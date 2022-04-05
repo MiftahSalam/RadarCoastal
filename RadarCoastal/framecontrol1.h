@@ -2,6 +2,9 @@
 #define FRAMECONTROL1_H
 
 #include <QFrame>
+#include <QVariant>
+
+#include <radarengine.h>
 
 namespace Ui {
 class FrameControl1;
@@ -12,10 +15,11 @@ class FrameControl1 : public QFrame
     Q_OBJECT
 
 public:
-    explicit FrameControl1(QWidget *parent = 0);
+    explicit FrameControl1(QWidget *parent = nullptr);
     ~FrameControl1();
 
-    void setRangeRing(double ringWidth);
+//    void setRangeRing(double ringWidth);
+    void setRadarEnginePtr(RadarEngine::RadarEngine* re = nullptr);
     void stateChange(int state);
 
 signals:
@@ -34,12 +38,16 @@ private slots:
 
     void on_checkBoxShowRing_clicked(bool checked);
 
-    void on_pushButtonTxStnb_2_clicked();
+    void trigger_radarConfigChange(QString key, QVariant val);
 
-    void on_pushButtonRFToggle_clicked();
+    void on_pushButtonShutdown_clicked();
 
 private:
+    void handleRingRangeChange();
+
     Ui::FrameControl1 *ui;
+    RadarEngine::RadarEngine* m_re;
+
     QString ringValue;
 };
 

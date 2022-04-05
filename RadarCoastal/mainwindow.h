@@ -19,8 +19,12 @@ public:
 
     RadarEngine::RadarEngine *m_re;
 
+private slots:
+    void trigger_shutdown();
+
 protected:
     void resizeEvent(QResizeEvent *event);
+    void closeEvent(QCloseEvent *event);
 
 private:
     Ui::MainWindow *ui;

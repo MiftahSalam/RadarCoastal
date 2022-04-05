@@ -164,7 +164,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButtonTxStnb_2">
+    <widget class="QPushButton" name="pushButtonShutdown">
      <property name="text">
       <string>Shutdown</string>
      </property>
