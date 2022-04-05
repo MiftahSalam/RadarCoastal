@@ -181,5 +181,4 @@ void FrameControl1::on_checkBoxShowRing_clicked(bool checked)
 void FrameControl1::on_pushButtonShutdown_clicked()
 {
     emit signal_req_shutdown();
-
 }
