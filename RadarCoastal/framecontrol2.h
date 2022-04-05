@@ -3,6 +3,8 @@
 
 #include <QFrame>
 
+#include <radarengine.h>
+
 namespace Ui {
 class FrameControl2;
 }
@@ -12,10 +14,10 @@ class FrameControl2 : public QFrame
     Q_OBJECT
 
 public:
-    explicit FrameControl2(QWidget *parent = 0);
+    explicit FrameControl2(QWidget *parent = nullptr);
     ~FrameControl2();
 
-    void initParam(bool enable_mti = false, int mti_value = 0);
+    void setRadarEnginePtr(RadarEngine::RadarEngine* re = nullptr);
 
 signals:
     void signal_change_gain_req(int value);
@@ -47,6 +49,7 @@ private slots:
 
 private:
     Ui::FrameControl2 *ui;
+    RadarEngine::RadarEngine* m_re;
 };
 
 #endif // FRAMECONTROL2_H

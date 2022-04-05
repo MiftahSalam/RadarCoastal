@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_re = new RadarEngine::RadarEngine(this);
     ui->frameControl1->setRadarEnginePtr(m_re);
+    ui->frameControl2->setRadarEnginePtr(m_re);
 
     connect(ui->frameControl1,SIGNAL(signal_req_shutdown()),
             this,SLOT(trigger_shutdown()));
@@ -46,7 +47,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     qDebug()<<Q_FUNC_INFO<<event->size()<<width()<<height();
-    ui->frameControl1->move(0,0);
+    ui->frameControl1->move(10,0);
+    ui->frameControl2->move(10,height()-ui->frameControl2->height());
 }
 
 MainWindow::~MainWindow()

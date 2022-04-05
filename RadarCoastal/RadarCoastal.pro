@@ -27,15 +27,18 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    framecontrol1.cpp
+    framecontrol1.cpp \
+    framecontrol2.cpp
 
 HEADERS += \
         mainwindow.h \
-    framecontrol1.h
+    framecontrol1.h \
+    framecontrol2.h
 
 FORMS += \
         mainwindow.ui \
-    framecontrol1.ui
+    framecontrol1.ui \
+    framecontrol2.ui
 
 #win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfig
 #else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfigd
