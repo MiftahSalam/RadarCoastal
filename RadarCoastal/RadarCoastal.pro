@@ -37,7 +37,8 @@ SOURCES += \
     stream/mqttdevicewrapper.cpp \
     stream/devicewrapper.cpp \
     frametrackdisplay.cpp \
-    radarwidget.cpp
+    ppi/radarwidget.cpp \
+    ppi/ppievent.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -49,7 +50,8 @@ HEADERS += \
     stream/mqttdevicewrapper.h \
     stream/devicewrapper.h \
     frametrackdisplay.h \
-    radarwidget.h
+    ppi/radarwidget.h \
+    ppi/ppievent.h
 
 FORMS += \
         mainwindow.ui \
@@ -66,6 +68,8 @@ LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfigd
 INCLUDEPATH += C:\Users\miftah\RadarConfigLib\include
 DEPENDPATH += C:\Users\miftah\RadarConfigLib\lib\include
 
+
+win32: LIBS += -lOpenGL32
 
 win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\ -lRadarEngine
 else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\ -lRadarEngined

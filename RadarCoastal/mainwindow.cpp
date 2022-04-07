@@ -11,13 +11,37 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("Coastal Radar");
 
     m_re = new RadarEngine::RadarEngine(this);
     ui->frameControl1->setRadarEnginePtr(m_re);
     ui->frameControl2->setRadarEnginePtr(m_re);
 
+    ppi = new RadarWidget(centralWidget(),m_re);
+
     connect(ui->frameControl1,SIGNAL(signal_req_shutdown()),
             this,SLOT(trigger_shutdown()));
+
+}
+
+void MainWindow::setupPPILayout()
+{
+    int radarWidgetWidth = width()-ui->frameRight->width();
+    int radarWidgetHeight = height();
+    int side = qMin(radarWidgetWidth, radarWidgetHeight);
+    int radarWidgetX = ((width()-ui->frameRight->width())/2)-(side/2);
+    int radarWidgetY = (height()/2)-(side/2);
+
+    ppi->clearMask();
+
+    /*
+    */
+    QRect rect;
+    ppi->setGeometry(radarWidgetX,radarWidgetY,side,side);
+    rect = QRect(5,5,ppi->width()-10,ppi->height()-10);
+    QRegion region = QRegion(rect,QRegion::Ellipse);
+    ppi->setRectRegoin(rect);
+    ppi->setMask(region);
 
 }
 
@@ -51,6 +75,8 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     ui->frameControl2->move(10,height()-ui->frameControl2->height());
     ui->frameRight->move(width()-ui->frameRight->width(),0);
     ui->frameRight->resize(ui->frameRight->width(),height());
+
+    setupPPILayout();
 }
 
 MainWindow::~MainWindow()

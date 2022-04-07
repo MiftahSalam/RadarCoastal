@@ -5,6 +5,8 @@
 
 #include <radarengine.h>
 
+#include "ppi/radarwidget.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -27,7 +29,11 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private:
+    void setupPPILayout();
+
     Ui::MainWindow *ui;
+
+    RadarWidget* ppi;
 };
 
 #endif // MAINWINDOW_H
