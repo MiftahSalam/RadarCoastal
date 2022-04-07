@@ -49,6 +49,8 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     qDebug()<<Q_FUNC_INFO<<event->size()<<width()<<height();
     ui->frameControl1->move(10,0);
     ui->frameControl2->move(10,height()-ui->frameControl2->height());
+    ui->frameRight->move(width()-ui->frameRight->width(),0);
+    ui->frameRight->resize(ui->frameRight->width(),height());
 }
 
 MainWindow::~MainWindow()

@@ -24,21 +24,39 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
+include(stream/qmqtt/qmqtt.pri)
+
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
     framecontrol1.cpp \
-    framecontrol2.cpp
+    framecontrol2.cpp \
+    frameosd.cpp \
+    stream/navsensor.cpp \
+    stream/stream.cpp \
+    stream/mqttdevicewrapper.cpp \
+    stream/devicewrapper.cpp \
+    frametrackdisplay.cpp \
+    radarwidget.cpp
 
 HEADERS += \
         mainwindow.h \
     framecontrol1.h \
-    framecontrol2.h
+    framecontrol2.h \
+    frameosd.h \
+    stream/navsensor.h \
+    stream/stream.h \
+    stream/mqttdevicewrapper.h \
+    stream/devicewrapper.h \
+    frametrackdisplay.h \
+    radarwidget.h
 
 FORMS += \
         mainwindow.ui \
     framecontrol1.ui \
-    framecontrol2.ui
+    framecontrol2.ui \
+    frameosd.ui \
+    frametrackdisplay.ui
 
 #win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfig
 #else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfigd
