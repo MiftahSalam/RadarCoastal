@@ -15,7 +15,7 @@
 #endif
 
 RadarWidget::RadarWidget(QWidget *parent, RadarEngine::RadarEngine *re)
-    : QOpenGLWidget(parent)//,m_re(re)
+    : QOpenGLWidget(parent),m_re(re)
 {
 
 //    counter = 0;
@@ -228,10 +228,11 @@ void RadarWidget::drawCompass(QPainter *painter, const int &side, const bool &he
 
 void RadarWidget::drawRings(QPainter *painter, const int &side)
 {
-    painter->setPen(QColor(255,255,0,100));
     int ringCount = qCeil(side/2)-20;
     int bufRng = ringCount;
-    for(int i=0;i<4;i++)
+
+    painter->setPen(QColor(255,255,0,100));
+    for(int i=0;i<RING_COUNT;i++)
     {
         painter->drawEllipse(-bufRng/2,-bufRng/2,bufRng,bufRng);
         bufRng += ringCount;
@@ -451,6 +452,7 @@ void RadarWidget::drawGZ(QPainter *painter)
     //    }
 
 }
+
 void RadarWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
@@ -470,11 +472,11 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glTranslatef(0.0, 0.0, -10.0);
-    glScaled(1, 1, 1.);
+    glScaled(.5, .5, .5);
 
 //    qDebug()<<Q_FUNC_INFO;
 
-//    spokeDrawer1->DrawRadarImage();
+    m_re->radarDraw->DrawRadarImage();
 
     /*
     glBegin(GL_LINES);
@@ -482,18 +484,14 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     glVertex2f(0,0);
     glVertex2f(sin(static_cast<float>(deg2rad(cur_radar_angle))),
                cos(static_cast<float>(deg2rad(cur_radar_angle))));
-    glColor3f(1,0,0);
-    glVertex2f(0,0);
-    glVertex2f(sin(static_cast<float>(deg2rad(cur_radar_angle1))),
-               cos(static_cast<float>(deg2rad(cur_radar_angle1))));
     glEnd();
-    */
 
     glShadeModel(GL_FLAT);
     glDisable(GL_DEPTH_TEST);
 
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
+    */
 
 
     QPainter painter(this);
@@ -579,20 +577,13 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
 //    arpa->AcquireNewMARPATarget(target_pos);
 //}
-//void RadarWidget::trigger_DrawSpoke(int transparency, int angle, UINT8 *data, size_t len)
-//{
-////    qDebug()<<Q_FUNC_INFO<<angle;
+void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data, size_t len)
+{
+//    qDebug()<<Q_FUNC_INFO<<angle;
 //    cur_radar_angle = SCALE_RAW_TO_DEGREES2048(angle);
-////    spokeDrawer->ProcessRadarSpoke(transparency,angle,data,len);
-//    update();
-//}
-//void RadarWidget::trigger_DrawSpoke1(int transparency, int angle, UINT8 *data, size_t len)
-//{
-////    qDebug()<<Q_FUNC_INFO<<angle;
-//    cur_radar_angle1 = SCALE_RAW_TO_DEGREES2048(angle);
-//    spokeDrawer1->ProcessRadarSpoke(transparency,angle,data,len);
-//    update();
-//}
+    m_re->radarDraw->ProcessRadarSpoke(angle,data,len);
+    update();
+}
 //void RadarWidget::setRange(int range)
 //{
 //    curRange = range;

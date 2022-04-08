@@ -41,12 +41,13 @@ protected:
     void initializeGL();
     void paintEvent(QPaintEvent *event);
     void resizeGL(int width, int height);
+//    void paintGL();
 //    void mouseReleaseEvent(QMouseEvent *event);
 //    void mouseMoveEvent(QMouseEvent *event);
 
 public slots:
     void timeOut();
-//    void trigger_DrawSpoke(int transparency, int angle, UINT8* data, size_t len);
+    void trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8* data, size_t len);
 //    void trigger_ReqDelTrack(bool r1,int id);
 
 private:
@@ -60,7 +61,7 @@ private:
 //    void createMARPA(QPoint pos);
 
 //    PPIEvent *ppiEvent;
-//    RadarEngine::RadarEngine* m_re;
+    RadarEngine::RadarEngine* m_re;
     QTimer *timer;
     QRect region;
 
