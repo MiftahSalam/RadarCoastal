@@ -15,6 +15,7 @@ FrameControl1::FrameControl1(QWidget *parent) :
     ui->checkBoxShowRing->setChecked(rcInstance->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
     on_checkBoxShowRing_clicked(rcInstance->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
     handleRingRangeChange();
+    stateChange(RadarEngine::RADAR_OFF);
 
     connect(rcInstance,&RadarConfig::RadarConfig::configValueChange,this,&FrameControl1::trigger_radarConfigChange);
 }
@@ -51,7 +52,7 @@ void FrameControl1::handleRingRangeChange()
 
 void FrameControl1::trigger_radarConfigChange(QString key, QVariant val)
 {
-    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
+//    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
 
     if(key == RadarConfig::VOLATILE_RADAR_STATUS) stateChange(val.toInt());
     else if(key == RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE) handleRingRangeChange();

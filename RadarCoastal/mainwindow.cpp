@@ -21,15 +21,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->frameControl1,SIGNAL(signal_req_shutdown()),
             this,SLOT(trigger_shutdown()));
+    connect(m_re,&RadarEngine::RadarEngine::signal_plotRadarSpoke,ppi,&RadarWidget::trigger_DrawSpoke);
 
 }
 
 void MainWindow::setupPPILayout()
 {
-    int radarWidgetWidth = width()-ui->frameRight->width();
+    int radarWidgetWidth = width()-ui->frameRight->width()-ui->frameLeft->width();
     int radarWidgetHeight = height();
     int side = qMin(radarWidgetWidth, radarWidgetHeight);
-    int radarWidgetX = ((width()-ui->frameRight->width())/2)-(side/2);
+    int radarWidgetX = (radarWidgetWidth/2)-(side/2);
     int radarWidgetY = (height()/2)-(side/2);
 
     ppi->clearMask();
@@ -71,10 +72,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     qDebug()<<Q_FUNC_INFO<<event->size()<<width()<<height();
-    ui->frameControl1->move(10,0);
-    ui->frameControl2->move(10,height()-ui->frameControl2->height());
+//    ui->frameControl1->move(10,0);
+//    ui->frameControl2->move(10,height()-ui->frameControl2->height());
     ui->frameRight->move(width()-ui->frameRight->width(),0);
     ui->frameRight->resize(ui->frameRight->width(),height());
+    ui->frameLeft->move(width()-ui->frameRight->width()-ui->frameLeft->width(),0);
+    ui->frameLeft->resize(ui->frameLeft->width(),height());
 
     setupPPILayout();
 }
