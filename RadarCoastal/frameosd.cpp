@@ -4,6 +4,7 @@
 #include <radarconfig.h>
 
 #include <QTime>
+#include <QDoubleValidator>
 
 FrameOSD::FrameOSD(QWidget *parent) :
     QFrame(parent),

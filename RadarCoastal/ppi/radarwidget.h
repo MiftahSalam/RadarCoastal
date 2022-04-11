@@ -2,6 +2,11 @@
 #define GLWIDGET_H
 
 #include <QOpenGLWidget>
+#include <QOpenGLBuffer>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLShader>
+#include <QOpenGLTexture>
+#include <QOpenGLFunctions>
 #include <QTimer>
 
 #include <radarconfig.h>
@@ -10,7 +15,7 @@
 
 #include "ppi/ppievent.h"
 
-class RadarWidget : public QOpenGLWidget
+class RadarWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
 
@@ -62,11 +67,12 @@ private:
 
 //    PPIEvent *ppiEvent;
     RadarEngine::RadarEngine* m_re;
+    RadarEngine::RDVert *rd;
     QTimer *timer;
     QRect region;
 
 //    double ringWidth;
-//    double cur_radar_angle,cur_radar_angle1;
+    double cur_radar_angle;
 ////    int curRange;
 //    int cur_arpa_id_count,cur_arpa_id_count1;
 //    int cur_arpa_number;
@@ -79,6 +85,41 @@ private:
 //    int old_y1;
 
 //    int counter;
+
+    GLuint m_posAttr;
+    GLuint m_colAttr;
+
+    QOpenGLShaderProgram *m_program;
+
+
+#define SHADER_COLOR_CHANNELS (4)  // RGB + Alpha
+
+          class RDShade : protected QOpenGLFunctions
+          {
+          public:
+              RDShade(RadarEngine::RadarEngine* re);
+              void DrawRadarImage();
+              void ProcessRadarSpoke(int angle, UINT8* data, size_t len);
+              void init();
+
+          private:
+              unsigned char m_data[SHADER_COLOR_CHANNELS * LINES_PER_ROTATION * RETURNS_PER_LINE];
+                int m_start_line;  // First line received since last draw, or -1
+                int m_lines;       // # of lines received since last draw
+
+                int m_format;
+//                QOpenGLTexture::TextureFormat m_format;
+                int m_channels;
+
+//                QVector<GLfloat> vertData;
+//                QOpenGLBuffer vbo;
+//                QOpenGLTexture *m_texture;
+                GLuint m_texture;
+                QOpenGLShader *m_fragment;
+                QOpenGLShader *m_vertex;
+                QOpenGLShaderProgram *m_program;
+                RadarEngine::RadarEngine* m_re;
+          }*rShader;
 };
 
 

@@ -11,6 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->pushButtonSetTrail->hide();
+    ui->pushButtonTilting->hide();
+
     setWindowTitle("Coastal Radar");
 
     m_re = new RadarEngine::RadarEngine(this);
@@ -78,6 +81,8 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     ui->frameRight->resize(ui->frameRight->width(),height());
     ui->frameLeft->move(width()-ui->frameRight->width()-ui->frameLeft->width(),0);
     ui->frameLeft->resize(ui->frameLeft->width(),height());
+    ui->frameCursor->move(width()-ui->frameRight->width()-ui->frameLeft->width()-ui->frameCursor->width(),height()-ui->frameCursor->height());
+    ui->frameCursor->resize(ui->frameCursor->width(),ui->frameCursor->height());
 
     setupPPILayout();
 }

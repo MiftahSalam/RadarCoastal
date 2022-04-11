@@ -56,7 +56,7 @@ void FrameTrackDisplay::timerTimeout()
     {
         target_time_tag_list.remove(target_to_delete.at(i));
 
-        QList<QStandardItem *> listTarget = model->findItems("R1-"+QString::number(target_to_delete.at(i)),0);
+        QList<QStandardItem *> listTarget = model->findItems("R1-"+QString::number(target_to_delete.at(i)),Qt::MatchExactly,0);
         if(!listTarget.isEmpty())
         {
             int row = listTarget.at(0)->row();
@@ -79,7 +79,7 @@ void FrameTrackDisplay::timerTimeout()
     {
         target_time_tag_list1.remove(target_to_delete.at(i));
 
-        QList<QStandardItem *> listTarget = model->findItems("R2-"+QString::number(target_to_delete.at(i)),0);
+        QList<QStandardItem *> listTarget = model->findItems("R2-"+QString::number(target_to_delete.at(i)),Qt::MatchExactly,0);
         if(!listTarget.isEmpty())
         {
             int row = listTarget.at(0)->row();
@@ -154,13 +154,13 @@ void FrameTrackDisplay::trigger_target_update(
     QHash<int,quint64> *cur_target_time_tag_list = r1 ? &target_time_tag_list : &target_time_tag_list1;
     if(cur_target_time_tag_list->contains(id))
     {
-        new_target_tt = cur_target_time_tag_list->value(id);
+//        new_target_tt = cur_target_time_tag_list->value(id);
         new_target_tt = QDateTime::currentMSecsSinceEpoch();
         cur_target_time_tag_list->remove(id);
         cur_target_time_tag_list->insert(id,new_target_tt);
 
         QList<QStandardItem *> listTarget = model->findItems(r1 ? "R1-"+QString::number(id) : "R2-"+QString::number(id)
-                                                                  ,0);
+                                                                  ,Qt::MatchExactly,0);
         if(!listTarget.isEmpty())
         {
             int row = listTarget.at(0)->row();

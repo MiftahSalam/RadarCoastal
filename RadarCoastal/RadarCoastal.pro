@@ -38,7 +38,10 @@ SOURCES += \
     stream/devicewrapper.cpp \
     frametrackdisplay.cpp \
     ppi/radarwidget.cpp \
-    ppi/ppievent.cpp
+    ppi/ppievent.cpp \
+    framecontrol3.cpp \
+    framecursor.cpp \
+    frametrail.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -51,31 +54,49 @@ HEADERS += \
     stream/devicewrapper.h \
     frametrackdisplay.h \
     ppi/radarwidget.h \
-    ppi/ppievent.h
+    ppi/ppievent.h \
+    framecontrol3.h \
+    framecursor.h \
+    frametrail.h
 
 FORMS += \
         mainwindow.ui \
     framecontrol1.ui \
     framecontrol2.ui \
     frameosd.ui \
-    frametrackdisplay.ui
+    frametrackdisplay.ui \
+    framecontrol3.ui \
+    framecursor.ui \
+    frametrail.ui
 
-#win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfig
-#else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfigd
+unix: {
+    LIBS += -L/usr/lib/RadarConfig -lRadarConfig
+    LIBS += -L/usr/lib/RadarEngine -lRadarEngine
 
-LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfigd
+    INCLUDEPATH += /usr/include/RadarConfig
+    DEPENDPATH += /usr/include/RadarConfig
 
-INCLUDEPATH += C:\Users\miftah\RadarConfigLib\include
-DEPENDPATH += C:\Users\miftah\RadarConfigLib\lib\include
+    INCLUDEPATH += /usr/include/RadarEngine
+    DEPENDPATH += /usr/include/RadarEngine
 
+} else:win32 {
+    LIBS += -lOpenGL32
 
-LIBS += -lOpenGL32
+    INCLUDEPATH += C:\Users\miftah\RadarConfigLib\include
+    DEPENDPATH += C:\Users\miftah\RadarConfigLib\lib\include
+
+    INCLUDEPATH += C:\Users\miftah\RadarEngineLib\include
+    DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include
+}
+
+#LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfigd
+
+win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfig
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfigd
 
 win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\ -lRadarEngine
 else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\ -lRadarEngined
 
-INCLUDEPATH += C:\Users\miftah\RadarEngineLib\include
-DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

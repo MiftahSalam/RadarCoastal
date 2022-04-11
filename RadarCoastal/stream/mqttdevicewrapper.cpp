@@ -37,7 +37,11 @@ MqttDeviceWrapper* MqttDeviceWrapper::getInstance(const QString config)
 
 void MqttDeviceWrapper::initConfig(const QString config)
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
     QStringList config_list = config.split(":",QString::SkipEmptyParts);
+#else
+    QStringList config_list = config.split(":",Qt::SkipEmptyParts);
+#endif
     if(config_list.size() == 3)
     {
         _mqttConfig.host = QHostAddress(config_list.at(0));
@@ -109,7 +113,11 @@ void MqttDeviceWrapper::changeConfig(const QString command)
 
 void MqttDeviceWrapper::write(const QString data)
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
     QStringList format = data.split(":",QString::SkipEmptyParts);
+#else
+    QStringList format = data.split(":",Qt::SkipEmptyParts);
+#endif
     if(format.size() == 2)
     {
         QMQTT::Message message(_idCounter,format.at(0),format.at(1).toUtf8());

@@ -9,6 +9,7 @@ QString loadStylesheetFile( const QString &path );
 
 int main(int argc, char *argv[])
 {
+    QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
     QApplication a(argc, argv);
 
     RadarConfig::RadarConfig *instance = RadarConfig::RadarConfig::getInstance(QDir::homePath()+QDir::separator()+"mpsr"+QDir::separator()+".radar.conf");
@@ -18,8 +19,8 @@ int main(int argc, char *argv[])
     a.setStyleSheet( appStyle );
 
     MainWindow w;
-//    w.showFullScreen();
-    w.showMaximized();
+    w.showFullScreen();
+//    w.showMaximized();
 
     return a.exec();
 }

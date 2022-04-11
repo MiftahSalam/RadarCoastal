@@ -3,6 +3,8 @@
 
 #include <radarconfig.h>
 
+#include <QIntValidator>
+
 FrameControl2::FrameControl2(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameControl2), m_re(nullptr)

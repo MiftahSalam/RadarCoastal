@@ -17,6 +17,7 @@
 RadarWidget::RadarWidget(QWidget *parent, RadarEngine::RadarEngine *re)
     : QOpenGLWidget(parent),m_re(re)
 {
+    rd = static_cast<RadarEngine::RDVert*>(m_re->radarDraw);
 
 //    counter = 0;
 //    spokeDrawer = RD::make_Draw(m_ri,0);
@@ -42,22 +43,23 @@ RadarWidget::RadarWidget(QWidget *parent, RadarEngine::RadarEngine *re)
 //    arpa_measure_time = static_cast<quint64>(QDateTime::currentMSecsSinceEpoch());
 }
 
-
-//void RadarWidget::trigger_ReqDelTrack(bool r1,int id)
-//{
-//    if(id>-10)
-//    {
-//        RA *cur_arpa = r1 ? arpa : arpa1;
-//        for(int i=0;i<cur_arpa->m_number_of_targets;i++)
-//            if(cur_arpa->m_target[i]->m_target_id == id)
-//                cur_arpa->m_target[i]->SetStatusLost();
-//    }
-//    else
-//    {
-//        arpa->DeleteAllTargets();
-//        arpa1->DeleteAllTargets();
-//    }
-//}
+/*
+void RadarWidget::trigger_ReqDelTrack(bool r1,int id)
+{
+    if(id>-10)
+    {
+        RA *cur_arpa = r1 ? arpa : arpa1;
+        for(int i=0;i<cur_arpa->m_number_of_targets;i++)
+            if(cur_arpa->m_target[i]->m_target_id == id)
+                cur_arpa->m_target[i]->SetStatusLost();
+    }
+    else
+    {
+        arpa->DeleteAllTargets();
+        arpa1->DeleteAllTargets();
+    }
+}
+*/
 
 void RadarWidget::timeOut()
 {
@@ -455,7 +457,7 @@ void RadarWidget::drawGZ(QPainter *painter)
 
 void RadarWidget::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
 
     makeCurrent();
     glMatrixMode(GL_MODELVIEW);
@@ -474,9 +476,94 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     glTranslatef(0.0, 0.0, -10.0);
     glScaled(.5, .5, .5);
 
-//    qDebug()<<Q_FUNC_INFO;
+
+    /*
+    m_program->bind();
+
+    QMatrix4x4 matrix;
+    matrix.perspective(60.0f, 4.0f/3.0f, 0.1f, 100.0f);
+    matrix.translate(0, 0, -2);
+
+    GLfloat vertices[] = {
+        0.0f, 0.407f,
+        -0.5f, -0.5f,
+        0.5f, -0.5f
+    };
+
+    GLfloat colors[] = {
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f
+    };
+
+    glVertexAttribPointer(m_posAttr, 2, GL_FLOAT, GL_FALSE, 0, vertices);
+    glVertexAttribPointer(m_colAttr, 3, GL_FLOAT, GL_FALSE, 0, colors);
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+
+    m_program->release();
+    */
+
 
     m_re->radarDraw->DrawRadarImage();
+
+//    m_program->bind();
+//    glEnableVertexAttribArray(GL_VERTEX_ARRAY);
+//    glEnableVertexAttribArray(GL_COLOR_ARRAY);
+//    glEnableVertexAttribArray(0);
+//    glEnableVertexAttribArray(1);
+
+//    for (size_t i = 0; i < LINES_PER_ROTATION; i++)
+//    {
+//        RadarEngine::RDVert::VertexLine* line = &rd->m_vertices[i];
+
+////        glVertexPointer(2, GL_FLOAT, sizeof(RadarEngine::RDVert::VertexPoint), &line->points[0].x);
+////        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(RadarEngine::RDVert::VertexPoint), &line->points[0].red);
+////        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(line->count));
+//        glVertexAttribPointer(m_posAttr, 2, GL_FLOAT, GL_FALSE, sizeof(RadarEngine::RDVert::VertexPoint), &line->points[0].x);
+//        glVertexAttribPointer(m_colAttr, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(RadarEngine::RDVert::VertexPoint), &line->points[0].red);
+////        glVertexAttribPointer(GL_VERTEX_ARRAY_POINTER, 2, GL_FLOAT, GL_TRUE, sizeof(RadarEngine::RDVert::VertexPoint), &line->points[0].x);
+////        glVertexAttribPointer(GL_COLOR_ARRAY_POINTER, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RadarEngine::RDVert::VertexPoint), &line->points[0].red);
+////        glEnableVertexAttribArray(0);
+////        glEnableVertexAttribArray(1);
+////        qDebug()<<Q_FUNC_INFO<<"line->count"<<line->count;
+////        qDebug()<<Q_FUNC_INFO<<"line->point"<<line->points[0].x<<line->points[0].y;
+//        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(line->count));
+//    }
+
+//    GLfloat vertices[] = {
+//        0.0f, 0.0f,
+//        -.7f, .7f,
+//    };
+
+//    GLfloat colors[] = {
+//        0.0f, 1.0f, 0.0f,
+//        0.0f, 1.0f, 0.0f,
+//        0.0f, 1.0f, 0.0f
+//    };
+
+//    vertices[2] = sin(static_cast<float>(deg2rad(cur_radar_angle)));
+//    vertices[3] = cos(static_cast<float>(deg2rad(cur_radar_angle)));
+//    glVertexAttribPointer(m_posAttr, 2, GL_FLOAT, GL_FALSE, 0, vertices);
+//    glVertexAttribPointer(m_colAttr, 3, GL_FLOAT, GL_FALSE, 0, colors);
+
+//    glDrawArrays(GL_LINES, 0, 2);
+
+//    glDisableClientState(GL_VERTEX_ARRAY);  // disable vertex arrays
+//    glDisableClientState(GL_COLOR_ARRAY);
+//    glDisableVertexAttribArray(GL_VERTEX_ARRAY);  // disable vertex arrays
+//    glDisableVertexAttribArray(GL_COLOR_ARRAY);
+//    glDisableVertexAttribArray(1);  // disable vertex arrays
+//    glDisableVertexAttribArray(0);
+//    m_program->release();
+
+
 
     /*
     glBegin(GL_LINES);
@@ -485,13 +572,16 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     glVertex2f(sin(static_cast<float>(deg2rad(cur_radar_angle))),
                cos(static_cast<float>(deg2rad(cur_radar_angle))));
     glEnd();
+    */
+
+//    m_re->radarDraw->DrawRadarImage();
+//    rShader->DrawRadarImage();
 
     glShadeModel(GL_FLAT);
     glDisable(GL_DEPTH_TEST);
 
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
-    */
 
 
     QPainter painter(this);
@@ -539,73 +629,78 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
 //    painter.end();
 }
+/*
+void RadarWidget::createMARPA(QPoint pos)
+{
+    qDebug()<<Q_FUNC_INFO<<pos<<size()<<geometry().topLeft();
 
-//void RadarWidget::createMARPA(QPoint pos)
-//{
-//    qDebug()<<Q_FUNC_INFO<<pos<<size()<<geometry().topLeft();
+    int side = qMin(region.width(), region.height())/2;
+    int centerX = pos.x()-(width()/2);
+    int centerY = pos.y()-(height()/2);
+    QPoint center_pos = QPoint(centerX,-centerY);
+//    QPoint center_pos = QPoint(-centerY,-centerX);
+    Polar pol;
+    double deg = MOD_DEGREES(rad2deg(atan2(center_pos.x(),center_pos.y())));
+//    double deg = MOD_DEGREES(rad2deg(atan2(-center_pos.y(),center_pos.x())));
+    double range_scale = sqrt(pow(center_pos.x(),2)+pow(center_pos.y(),2))/side;
+    pol.angle = SCALE_DEGREES_TO_RAW2048(deg);
+    pol.r = range_scale*RETURNS_PER_LINE;
+    qDebug()<<Q_FUNC_INFO<<"mouse pos"<<center_pos
+           <<"polar angle"<<pol.angle
+          <<"polar range"<<pol.r
+         <<"side"<<side
+        <<"range meter"<<range_scale*2*curRange
+       <<"radar meter"<<2*curRange
+      <<"degree"<<deg;
+    if (pol.r >= RETURNS_PER_LINE || pol.r <= 0)
+    {
+        qDebug()<<"out of avail area";
+        //        emit warning_MARPA_out_of_area();
+        return;
+    }
 
-//    int side = qMin(region.width(), region.height())/2;
-//    int centerX = pos.x()-(width()/2);
-//    int centerY = pos.y()-(height()/2);
-//    QPoint center_pos = QPoint(centerX,-centerY);
-////    QPoint center_pos = QPoint(-centerY,-centerX);
-//    Polar pol;
-//    double deg = MOD_DEGREES(rad2deg(atan2(center_pos.x(),center_pos.y())));
-////    double deg = MOD_DEGREES(rad2deg(atan2(-center_pos.y(),center_pos.x())));
-//    double range_scale = sqrt(pow(center_pos.x(),2)+pow(center_pos.y(),2))/side;
-//    pol.angle = SCALE_DEGREES_TO_RAW2048(deg);
-//    pol.r = range_scale*RETURNS_PER_LINE;
-//    qDebug()<<Q_FUNC_INFO<<"mouse pos"<<center_pos
-//           <<"polar angle"<<pol.angle
-//          <<"polar range"<<pol.r
-//         <<"side"<<side
-//        <<"range meter"<<range_scale*2*curRange
-//       <<"radar meter"<<2*curRange
-//      <<"degree"<<deg;
-//    if (pol.r >= RETURNS_PER_LINE || pol.r <= 0)
-//    {
-//        qDebug()<<"out of avail area";
-//        //        emit warning_MARPA_out_of_area();
-//        return;
-//    }
+    Position own_pos;
+    own_pos.lat = currentOwnShipLat;
+    own_pos.lon = currentOwnShipLon;
+    Position target_pos = Polar2Pos(pol,own_pos,curRange);
+    qDebug()<<Q_FUNC_INFO<<target_pos.lat<<target_pos.lon;
 
-//    Position own_pos;
-//    own_pos.lat = currentOwnShipLat;
-//    own_pos.lon = currentOwnShipLon;
-//    Position target_pos = Polar2Pos(pol,own_pos,curRange);
-//    qDebug()<<Q_FUNC_INFO<<target_pos.lat<<target_pos.lon;
-
-//    arpa->AcquireNewMARPATarget(target_pos);
-//}
+    arpa->AcquireNewMARPATarget(target_pos);
+}
+*/
 void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data, size_t len)
 {
 //    qDebug()<<Q_FUNC_INFO<<angle;
-//    cur_radar_angle = SCALE_RAW_TO_DEGREES2048(angle);
+    cur_radar_angle = SCALE_RAW_TO_DEGREES2048(angle);
     m_re->radarDraw->ProcessRadarSpoke(angle,data,len);
+//    rShader->ProcessRadarSpoke(angle,data,len);
     update();
 }
-//void RadarWidget::setRange(int range)
-//{
-//    curRange = range;
-//    arpa->range_meters = 2*range;
-//    arpa1->range_meters = 2*range;
-//    computetRingWidth();
-//}
-//void RadarWidget::computetRingWidth()
-//{
-//    int side = region.width()/2;
-//    ringWidth = (qCeil(side/2)-20)*curRange/side/2;
-//    ringWidth /=1000;
-//}
-//int RadarWidget::getRange()
-//{
-//    return curRange;
-//}
 
-//double RadarWidget::getRingWidth()
-//{
-//    return ringWidth;
-//}
+/*
+void RadarWidget::setRange(int range)
+{
+    curRange = range;
+    arpa->range_meters = 2*range;
+    arpa1->range_meters = 2*range;
+    computetRingWidth();
+}
+void RadarWidget::computetRingWidth()
+{
+    int side = region.width()/2;
+    ringWidth = (qCeil(side/2)-20)*curRange/side/2;
+    ringWidth /=1000;
+}
+int RadarWidget::getRange()
+{
+    return curRange;
+}
+
+double RadarWidget::getRingWidth()
+{
+    return ringWidth;
+}
+*/
 
 void RadarWidget::resizeGL(int width, int height)
 {
@@ -619,40 +714,76 @@ void RadarWidget::setRectRegoin(QRect rect)
 RadarWidget::~RadarWidget()
 {
 }
+/*
+*/
+static const char *vertexShaderSource =
+      "attribute highp vec4 posAttr;\n"
+      "attribute lowp vec4 colAttr;\n"
+      "varying lowp vec4 col;\n"
+//      "uniform highp mat4 matrix;\n"
+      "void main() {\n"
+      "   col = colAttr;\n"
+      "   gl_Position = posAttr;\n"
+//      "   gl_Position = matrix * posAttr;\n"
+      "}\n";
+
+  static const char *fragmentShaderSource =
+      "varying lowp vec4 col;\n"
+      "void main() {\n"
+      "   gl_FragColor = col;\n"
+      "}\n";
 
 void RadarWidget::initializeGL()
 {
+    initializeOpenGLFunctions();
+//    rShader = new RDShade(m_re);
+
     glEnable(GL_MULTISAMPLE);
+//    rShader->init();
+    m_re->radarDraw->init(this);
+
+    /*
+    m_program = new QOpenGLShaderProgram(this);
+    m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShaderSource);
+    m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShaderSource);
+    m_program->link();
+    m_posAttr = m_program->attributeLocation("posAttr");
+    m_colAttr = m_program->attributeLocation("colAttr");
+    */
 }
 
-//void RadarWidget::mouseReleaseEvent(QMouseEvent *event)
-//{
-//    qDebug()<<Q_FUNC_INFO<<event->pos()<<event->globalPos();
-//    if(event->button()==Qt::LeftButton && arpa_settings[0].create_arpa_by_click)
-//        createMARPA(event->pos());
-//    else if(event->button()==Qt::RightButton && arpa_settings[0].create_arpa_by_click)
-//        qDebug()<<Q_FUNC_INFO<<"right button";
-//}
+/*
+void RadarWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    qDebug()<<Q_FUNC_INFO<<event->pos()<<event->globalPos();
+    if(event->button()==Qt::LeftButton && arpa_settings[0].create_arpa_by_click)
+        createMARPA(event->pos());
+    else if(event->button()==Qt::RightButton && arpa_settings[0].create_arpa_by_click)
+        qDebug()<<Q_FUNC_INFO<<"right button";
+}
+*/
 
-//void RadarWidget::mouseMoveEvent(QMouseEvent *event)
-//{
-//    Q_UNUSED(event);
+/*
+void RadarWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
 
-//    int side = qMin(region.width(), region.height())/2;
-//    QPoint os_pos(region.width()/2,region.height()/2);
-//    QPoint mouse_pos = mapFromGlobal(QCursor::pos());
-//    double range_pixel_x = os_pos.x()-mouse_pos.x();
-//    double range_pixel_y = os_pos.y()-mouse_pos.y();
-//    double bearing = atan2(range_pixel_y,range_pixel_x);
-//    bearing = (bearing*180/M_PI)-90;
-//    if(bearing<0)
-//        bearing+=360;
+    int side = qMin(region.width(), region.height())/2;
+    QPoint os_pos(region.width()/2,region.height()/2);
+    QPoint mouse_pos = mapFromGlobal(QCursor::pos());
+    double range_pixel_x = os_pos.x()-mouse_pos.x();
+    double range_pixel_y = os_pos.y()-mouse_pos.y();
+    double bearing = atan2(range_pixel_y,range_pixel_x);
+    bearing = (bearing*180/M_PI)-90;
+    if(bearing<0)
+        bearing+=360;
 
-//    double range = sqrt(pow(range_pixel_y,2)+pow(range_pixel_x,2)); //pixel
-////    range = range*static_cast<double>(curRange)/static_cast<double>(side)/1000.;
-//    //    qDebug()<<Q_FUNC_INFO<<range<<bearing<<mouse_pos<<side;
-//    emit signal_cursorMove(range,bearing);
-//}
+    double range = sqrt(pow(range_pixel_y,2)+pow(range_pixel_x,2)); //pixel
+//    range = range*static_cast<double>(curRange)/static_cast<double>(side)/1000.;
+    //    qDebug()<<Q_FUNC_INFO<<range<<bearing<<mouse_pos<<side;
+    emit signal_cursorMove(range,bearing);
+}
+*/
 void RadarWidget::setupViewport(int width, int height)
 {
     int side = qMin(width, height);
@@ -666,4 +797,270 @@ void RadarWidget::setupViewport(int width, int height)
     glOrtho(-0.5, +0.5, -0.5, 0.5, 4.0, 15.0);
 #endif
     glMatrixMode(GL_MODELVIEW);
+}
+
+
+
+
+static const char *VertexShaderText =
+    "void main() \n"
+    "{ \n"
+    "   gl_TexCoord[0] = gl_MultiTexCoord0; \n"
+    "   gl_Position = ftransform(); \n"
+    "} \n";
+
+static const char *FragmentShaderColorText =
+    "uniform sampler2D tex2d; \n"
+    "void main() \n"
+    "{ \n"
+    "   float d = length(gl_TexCoord[0].xy);\n"
+    "   if (d >= 1.0) \n"
+    "      discard; \n"
+    "   float a = atan(gl_TexCoord[0].x, gl_TexCoord[0].y) / 6.28318; \n"
+    "   gl_FragColor = texture2D(tex2d, vec2(d, a)); \n"
+    "} \n";
+
+RadarWidget::RDShade::RDShade(RadarEngine::RadarEngine *re):
+    m_re(re)
+{
+}
+
+void RadarWidget::RDShade::init()
+{
+    initializeOpenGLFunctions();
+
+    m_start_line = -1;  // No spokes received since last draw
+    m_lines = 0;
+    m_format = GL_BGRA;
+//    m_format = QOpenGLTexture::RGBA8_UNorm;
+    m_channels = SHADER_COLOR_CHANNELS;
+
+    m_vertex = new QOpenGLShader(QOpenGLShader::Vertex);
+    m_vertex->compileSourceCode(VertexShaderText);
+
+    m_fragment = new QOpenGLShader(QOpenGLShader::Fragment);
+    m_fragment->compileSourceCode(FragmentShaderColorText);
+
+    m_program = new QOpenGLShaderProgram;
+    m_program->addShader(m_vertex);
+    m_program->addShader(m_fragment);
+//    m_program->bindAttributeLocation("gl_TexCoord[0]", 0);
+    //          m_environmentProgram->bindAttributeLocation("aTexCoord", 1);
+    m_program->link();
+    m_program->bind();
+    m_program->setUniformValue("tex2d", 0);
+
+    glGenTextures(1,&m_texture);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glTexImage2D(/* target          = */ GL_TEXTURE_2D,
+                  /* level           = */ 0,
+                  /* internal_format = */ m_format,
+                  /* width           = */ RETURNS_PER_LINE,
+                  /* heigth          = */ LINES_PER_ROTATION,
+                  /* border          = */ 0,
+                  /* format          = */ m_format,
+                  /* type            = */ GL_UNSIGNED_BYTE,
+                  /* data            = */ m_data);
+     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    /*
+    m_texture = new QOpenGLTexture(QImage(QDir::homePath()+QDir::separator()+"side1.png").mirrored());
+    m_texture = new QOpenGLTexture(QOpenGLTexture::Target2D);
+    m_texture->setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
+    m_texture->create();
+
+    m_texture->setSize(100, 100, 1);
+    m_texture->setFormat(m_format);
+    m_texture->allocateStorage(QOpenGLTexture::BGRA,QOpenGLTexture::UInt8);
+//    QImage image = QPixmap(10,10).toImage();
+    QImage image(QDir::homePath()+QDir::separator()+"side1.png");
+    m_texture->setData(0,0,0,100,100,1,0,QOpenGLTexture::BGRA,QOpenGLTexture::UInt8,static_cast<const void*>(image.bits()));
+    */
+
+    memset(&m_data,0,sizeof(unsigned char)*SHADER_COLOR_CHANNELS * LINES_PER_ROTATION * RETURNS_PER_LINE);
+
+    /*
+
+    float vertices[4][8] = {
+        {-1.f,  -1.f, 0.0f,   -1.f, -1.f},
+        {1.f, -1.f, 0.0f,   1.f, 1.0f},
+        {1.f, 1.f, 0.0f,  1.0f, 1.0f},
+        {-1.f,  1.f, 0.0f,  -1.0f, 1.f}
+    };
+    for(int j = 0; j < 4; ++j)
+    {
+        vertData.append(0.2*vertices[j][0]);
+        vertData.append(0.2*vertices[j][1]);
+        vertData.append(0.2*vertices[j][2]);
+
+        vertData.append(vertices[j][3]);
+        vertData.append(vertices[j][4]);
+    }
+    vbo.create();
+    vbo.bind();
+    vbo.allocate(vertData.constData(), vertData.count() * sizeof(GLfloat));
+    */
+}
+
+void RadarWidget::RDShade::ProcessRadarSpoke(int angle, UINT8* data, size_t len)
+{
+    GLubyte alpha = 255;
+
+    if (m_start_line == -1) m_start_line = angle;  // Note that this only runs once after each draw,
+    if (m_lines < LINES_PER_ROTATION) m_lines++;
+    if (m_channels == SHADER_COLOR_CHANNELS)
+    {
+        unsigned char *d = m_data + (angle * RETURNS_PER_LINE) * m_channels;
+        for (size_t r = 0; r < len; r++)
+        {
+            GLubyte strength = data[r];
+            RadarEngine::BlobColour colour = m_re->m_colour_map[strength];
+            d[0] = static_cast<unsigned char>(m_re->m_colour_map_rgb[colour].red());
+            d[1] = static_cast<unsigned char>(m_re->m_colour_map_rgb[colour].green());
+            d[2] = static_cast<unsigned char>(m_re->m_colour_map_rgb[colour].blue());
+            d[3] = colour != RadarEngine::BLOB_NONE ? alpha : 0;
+            d += m_channels;
+        }
+    }
+    else
+    {
+        unsigned char *d = m_data + (angle * RETURNS_PER_LINE);
+        for (size_t r = 0; r < len; r++)
+        {
+            GLubyte strength = data[r];
+            RadarEngine::BlobColour colour = m_re->m_colour_map[strength];
+            *d++ = (static_cast<unsigned char>(m_re->m_colour_map_rgb[colour].red()) * alpha) >> 8;
+        }
+    }
+}
+
+void RadarWidget::RDShade::DrawRadarImage()
+{
+      if (!m_program || !m_texture) {
+        return;
+      }
+
+
+      m_program->bind();
+//      vbo.bind();
+//      m_texture->bind();
+
+      glPushAttrib(GL_TEXTURE_BIT);
+      glBindTexture(GL_TEXTURE_2D, m_texture);
+
+      if (m_start_line > -1) {
+        // Since the last time we have received data from [m_start_line, m_end_line>
+        // so we only need to update the texture for those data lines.
+        if (m_start_line + m_lines > LINES_PER_ROTATION) {
+          int end_line = MOD_ROTATION2048(m_start_line + m_lines);
+          // if the new data partly wraps past the end of the texture
+          // tell it the two parts separately
+          // First remap [0, m_end_line>
+//          m_texture->setData(0,0,0,RETURNS_PER_LINE,end_line,1,0,QOpenGLTexture::BGRA,QOpenGLTexture::UInt8,static_cast<const void*>(m_data));
+
+          glTexSubImage2D(/* target =   */ GL_TEXTURE_2D,
+                          /* level =    */ 0,
+                          /* x-offset = */ 0,
+                          /* y-offset = */ 0,
+                          /* width =    */ RETURNS_PER_LINE,
+                          /* height =   */ end_line,
+                          /* format =   */ m_format,
+                          /* type =     */ GL_UNSIGNED_BYTE,
+                          /* pixels =   */ m_data);
+          // And then remap [m_start_line, LINES_PER_ROTATION>
+
+//          qDebug()<<Q_FUNC_INFO<<"m_start_line * RETURNS_PER_LINE * m_channels"<<m_start_line * RETURNS_PER_LINE * m_channels;
+//          qDebug()<<Q_FUNC_INFO<<"m_data"<<m_data[ m_start_line * RETURNS_PER_LINE * m_channels ];
+//          m_texture->setData(0,m_start_line,0,RETURNS_PER_LINE,LINES_PER_ROTATION - m_start_line,1,0,QOpenGLTexture::BGRA,QOpenGLTexture::UInt8,static_cast<const void*>(m_data + m_start_line * RETURNS_PER_LINE * m_channels));
+
+
+          glTexSubImage2D(/* target =   */ GL_TEXTURE_2D,
+                          /* level =    */ 0,
+                          /* x-offset = */ 0,
+                          /* y-offset = */ m_start_line,
+                          /* width =    */ RETURNS_PER_LINE,
+                          /* height =   */ LINES_PER_ROTATION - m_start_line,
+                          /* format =   */ m_format,
+                          /* type =     */ GL_UNSIGNED_BYTE,
+                          /* pixels =   */ m_data + m_start_line * RETURNS_PER_LINE * m_channels);
+
+        } else {
+          // Map [m_start_line, m_end_line>
+//            qDebug()<<Q_FUNC_INFO<<"m_start_line * RETURNS_PER_LINE * m_channels"<<m_start_line * RETURNS_PER_LINE * m_channels;
+//            qDebug()<<Q_FUNC_INFO<<"m_data"<<m_data[ m_start_line * RETURNS_PER_LINE * m_channels ];
+//            QImage image(100,100, QImage::Format_ARGB32);
+//            QRgb value;
+
+//             value = qRgba(189, 149, 39, 255); // 0xffbd9527
+//             for(int i = 0; i < 25; i++) image.setPixel(i, i, value);
+
+//             value = qRgba(122, 163, 39, 255); // 0xff7aa327
+//             for(int i = 25; i < 50; i++)
+//             {
+//             image.setPixel(26, i, value);
+//             image.setPixel(i, 26, value);
+//             }
+
+//             value = qRgba(237, 187, 51, 255); // 0xffedba31
+//             for(int i = 50; i < 75; i++)
+//             {
+//             image.setPixel(50, i, value);
+//             image.setPixel(i, 50, value);
+//             }
+
+//             m_texture->setData(0,0,0,RETURNS_PER_LINE,500,1,1,QOpenGLTexture::BGRA,QOpenGLTexture::UInt8,static_cast<const void*>(image.bits()));
+//            m_texture->setData(0,m_start_line,0,RETURNS_PER_LINE,m_lines,1,0,QOpenGLTexture::BGRA,QOpenGLTexture::UInt8,static_cast<const void*>(m_data + m_start_line * RETURNS_PER_LINE * m_channels));
+
+
+            glTexSubImage2D(/* target =   */ GL_TEXTURE_2D,
+                          /* level =    */ 0,
+                          /* x-offset = */ 0,
+                          /* y-offset = */ m_start_line,
+                          /* width =    */ RETURNS_PER_LINE,
+                          /* height =   */ m_lines,
+                          /* format =   */ m_format,
+                          /* type =     */ GL_UNSIGNED_BYTE,
+                          /* pixels =   */ m_data + m_start_line * RETURNS_PER_LINE * m_channels);
+
+        }
+        m_start_line = -1;
+        m_lines = 0;
+      }
+
+      // We tell the GPU to draw a square from (-512,-512) to (+512,+512).
+      // The shader morphs this into a circle.
+      glDrawArrays(GL_QUADS,0,4);
+      /*
+      */
+      float fullscale = 1;
+      glBegin(GL_QUADS);
+      glTexCoord2f(-1, -1);
+      glVertex2f(-fullscale, -fullscale);
+      glTexCoord2f(1, -1);
+      glVertex2f(fullscale, -fullscale);
+      glTexCoord2f(1, 1);
+      glVertex2f(fullscale, fullscale);
+      glTexCoord2f(-1, 1);
+      glVertex2f(-fullscale, fullscale);
+      glEnd();
+
+      /*
+      float fullscale = 1;
+      glBegin(GL_QUADS);
+      glTexCoord2f(0., 1.);
+      glVertex2f(-fullscale, -fullscale);
+      glTexCoord2f(1., 1.);
+      glVertex2f(fullscale, -fullscale);
+      glTexCoord2f(1., 0.);
+      glVertex2f(fullscale, fullscale);
+      glTexCoord2f(0., 0.);
+      glVertex2f(-fullscale, fullscale);
+      glEnd();
+      */
+
+//      m_texture->release();
+//      vbo.release();
+      m_program->release();
+      glPopAttrib();
 }
