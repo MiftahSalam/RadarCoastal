@@ -62,6 +62,8 @@ private:
     void drawArpa(QPainter* painter);
     void drawGZ(QPainter* painter);
 
+    void saveGLState();
+    void restoreGLState();
     void setupViewport(int width, int height);
 //    void createMARPA(QPoint pos);
 
@@ -85,41 +87,6 @@ private:
 //    int old_y1;
 
 //    int counter;
-
-    GLuint m_posAttr;
-    GLuint m_colAttr;
-
-    QOpenGLShaderProgram *m_program;
-
-
-#define SHADER_COLOR_CHANNELS (4)  // RGB + Alpha
-
-          class RDShade : protected QOpenGLFunctions
-          {
-          public:
-              RDShade(RadarEngine::RadarEngine* re);
-              void DrawRadarImage();
-              void ProcessRadarSpoke(int angle, UINT8* data, size_t len);
-              void init();
-
-          private:
-              unsigned char m_data[SHADER_COLOR_CHANNELS * LINES_PER_ROTATION * RETURNS_PER_LINE];
-                int m_start_line;  // First line received since last draw, or -1
-                int m_lines;       // # of lines received since last draw
-
-                int m_format;
-//                QOpenGLTexture::TextureFormat m_format;
-                int m_channels;
-
-//                QVector<GLfloat> vertData;
-//                QOpenGLBuffer vbo;
-//                QOpenGLTexture *m_texture;
-                GLuint m_texture;
-                QOpenGLShader *m_fragment;
-                QOpenGLShader *m_vertex;
-                QOpenGLShaderProgram *m_program;
-                RadarEngine::RadarEngine* m_re;
-          }*rShader;
 };
 
 

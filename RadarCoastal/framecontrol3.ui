@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>200</width>
-    <height>88</height>
+    <height>96</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,6 +20,13 @@
    <enum>QFrame::Raised</enum>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QCheckBox" name="checkBoxShowRSweep">
+     <property name="text">
+      <string>Show Radar Sweep</string>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QCheckBox" name="checkBoxShowCompass">
      <property name="text">

@@ -15,6 +15,7 @@ FrameControl3::FrameControl3(QWidget *parent) :
     ui->comboBoxMotion->setCurrentIndex(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool() ? 1 : 0);
     ui->checkBoxShowCompass->setChecked(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_COMPASS).toBool());
     ui->checkBoxShowHM->setChecked(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_HEADING_MARKER).toBool());
+    ui->checkBoxShowRSweep->setChecked(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP).toBool());
 }
 
 FrameControl3::~FrameControl3()
@@ -39,3 +40,10 @@ void FrameControl3::on_checkBoxShowHM_clicked(bool checked)
     RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_HEADING_MARKER,checked);
 //    radar_settings.show_heading_marker = checked;
 }
+
+
+void FrameControl3::on_checkBoxShowRSweep_clicked(bool checked)
+{
+    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP,checked);
+}
+

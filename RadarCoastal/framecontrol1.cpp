@@ -69,6 +69,13 @@ void FrameControl1::stateChange(int state)
     {
         ui->pushButtonTxStnb->setEnabled(true);
         ui->pushButtonTxStnb->setText("Standby");
+
+        //comment for radar offline mode
+        /*
+        const uint cur_range = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_RADAR_PARAMS_RANGE_DATA_RANGE).toUInt();
+        const uint cur_scale = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toUInt();
+        if(cur_scale != cur_range) m_re->trigger_ReqRangeChange(static_cast<int>(cur_scale));
+        */
     }
     else
     {

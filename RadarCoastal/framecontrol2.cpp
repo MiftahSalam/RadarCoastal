@@ -21,6 +21,8 @@ FrameControl2::FrameControl2(QWidget *parent) :
     ui->lineEditSea->setText(QString::number(ui->horizontalSliderSea->value()));
     ui->lineEditMTI->setText(QString::number(ui->horizontalSliderMTI->value()));
 
+    ui->checkBoxMTI->setChecked(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_RADAR_PARAMS_FILTER_CONTROL_MTI).toBool());
+
 
 }
 

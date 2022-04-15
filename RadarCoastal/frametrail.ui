@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>174</width>
-    <height>98</height>
+    <width>184</width>
+    <height>104</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,7 @@
        <item>
         <widget class="QComboBox" name="comboBoxTargetTail">
          <property name="styleSheet">
-          <string notr="true">background-color: black;</string>
+          <string notr="true"/>
          </property>
          <item>
           <property name="text">

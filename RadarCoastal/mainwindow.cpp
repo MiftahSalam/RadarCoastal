@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_re = new RadarEngine::RadarEngine(this);
     ui->frameControl1->setRadarEnginePtr(m_re);
     ui->frameControl2->setRadarEnginePtr(m_re);
+    ui->frameTrail->setRadarPtr(m_re);
 
     ppi = new RadarWidget(centralWidget(),m_re);
 

@@ -25,6 +25,8 @@ private slots:
 
     void on_checkBoxShowHM_clicked(bool checked);
 
+    void on_checkBoxShowRSweep_clicked(bool checked);
+
 private:
     Ui::FrameControl3 *ui;
 };
