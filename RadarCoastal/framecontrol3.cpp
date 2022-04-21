@@ -5,6 +5,7 @@
 #include <radarengine_global.h>
 
 #include <QMessageBox>
+#include <QFile>
 
 FrameControl3::FrameControl3(QWidget *parent) :
     QFrame(parent),
@@ -45,5 +46,38 @@ void FrameControl3::on_checkBoxShowHM_clicked(bool checked)
 void FrameControl3::on_checkBoxShowRSweep_clicked(bool checked)
 {
     RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP,checked);
+}
+
+
+void FrameControl3::on_comboBoxDisplayMode_currentIndexChanged(int index)
+{
+    /*change style*/
+    QFile styleFile;
+    QString style;
+
+    switch (index) {
+    case 0:
+        styleFile.setFileName( ":/css/HMI_style.css" );
+        break;
+    case 1:
+        styleFile.setFileName( ":/css/HMI_style_night.css" );
+        break;
+    default:
+        styleFile.setFileName( ":/css/HMI_style.css" );
+        break;
+    }
+
+    if( styleFile.open( QFile::ReadOnly ) )
+    {
+        qDebug() << "loading stylesheet file...";
+        style = QLatin1String( styleFile.readAll() );
+        qApp->setStyleSheet(style);
+    }
+    else
+    {
+        qWarning() << ":/css/HMI_style_night.css" << ": css file not found!";
+    }
+
+    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_DISPLAY_PRESET_COLOR,index);
 }
 

@@ -9,13 +9,18 @@ QString loadStylesheetFile( const QString &path );
 
 int main(int argc, char *argv[])
 {
-    QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
+    QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL); //tiap pc beda.why??
     QApplication a(argc, argv);
 
     RadarConfig::RadarConfig *instance = RadarConfig::RadarConfig::getInstance(QDir::homePath()+QDir::separator()+"mpsr"+QDir::separator()+".radar.conf");
     if(!instance) qFatal("Cannot provide config service");
 
-    QString appStyle = loadStylesheetFile( ":/css/HMI_style.css" );
+    QString appStyle;
+    if(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_DISPLAY_PRESET_COLOR).toInt() == 0)
+        appStyle = loadStylesheetFile( ":/css/HMI_style.css" );
+    else if(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_DISPLAY_PRESET_COLOR).toInt() == 1)
+        appStyle = loadStylesheetFile( ":/css/HMI_style_night.css" );
+
     a.setStyleSheet( appStyle );
 
     MainWindow w;

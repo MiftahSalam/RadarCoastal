@@ -27,6 +27,8 @@ private slots:
 
     void on_checkBoxShowRSweep_clicked(bool checked);
 
+    void on_comboBoxDisplayMode_currentIndexChanged(int index);
+
 private:
     Ui::FrameControl3 *ui;
 };

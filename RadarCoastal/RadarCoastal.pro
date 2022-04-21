@@ -27,6 +27,7 @@ CONFIG += c++11
 include(stream/qmqtt/qmqtt.pri)
 
 SOURCES += \
+    dialogradar.cpp \
         main.cpp \
         mainwindow.cpp \
     framecontrol1.cpp \
@@ -44,6 +45,7 @@ SOURCES += \
     frametrail.cpp
 
 HEADERS += \
+    dialogradar.h \
         mainwindow.h \
     framecontrol1.h \
     framecontrol2.h \
@@ -60,6 +62,7 @@ HEADERS += \
     frametrail.h
 
 FORMS += \
+    dialogradar.ui \
         mainwindow.ui \
     framecontrol1.ui \
     framecontrol2.ui \

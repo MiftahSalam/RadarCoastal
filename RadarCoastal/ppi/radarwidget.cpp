@@ -237,7 +237,7 @@ void RadarWidget::drawRings(QPainter *painter, const int &side)
     int ringCount = qCeil(side/2)-20;
     int bufRng = ringCount;
 
-    painter->setPen(QColor(255,255,0,100));
+//    painter->setPen(QColor(255,255,0,100));
     for(int i=0;i<RING_COUNT;i++)
     {
         painter->drawEllipse(-bufRng/2,-bufRng/2,bufRng,bufRng);
@@ -251,7 +251,7 @@ void RadarWidget::drawHM(QPainter *painter, const int &side, const bool& heading
     double baringan = heading_up ? 0 : currentHeading;
     painter->rotate(baringan-90);
     //        painter.rotate(baringan-180);
-    painter->setPen(QColor(255,255,0,255));
+//    painter->setPen(QColor(255,255,0,255));
     painter->drawLine(0,0,side,0);
     //        painter.rotate(180-baringan);
     painter->rotate(90-baringan);
@@ -465,7 +465,14 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     makeCurrent();
 
+    const int preset_color = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_DISPLAY_PRESET_COLOR).toInt();
+
     setupViewport(width(), height());
+    if(preset_color == 0)
+        glClearColor(0.f, 0.0f, 0.0f, .1f);
+    else if(preset_color == 1)
+        glClearColor(1.f, 1.0f, 1.0f, .1f);
+
     glClear(GL_COLOR_BUFFER_BIT);
 
 //    saveGLState();
@@ -480,7 +487,10 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(Qt::SolidLine);
-    painter.setPen(QColor(255,255,0,255));
+    if(preset_color == 0)
+        painter.setPen(QColor(0,255,0,255));
+    else if(preset_color == 1)
+        painter.setPen(QColor(255,255,0,255));
     painter.translate(width()/2,height()/2);
 
     int side = region.width()/2;
@@ -491,6 +501,10 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     const bool show_gz = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ).toBool();
     const bool heading_up = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
     const double currentHeading = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+
+    /*ring boundary*/
+    int ring_size = qCeil(2*side)-5;
+    painter.drawEllipse(-ring_size/2,-ring_size/2,ring_size,ring_size);
 
     /*
     */
