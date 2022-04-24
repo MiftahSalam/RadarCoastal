@@ -16,6 +16,17 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
 
     stream = new Stream(this,nav_config_str);
     connect(stream,&Stream::signal_receiveData,this,&NavSensor::trigger_receivedData);
+    connect(RadarConfig::RadarConfig::getInstance(""),&RadarConfig::RadarConfig::configValueChange,
+            this,&NavSensor::trigger_configChange);
+}
+
+void NavSensor::trigger_configChange(const QString key, const QVariant val)
+{
+    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
+    if(key == RadarConfig::NON_VOLATILE_NAV_NET_CONFIG)
+    {
+        stream->setConfig(val.toString());
+    }
 }
 
 void NavSensor::trigger_receivedData(const QString data)

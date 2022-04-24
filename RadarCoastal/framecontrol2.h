@@ -17,8 +17,6 @@ public:
     explicit FrameControl2(QWidget *parent = nullptr);
     ~FrameControl2();
 
-    void setRadarEnginePtr(RadarEngine::RadarEngine* re = nullptr);
-
 signals:
     void signal_change_gain_req(int value);
     void signal_change_sea_req(int value);

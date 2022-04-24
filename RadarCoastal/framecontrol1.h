@@ -19,7 +19,6 @@ public:
     ~FrameControl1();
 
 //    void setRangeRing(double ringWidth);
-    void setRadarEnginePtr(RadarEngine::RadarEngine* re = nullptr);
     void stateChange(int state);
 
 signals:

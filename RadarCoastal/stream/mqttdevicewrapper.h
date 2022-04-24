@@ -58,16 +58,17 @@ class MqttDeviceWrapper : public DeviceWrapper
 public:
     MqttDeviceWrapper(MqttDeviceWrapper& other) = delete;
     void operator=(const MqttDeviceWrapper&) = delete;
-    ~MqttDeviceWrapper();
+    ~MqttDeviceWrapper() override;
 
     static MqttDeviceWrapper* getInstance(const QString config);
 
-    void write(const QString data);
-    DeviceStatus getStatus();
-    void changeConfig(const QString command);
+    void write(const QString data) override;
+    DeviceStatus getStatus() override;
+    void changeConfig(const QString command) override;
+    bool initConfig(const QString config = "127.0.0.1:1883") override;
 
 protected:
-    MqttDeviceWrapper(QObject *parent = nullptr, QString config = "127.0.0.1:1883");
+    MqttDeviceWrapper(QObject *parent = nullptr);
 
 private slots:
     void receiveData(QMQTT::Message message);
@@ -84,7 +85,6 @@ private:
     Subscriber* _subsciber;
     static QMap<QString, MqttDeviceWrapper*> _wrappers;
 
-    void initConfig(const QString config);
 };
 
 

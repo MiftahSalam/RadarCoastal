@@ -14,14 +14,14 @@
 #include <radarengine.h>
 
 #include "ppi/ppievent.h"
+#include "ppiarpaobject.h"
 
 class RadarWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
-
 public:
-    RadarWidget(QWidget *parent = nullptr, RadarEngine::RadarEngine *re = nullptr);
-    ~RadarWidget();
+    RadarWidget(QWidget *parent = nullptr);
+    ~RadarWidget() override;
 
     void setRectRegoin(QRect rect);
 //    void setRange(int range);
@@ -40,7 +40,7 @@ signals:
 //                             double spd,
 //                             double crs
 //                             );
-//    void signal_cursorMove(double range,double brn);
+    void signal_cursorMove(const QPoint pos, const int width, const int height);
 
 protected:
     void initializeGL();
@@ -54,6 +54,7 @@ public slots:
     void timeOut();
     void trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8* data, size_t len);
 //    void trigger_ReqDelTrack(bool r1,int id);
+    void trigger_cursorMove(const QPointF pos);
 
 private:
     void drawCompass(QPainter* painter, const int& side, const bool& heading_up, const double& currentHeading);
@@ -67,9 +68,9 @@ private:
     void setupViewport(int width, int height);
 //    void createMARPA(QPoint pos);
 
-//    PPIEvent *ppiEvent;
+    QList<PPIObject*> drawObjects;
+    PPIEvent *ppiEvent;
     RadarEngine::RadarEngine* m_re;
-    RadarEngine::RDVert *rd;
     QTimer *timer;
     QRect region;
 

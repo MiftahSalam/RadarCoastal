@@ -1,5 +1,7 @@
 #include "stream.h"
 
+#include <radarconfig.h>
+
 Stream::Stream(QObject *parent, QString config) :
     QObject(parent)
 {
@@ -10,7 +12,23 @@ Stream::Stream(QObject *parent, QString config) :
         m_streamDevice = MqttDeviceWrapper::getInstance(m_config.config);
     }
 
-    connect(m_streamDevice,&DeviceWrapper::readyRead,this,&Stream::signal_receiveData);
+    if(m_streamDevice) connect(m_streamDevice,&DeviceWrapper::readyRead,this,&Stream::signal_receiveData);
+}
+
+void Stream::setConfig(const QString& config)
+{
+    generateConfig(config);
+
+    if(!m_streamDevice)
+    {
+        switch (m_config.type) {
+        case MQTT:
+            m_streamDevice = MqttDeviceWrapper::getInstance(m_config.config);
+        }
+
+        if(m_streamDevice) connect(m_streamDevice,&DeviceWrapper::readyRead,this,&Stream::signal_receiveData);
+    }
+    else m_streamDevice->initConfig(m_config.config);
 }
 
 void Stream::sendData(const QString &data)

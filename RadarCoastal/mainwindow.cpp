@@ -11,21 +11,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->pushButtonSetTrail->hide();
     ui->pushButtonTilting->hide();
 
     setWindowTitle("Coastal Radar");
 
-    m_re = new RadarEngine::RadarEngine(this);
-    ui->frameControl1->setRadarEnginePtr(m_re);
-    ui->frameControl2->setRadarEnginePtr(m_re);
-    ui->frameTrail->setRadarPtr(m_re);
-
-    ppi = new RadarWidget(centralWidget(),m_re);
+    m_re = RadarEngine::RadarEngine::getInstance(this);
+    ppi = new RadarWidget(centralWidget());
+    dConns = new DialogConnections(this);
 
     connect(ui->frameControl1,SIGNAL(signal_req_shutdown()),
             this,SLOT(trigger_shutdown()));
     connect(m_re,&RadarEngine::RadarEngine::signal_plotRadarSpoke,ppi,&RadarWidget::trigger_DrawSpoke);
+    connect(ppi,&RadarWidget::signal_cursorMove,ui->frameCursor,&FrameCursor::trigger_cursorMove);
 
 }
 
@@ -84,6 +81,15 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     ui->frameLeft->resize(ui->frameLeft->width(),height());
     ui->frameCursor->move(width()-ui->frameRight->width()-ui->frameLeft->width()-ui->frameCursor->width(),height()-ui->frameCursor->height());
     ui->frameCursor->resize(ui->frameCursor->width(),ui->frameCursor->height());
+    if(height() > 900)
+    {
+        ui->frameStatus->move(width()-ui->frameRight->width()-ui->frameLeft->width()-ui->frameStatus->width(),height()-ui->frameStatus->height()-ui->frameCursor->height());
+    }
+    else
+    {
+        ui->frameStatus->move(width()-ui->frameRight->width()-ui->frameLeft->width()-ui->frameStatus->width(),0);
+    }
+    ui->frameStatus->resize(ui->frameStatus->width(),ui->frameStatus->height());
 
     setupPPILayout();
 }
@@ -92,3 +98,13 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::on_pushButtonBIT_clicked()
+{
+}
+
+void MainWindow::on_pushButtonConnections_clicked()
+{
+    dConns->show();
+}
+

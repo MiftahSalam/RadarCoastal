@@ -1,21 +1,23 @@
-#ifndef NAVSENSOR_H
-#define NAVSENSOR_H
+#ifndef ARPASENDER_H
+#define ARPASENDER_H
+
+#include <QObject>
 
 #include <QObject>
 
 #include "stream/stream.h"
 #include <radarconfig.h>
 
-class NavSensor : public QObject
+class ArpaSender : public QObject
 {
     Q_OBJECT
 public:
-    explicit NavSensor(QObject *parent = nullptr);
+    explicit ArpaSender(QObject *parent = nullptr);
 
+    void sendData(const QString data);
 signals:
 
 private slots:
-    void trigger_receivedData(const QString data);
     void trigger_configChange(const QString key, const QVariant val);
 
 private:
@@ -23,6 +25,7 @@ private:
     QString topic;
 
     Stream::StreamConfig generateStreamConfig(const QString config);
+
 };
 
-#endif // NAVSENSOR_H
+#endif // ARPASENDER_H

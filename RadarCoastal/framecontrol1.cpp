@@ -9,6 +9,7 @@ FrameControl1::FrameControl1(QWidget *parent) :
     QFrame(parent), ui(new Ui::FrameControl1)
 {
     ui->setupUi(this);
+    m_re = RadarEngine::RadarEngine::getInstance();
 
     RadarConfig::RadarConfig* rcInstance = RadarConfig::RadarConfig::getInstance("");
 
@@ -18,11 +19,6 @@ FrameControl1::FrameControl1(QWidget *parent) :
     stateChange(RadarEngine::RADAR_OFF);
 
     connect(rcInstance,&RadarConfig::RadarConfig::configValueChange,this,&FrameControl1::trigger_radarConfigChange);
-}
-
-void FrameControl1::setRadarEnginePtr(RadarEngine::RadarEngine *re)
-{
-    m_re = re;
 }
 
 void FrameControl1::handleRingRangeChange()

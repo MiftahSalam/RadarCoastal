@@ -25,10 +25,11 @@ public:
     };
 
     Stream(QObject *parent = nullptr, QString config = "" );
-    ~Stream();
+    ~Stream() override;
 
     QString getStreamError() const;
     void sendData(const QString& data);
+    void setConfig(const QString& config);
 
 protected:
     QString streamError;

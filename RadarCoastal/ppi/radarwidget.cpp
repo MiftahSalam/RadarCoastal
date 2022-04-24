@@ -14,14 +14,15 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
-RadarWidget::RadarWidget(QWidget *parent, RadarEngine::RadarEngine *re)
-    : QOpenGLWidget(parent),m_re(re)
+RadarWidget::RadarWidget(QWidget *parent)
+    : QOpenGLWidget(parent)
 {
     QSurfaceFormat format;
     format.setSamples(16);
     setFormat(format);
 
-    rd = static_cast<RadarEngine::RDVert*>(m_re->radarDraw);
+    m_re = RadarEngine::RadarEngine::getInstance();
+    drawObjects.append(new PPIArpaObject(this));
 
 //    counter = 0;
 //    spokeDrawer = RD::make_Draw(m_ri,0);
@@ -36,9 +37,11 @@ RadarWidget::RadarWidget(QWidget *parent, RadarEngine::RadarEngine *re)
     setAutoFillBackground(false);
     setMinimumSize(200, 200);
 
-//    ppiEvent = new PPIEvent(this);
-//    installEventFilter(ppiEvent);
-//    setMouseTracking(true);
+    ppiEvent = new PPIEvent(this);
+    installEventFilter(ppiEvent);
+    setMouseTracking(true);
+
+    connect(ppiEvent,&PPIEvent::move_mouse,this,&RadarWidget::trigger_cursorMove);
 
 //    old_motion_mode = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
 //    curRange = 0;
@@ -47,6 +50,10 @@ RadarWidget::RadarWidget(QWidget *parent, RadarEngine::RadarEngine *re)
 //    arpa_measure_time = static_cast<quint64>(QDateTime::currentMSecsSinceEpoch());
 }
 
+void RadarWidget::trigger_cursorMove(const QPointF pos)
+{
+    emit signal_cursorMove(pos.toPoint(), width(), height());
+}
 /*
 void RadarWidget::trigger_ReqDelTrack(bool r1,int id)
 {
@@ -501,6 +508,11 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     const bool show_gz = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ).toBool();
     const bool heading_up = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
     const double currentHeading = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+
+    foreach (PPIObject* obj, drawObjects)
+    {
+        obj->draw(&painter);
+    }
 
     /*ring boundary*/
     int ring_size = qCeil(2*side)-5;

@@ -16,7 +16,6 @@ class FrameTrail : public QFrame
 public:
     explicit FrameTrail(QWidget *parent = nullptr);
     ~FrameTrail() override;
-    void setRadarPtr(RadarEngine::RadarEngine* re);
 
 private slots:
     void on_checkBoxTrailOff_clicked(bool checked);

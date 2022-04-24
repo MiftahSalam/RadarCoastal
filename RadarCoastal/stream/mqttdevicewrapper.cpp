@@ -2,16 +2,12 @@
 
 QMap<QString, MqttDeviceWrapper*> MqttDeviceWrapper::_wrappers;
 
-MqttDeviceWrapper::MqttDeviceWrapper(QObject *parent, QString config) :
-    DeviceWrapper(parent,config), _idCounter(0)
+MqttDeviceWrapper::MqttDeviceWrapper(QObject *parent):
+    DeviceWrapper(parent), _idCounter(0)
 {
-    qDebug()<<Q_FUNC_INFO<<"config"<<config;
-
-    initConfig(config);
-
-    _publisher = new Publisher(this,_mqttConfig.host,_mqttConfig.port, _defaultTopic);
-    _subsciber = new Subscriber(this,_mqttConfig.host,_mqttConfig.port, _defaultTopic);
-    connect(_subsciber,&Subscriber::signal_onReceived, this, &MqttDeviceWrapper::receiveData);
+    _publisher = nullptr;
+    _subsciber = nullptr;
+    qDebug()<<Q_FUNC_INFO;
 }
 
 MqttDeviceWrapper::~MqttDeviceWrapper()
@@ -25,7 +21,14 @@ MqttDeviceWrapper* MqttDeviceWrapper::getInstance(const QString config)
     qDebug()<<Q_FUNC_INFO<<"config"<<config;
     if(!_wrappers.contains(config))
     {
-        _wrappers.insert(config,new MqttDeviceWrapper(nullptr, config));
+        MqttDeviceWrapper* wrapper = new MqttDeviceWrapper(nullptr);
+        bool wrap_init = wrapper->initConfig(config);
+        if(!wrap_init)
+        {
+            delete wrapper;
+            return nullptr;
+        }
+        _wrappers.insert(config,wrapper);
     }
     else
     {
@@ -35,8 +38,9 @@ MqttDeviceWrapper* MqttDeviceWrapper::getInstance(const QString config)
     return _wrappers.value(config);
 }
 
-void MqttDeviceWrapper::initConfig(const QString config)
+bool MqttDeviceWrapper::initConfig(const QString config)
 {
+    bool ret_val = false;
 #if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
     QStringList config_list = config.split(":",QString::SkipEmptyParts);
 #else
@@ -44,11 +48,22 @@ void MqttDeviceWrapper::initConfig(const QString config)
 #endif
     if(config_list.size() == 3)
     {
+        ret_val = true;
+
         _mqttConfig.host = QHostAddress(config_list.at(0));
         _mqttConfig.port = config_list.at(1).toUShort();
         _defaultTopic = config_list.at(2);
+
+        if(_publisher) delete _publisher;
+        if(_subsciber) delete _subsciber;
+
+        _publisher = new Publisher(this,_mqttConfig.host,_mqttConfig.port, _defaultTopic);
+        _subsciber = new Subscriber(this,_mqttConfig.host,_mqttConfig.port, _defaultTopic);
+        connect(_subsciber,&Subscriber::signal_onReceived, this, &MqttDeviceWrapper::receiveData);
     }
     else qDebug()<<Q_FUNC_INFO<<"invalid config"<<config;
+
+    return ret_val;
 }
 
 DeviceWrapper::DeviceStatus MqttDeviceWrapper::getStatus()

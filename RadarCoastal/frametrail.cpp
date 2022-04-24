@@ -8,17 +8,13 @@ FrameTrail::FrameTrail(QWidget *parent) :
     ui(new Ui::FrameTrail)
 {
     ui->setupUi(this);
+    m_re = RadarEngine::RadarEngine::getInstance();
 
     RadarConfig::RadarConfig* instance = RadarConfig::RadarConfig::getInstance("");
 
     int curInx = instance->getConfig(RadarConfig::NON_VOLATILE_RADAR_TRAIL_TIME).toInt();
     ui->comboBoxTargetTail->setCurrentIndex(curInx);
     ui->checkBoxTrailOff->setChecked(instance->getConfig(RadarConfig::NON_VOLATILE_RADAR_TRAIL_ENABLE).toBool());
-}
-
-void FrameTrail::setRadarPtr(RadarEngine::RadarEngine* re)
-{
-    m_re = re;
 }
 
 FrameTrail::~FrameTrail()

@@ -10,6 +10,7 @@ FrameControl2::FrameControl2(QWidget *parent) :
     ui(new Ui::FrameControl2), m_re(nullptr)
 {
     ui->setupUi(this);
+    m_re = RadarEngine::RadarEngine::getInstance();
 
     ui->lineEditGain->setValidator(new QIntValidator(0,255,ui->lineEditGain));
     ui->lineEditRain->setValidator(new QIntValidator(0,255,ui->lineEditRain));
@@ -24,11 +25,6 @@ FrameControl2::FrameControl2(QWidget *parent) :
     ui->checkBoxMTI->setChecked(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_RADAR_PARAMS_FILTER_CONTROL_MTI).toBool());
 
 
-}
-
-void FrameControl2::setRadarEnginePtr(RadarEngine::RadarEngine *re)
-{
-    m_re = re;
 }
 
 FrameControl2::~FrameControl2()

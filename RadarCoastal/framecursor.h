@@ -12,11 +12,11 @@ class FrameCursor : public QFrame
     Q_OBJECT
 
 public:
-    explicit FrameCursor(QWidget *parent = 0);
-    ~FrameCursor();
+    explicit FrameCursor(QWidget *parent = nullptr);
+    ~FrameCursor() override;
 
-private slots:
-    void trigger_cursorMove(double range,double brn);
+public slots:
+    void trigger_cursorMove(const QPoint pos, const int vp_width, const int vp_height);
 
 private:
     Ui::FrameCursor *ui;

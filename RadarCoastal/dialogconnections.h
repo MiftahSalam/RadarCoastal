@@ -1,19 +1,18 @@
-#ifndef DIALOGRADAR_H
-#define DIALOGRADAR_H
+#ifndef DIALOGCONNECTIONS_H
+#define DIALOGCONNECTIONS_H
 
 #include <QDialog>
 
 namespace Ui {
-class DialogRadar;
+class DialogConnections;
 }
 
-class DialogRadar : public QDialog
+class DialogConnections : public QDialog
 {
     Q_OBJECT
-    
 public:
-    explicit DialogRadar(QWidget *parent = 0);
-    ~DialogRadar();
+    explicit DialogConnections(QWidget *parent = nullptr);
+    ~DialogConnections() override;
     
 signals:
     void signal_settingChange();
@@ -24,10 +23,8 @@ private slots:
 
     void on_pushButtonApply_clicked();
 
-    void on_pushButtonApplyPos_clicked();
-
 private:
-    Ui::DialogRadar *ui;
+    Ui::DialogConnections *ui;
 };
 
-#endif // DIALOGRADAR_H
+#endif // DIALOGCONNECTIONS_H

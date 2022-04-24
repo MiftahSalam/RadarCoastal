@@ -15,10 +15,11 @@ public:
         INPUT_AVAIL
     };
 
-    explicit DeviceWrapper(QObject *parent = nullptr, QString config = "");
+    explicit DeviceWrapper(QObject *parent = nullptr);
     virtual void write(const QString data) = 0;
     virtual DeviceStatus getStatus() = 0;
     virtual void changeConfig(const QString command) = 0;
+    virtual bool initConfig(const QString config) = 0;
 
 signals:
     void readyRead(const QString data);
@@ -26,7 +27,6 @@ signals:
 public slots:
 
 protected:
-    virtual void initConfig(const QString config) = 0;
 
     QString _config;
 //    QString _currentData;

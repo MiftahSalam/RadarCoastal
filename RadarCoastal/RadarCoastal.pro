@@ -27,12 +27,16 @@ CONFIG += c++11
 include(stream/qmqtt/qmqtt.pri)
 
 SOURCES += \
-    dialogradar.cpp \
+    dialogconnections.cpp \
+    framestatus.cpp \
         main.cpp \
         mainwindow.cpp \
     framecontrol1.cpp \
     framecontrol2.cpp \
     frameosd.cpp \
+    ppi/ppiarpaobject.cpp \
+    ppi/ppiobject.cpp \
+    stream/arpasender.cpp \
     stream/navsensor.cpp \
     stream/stream.cpp \
     stream/mqttdevicewrapper.cpp \
@@ -42,14 +46,19 @@ SOURCES += \
     ppi/ppievent.cpp \
     framecontrol3.cpp \
     framecursor.cpp \
-    frametrail.cpp
+    frametrail.cpp \
+    utils.cpp
 
 HEADERS += \
-    dialogradar.h \
+    dialogconnections.h \
+    framestatus.h \
         mainwindow.h \
     framecontrol1.h \
     framecontrol2.h \
     frameosd.h \
+    ppi/ppiarpaobject.h \
+    ppi/ppiobject.h \
+    stream/arpasender.h \
     stream/navsensor.h \
     stream/stream.h \
     stream/mqttdevicewrapper.h \
@@ -59,10 +68,12 @@ HEADERS += \
     ppi/ppievent.h \
     framecontrol3.h \
     framecursor.h \
-    frametrail.h
+    frametrail.h \
+    utils.h
 
 FORMS += \
-    dialogradar.ui \
+    dialogconnections.ui \
+    framestatus.ui \
         mainwindow.ui \
     framecontrol1.ui \
     framecontrol2.ui \

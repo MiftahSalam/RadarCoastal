@@ -6,6 +6,7 @@
 #include <radarengine.h>
 
 #include "ppi/radarwidget.h"
+#include "dialogconnections.h"
 
 namespace Ui {
 class MainWindow;
@@ -17,16 +18,20 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() override;
 
     RadarEngine::RadarEngine *m_re;
 
 private slots:
     void trigger_shutdown();
 
+    void on_pushButtonBIT_clicked();
+
+    void on_pushButtonConnections_clicked();
+
 protected:
-    void resizeEvent(QResizeEvent *event);
-    void closeEvent(QCloseEvent *event);
+    void resizeEvent(QResizeEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     void setupPPILayout();
@@ -34,6 +39,7 @@ private:
     Ui::MainWindow *ui;
 
     RadarWidget* ppi;
+    DialogConnections* dConns;
 };
 
 #endif // MAINWINDOW_H
