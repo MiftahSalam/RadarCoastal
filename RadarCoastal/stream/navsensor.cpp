@@ -22,7 +22,7 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
 
 void NavSensor::trigger_configChange(const QString key, const QVariant val)
 {
-    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
+//    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
     if(key == RadarConfig::NON_VOLATILE_NAV_NET_CONFIG)
     {
         stream->setConfig(val.toString());

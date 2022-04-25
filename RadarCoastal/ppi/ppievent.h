@@ -14,9 +14,9 @@ protected:
 
 signals:
     void send_rightButtonClicked(const QPoint &p);
-    void send_leftButtonClicked(const QPointF &p);
-    void send_leftButtonReleased(const QPointF &p);
-    void move_mouse(const QPointF &p);
+    void send_leftButtonClicked(const QPoint &p);
+    void send_leftButtonReleased(const QPoint &p);
+    void move_mouse(const QPoint &p);
     void hover_enter();
     void hover_leave();
 };

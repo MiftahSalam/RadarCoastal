@@ -17,31 +17,32 @@
 RadarWidget::RadarWidget(QWidget *parent)
     : QOpenGLWidget(parent)
 {
+    setAutoFillBackground(false);
+    setMinimumSize(200, 200);
+
     QSurfaceFormat format;
     format.setSamples(16);
     setFormat(format);
-
-    m_re = RadarEngine::RadarEngine::getInstance();
-    drawObjects.append(new PPIArpaObject(this));
-
-//    counter = 0;
-//    spokeDrawer = RD::make_Draw(m_ri,0);
-//    cur_radar_angle = 0.;
-
-//    arpa = new RA(this,re);
-
-    timer  = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(timeOut()));
-    timer->start(100);
-
-    setAutoFillBackground(false);
-    setMinimumSize(200, 200);
 
     ppiEvent = new PPIEvent(this);
     installEventFilter(ppiEvent);
     setMouseTracking(true);
 
+    timer  = new QTimer(this);
+
+    m_re = RadarEngine::RadarEngine::getInstance();
+    PPIArpaObject* arpa = new PPIArpaObject(this);
+
+    connect(ppiEvent,&PPIEvent::send_leftButtonReleased,this,&RadarWidget::trigger_cursorLeftRelease);
     connect(ppiEvent,&PPIEvent::move_mouse,this,&RadarWidget::trigger_cursorMove);
+    connect(this,&RadarWidget::signal_cursorLeftRelease,arpa,&PPIArpaObject::createMARPA);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timeOut()));
+
+    drawObjects.append(arpa);
+
+    //    counter = 0;
+//    cur_radar_angle = 0.;
+    timer->start(100);
 
 //    old_motion_mode = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
 //    curRange = 0;
@@ -50,9 +51,13 @@ RadarWidget::RadarWidget(QWidget *parent)
 //    arpa_measure_time = static_cast<quint64>(QDateTime::currentMSecsSinceEpoch());
 }
 
-void RadarWidget::trigger_cursorMove(const QPointF pos)
+void RadarWidget::trigger_cursorMove(const QPoint pos)
 {
-    emit signal_cursorMove(pos.toPoint(), width(), height());
+    emit signal_cursorMove(pos, width(), height());
+}
+void RadarWidget::trigger_cursorLeftRelease(const QPoint pos)
+{
+    emit signal_cursorLeftRelease(pos, width(), height());
 }
 /*
 void RadarWidget::trigger_ReqDelTrack(bool r1,int id)
@@ -484,12 +489,14 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
 //    saveGLState();
 
-//    glLoadIdentity();
-    glScaled(.5, .5, .5);
     m_re->radarDraw->DrawRadarImage();
 
     const bool show_sweep = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP).toBool();
     if(show_sweep) m_re->radarDraw->DrawRadarSweep(cur_radar_angle);
+
+    glShadeModel(GL_FLAT);
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -511,7 +518,7 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     foreach (PPIObject* obj, drawObjects)
     {
-        obj->draw(&painter);
+        obj->draw(&painter,side);
     }
 
     /*ring boundary*/
@@ -681,7 +688,9 @@ void RadarWidget::mouseMoveEvent(QMouseEvent *event)
 */
 void RadarWidget::setupViewport(int width, int height)
 {
-    int side = qMin(width, height);
+    int side = qMin(width, height); //scale 1
+//    int side = qMin(width, height)*2; //scale 2
+//    int side = qMin(width, height)/2; //scale 0.5
     glViewport((width - side) / 2, (height - side) / 2, side, side);
 
     /*

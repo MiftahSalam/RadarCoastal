@@ -12,7 +12,7 @@ class PPIObject : public QObject
 public:
     PPIObject(QObject* parent);
 
-    virtual void draw(QPainter* painter) = 0;
+    virtual void draw(QPainter* painter, const int &side) = 0;
 };
 
 #endif // PPIOBJECT_H

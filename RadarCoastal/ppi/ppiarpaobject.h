@@ -11,10 +11,10 @@ class PPIArpaObject : public PPIObject
 public:
     PPIArpaObject(QObject* parent = nullptr);
 
-    void draw(QPainter* painter) override;
+    void draw(QPainter* painter, const int &side) override;
 
 public slots:
-    void createMARPA(QPoint pos);
+    void createMARPA(const QPoint &pos, const int vp_width, const int vp_height);
 
 private:
     RadarEngine::RadarEngine* m_re;

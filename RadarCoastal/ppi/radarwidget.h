@@ -41,11 +41,12 @@ signals:
 //                             double crs
 //                             );
     void signal_cursorMove(const QPoint pos, const int width, const int height);
+    void signal_cursorLeftRelease(const QPoint pos, const int width, const int height);
 
 protected:
-    void initializeGL();
-    void paintEvent(QPaintEvent *event);
-    void resizeGL(int width, int height);
+    void initializeGL() override;
+    void paintEvent(QPaintEvent *event) override;
+    void resizeGL(int width, int height) override;
 //    void paintGL();
 //    void mouseReleaseEvent(QMouseEvent *event);
 //    void mouseMoveEvent(QMouseEvent *event);
@@ -54,7 +55,8 @@ public slots:
     void timeOut();
     void trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8* data, size_t len);
 //    void trigger_ReqDelTrack(bool r1,int id);
-    void trigger_cursorMove(const QPointF pos);
+    void trigger_cursorMove(const QPoint pos);
+    void trigger_cursorLeftRelease(const QPoint pos);
 
 private:
     void drawCompass(QPainter* painter, const int& side, const bool& heading_up, const double& currentHeading);
