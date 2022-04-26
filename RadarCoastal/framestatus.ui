@@ -79,7 +79,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="labelRadarStatus">
        <property name="text">
         <string>No Radar</string>
        </property>
@@ -106,7 +106,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="labelNavStatus">
        <property name="text">
         <string>Online</string>
        </property>

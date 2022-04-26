@@ -173,3 +173,29 @@ QStringList GPSString(const double lon, const double lat)
 
     return QStringList()<<latitude_string<<longitude_string;
 }
+
+QString tickToTime(quint8 tick)
+{
+    qDebug()<<Q_FUNC_INFO<<"tick"<<tick;
+
+    QString sec, min;
+    if(tick<60)
+    {
+        sec = QString::number(tick);
+        if(sec.size() < 2) sec.prepend("0");
+        min = "00";
+    }
+    else
+    {
+        int sec_int = tick % 60;
+        int min_int = tick / 60;
+
+        sec = QString::number(sec_int);
+        min = QString::number(min_int);
+
+        if(sec.size() < 2) sec.prepend("0");
+        if(min.size() < 2) min.prepend("0");
+    }
+
+    return min+":"+sec;
+}

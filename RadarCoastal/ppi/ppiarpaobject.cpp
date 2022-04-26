@@ -22,7 +22,6 @@ void PPIArpaObject::draw(QPainter* painter, const int &side)
 
 
         int x2,y2,txtX,txtY;
-        QVector<QLine> lines;
         QTextOption opt;
         QFont font;
 
@@ -71,7 +70,7 @@ void PPIArpaObject::draw(QPainter* painter, const int &side)
 
         for (int i = 0; i < m_re->radarArpa->m_number_of_targets; i++)
         {
-            qDebug()<<Q_FUNC_INFO<<"target"<<i<<m_re->radarArpa->m_target[i]->m_position.lat<<m_re->radarArpa->m_target[i]->m_position.lon;
+            qDebug()<<Q_FUNC_INFO<<"target"<<i<<m_re->radarArpa->m_target[i]->m_position.lat<<m_re->radarArpa->m_target[i]->m_position.lon<<m_re->radarArpa->m_target[i]->m_speed_kn;
         }
 
 
