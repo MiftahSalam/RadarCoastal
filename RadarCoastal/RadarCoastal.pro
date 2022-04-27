@@ -28,6 +28,8 @@ include(stream/qmqtt/qmqtt.pri)
 
 SOURCES += \
     dialogconnections.cpp \
+    dialoggz.cpp \
+    framegz.cpp \
     framestatus.cpp \
         main.cpp \
         mainwindow.cpp \
@@ -35,7 +37,9 @@ SOURCES += \
     framecontrol2.cpp \
     frameosd.cpp \
     ppi/ppiarpaobject.cpp \
+    ppi/ppigzobject.cpp \
     ppi/ppiobject.cpp \
+    ppi/ppicompassobject.cpp \
     stream/arpasender.cpp \
     stream/navsensor.cpp \
     stream/stream.cpp \
@@ -51,13 +55,17 @@ SOURCES += \
 
 HEADERS += \
     dialogconnections.h \
+    dialoggz.h \
+    framegz.h \
     framestatus.h \
         mainwindow.h \
     framecontrol1.h \
     framecontrol2.h \
     frameosd.h \
     ppi/ppiarpaobject.h \
+    ppi/ppigzobject.h \
     ppi/ppiobject.h \
+    ppi/ppicompassobject.h \
     stream/arpasender.h \
     stream/navsensor.h \
     stream/stream.h \
@@ -73,6 +81,8 @@ HEADERS += \
 
 FORMS += \
     dialogconnections.ui \
+    dialoggz.ui \
+    framegz.ui \
     framestatus.ui \
         mainwindow.ui \
     framecontrol1.ui \

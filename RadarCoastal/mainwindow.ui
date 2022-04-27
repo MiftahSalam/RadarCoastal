@@ -334,6 +334,28 @@
       </widget>
      </item>
      <item>
+      <widget class="FrameGZ" name="frameGZ">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>165</width>
+         <height>250</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -454,6 +476,12 @@
    <class>FrameStatus</class>
    <extends>QFrame</extends>
    <header location="global">framestatus.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FrameGZ</class>
+   <extends>QFrame</extends>
+   <header location="global">framegz.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

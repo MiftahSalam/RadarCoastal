@@ -26,7 +26,8 @@ bool PPIEvent::eventFilter(QObject *obj, QEvent *event)
     }
     else if(event->type() == QEvent::MouseButtonRelease){
          QMouseEvent *mouseEvent=static_cast<QMouseEvent*> (event);
-         emit send_leftButtonReleased(mouseEvent->pos());
+         if(mouseEvent->button()==Qt::LeftButton)
+             emit send_leftButtonReleased(mouseEvent->pos());
 
          return true;
     }

@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_re = RadarEngine::RadarEngine::getInstance(this);
     ppi = new RadarWidget(centralWidget());
     dConns = new DialogConnections(this);
+    dGZ = new DialogGZ(this);
 
     connect(ui->frameControl1,SIGNAL(signal_req_shutdown()),
             this,SLOT(trigger_shutdown()));
@@ -73,8 +74,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     qDebug()<<Q_FUNC_INFO<<event->size()<<width()<<height();
-//    ui->frameControl1->move(10,0);
-//    ui->frameControl2->move(10,height()-ui->frameControl2->height());
+
     ui->frameRight->move(width()-ui->frameRight->width(),0);
     ui->frameRight->resize(ui->frameRight->width(),height());
     ui->frameLeft->move(width()-ui->frameRight->width()-ui->frameLeft->width(),0);
@@ -84,10 +84,14 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     if(height() > 900)
     {
         ui->frameStatus->move(width()-ui->frameRight->width()-ui->frameLeft->width()-ui->frameStatus->width(),height()-ui->frameStatus->height()-ui->frameCursor->height());
+        ui->pushButtonSetGZ->hide();
+        ui->frameGZ->show();
     }
     else
     {
         ui->frameStatus->move(width()-ui->frameRight->width()-ui->frameLeft->width()-ui->frameStatus->width(),0);
+        ui->pushButtonSetGZ->show();
+        ui->frameGZ->hide();
     }
     ui->frameStatus->resize(ui->frameStatus->width(),ui->frameStatus->height());
 
@@ -106,5 +110,10 @@ void MainWindow::on_pushButtonBIT_clicked()
 void MainWindow::on_pushButtonConnections_clicked()
 {
     dConns->show();
+}
+
+void MainWindow::on_pushButtonSetGZ_clicked()
+{
+    dGZ->show();
 }
 

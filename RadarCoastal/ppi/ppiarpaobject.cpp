@@ -15,6 +15,8 @@ void PPIArpaObject::draw(QPainter* painter, const int &side)
 
         const int preset_color = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_DISPLAY_PRESET_COLOR).toInt();
 
+        QPen curPen = painter->pen();
+
         if(preset_color == 0)
             painter->setPen(QColor(255,255,255,255));
         else if(preset_color == 1)
@@ -73,13 +75,8 @@ void PPIArpaObject::draw(QPainter* painter, const int &side)
             qDebug()<<Q_FUNC_INFO<<"target"<<i<<m_re->radarArpa->m_target[i]->m_position.lat<<m_re->radarArpa->m_target[i]->m_position.lon<<m_re->radarArpa->m_target[i]->m_speed_kn;
         }
 
-
-        if(preset_color == 0)
-            painter->setPen(QColor(0,255,0,255));
-        else if(preset_color == 1)
-            painter->setPen(QColor(255,255,0,255));
+        painter->setPen(curPen);
     }
-
 }
 
 void PPIArpaObject::createMARPA(const QPoint& pos, const int vp_width, const int vp_height)
@@ -87,6 +84,9 @@ void PPIArpaObject::createMARPA(const QPoint& pos, const int vp_width, const int
     qDebug()<<Q_FUNC_INFO<<pos;
 
     RadarConfig::RadarConfig* instance = RadarConfig::RadarConfig::getInstance("");
+
+    if(!instance->getConfig(RadarConfig::NON_VOLATILE_ARPA_CONTROL_CREATE_ARPA_BY_CLICK).toBool()) return;
+
     double const curRange = instance->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
     double const curLat = instance->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
     double const curLon = instance->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();

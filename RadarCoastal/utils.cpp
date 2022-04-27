@@ -176,7 +176,7 @@ QStringList GPSString(const double lon, const double lat)
 
 QString tickToTime(quint8 tick)
 {
-    qDebug()<<Q_FUNC_INFO<<"tick"<<tick;
+//    qDebug()<<Q_FUNC_INFO<<"tick"<<tick;
 
     QString sec, min;
     if(tick<60)

@@ -20,8 +20,12 @@ void FrameStatus::trigger_statusChange(const QString& key, const QVariant& val)
     if(key == RadarConfig::VOLATILE_RADAR_STATUS)
     {
         RadarEngine::RadarState status = static_cast<RadarEngine::RadarState>(val.toInt());
+
+        /*tes
         status = RadarEngine::RADAR_WAKING_UP;
         RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_RADAR_WAKINGUP_TIME,30);
+        */
+
         switch (status) {
         case RadarEngine::RADAR_OFF:
             ui->labelRadarStatus->setText("No Radar");

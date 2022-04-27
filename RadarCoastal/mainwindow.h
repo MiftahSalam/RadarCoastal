@@ -7,6 +7,7 @@
 
 #include "ppi/radarwidget.h"
 #include "dialogconnections.h"
+#include "dialoggz.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +30,8 @@ private slots:
 
     void on_pushButtonConnections_clicked();
 
+    void on_pushButtonSetGZ_clicked();
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
@@ -40,6 +43,7 @@ private:
 
     RadarWidget* ppi;
     DialogConnections* dConns;
+    DialogGZ *dGZ;
 };
 
 #endif // MAINWINDOW_H

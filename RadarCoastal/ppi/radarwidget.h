@@ -15,6 +15,8 @@
 
 #include "ppi/ppievent.h"
 #include "ppiarpaobject.h"
+#include "ppigzobject.h"
+#include "ppicompassobject.h"
 
 class RadarWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -47,9 +49,6 @@ protected:
     void initializeGL() override;
     void paintEvent(QPaintEvent *event) override;
     void resizeGL(int width, int height) override;
-//    void paintGL();
-//    void mouseReleaseEvent(QMouseEvent *event);
-//    void mouseMoveEvent(QMouseEvent *event);
 
 public slots:
     void timeOut();
@@ -59,16 +58,13 @@ public slots:
     void trigger_cursorLeftRelease(const QPoint pos);
 
 private:
-    void drawCompass(QPainter* painter, const int& side, const bool& heading_up, const double& currentHeading);
     void drawRings(QPainter* painter, const int& side);
     void drawHM(QPainter* painter, const int& side, const bool& heading_up, const double& currentHeading);
-    void drawArpa(QPainter* painter);
     void drawGZ(QPainter* painter);
 
     void saveGLState();
     void restoreGLState();
     void setupViewport(int width, int height);
-//    void createMARPA(QPoint pos);
 
     QList<PPIObject*> drawObjects;
     PPIEvent *ppiEvent;
@@ -76,20 +72,13 @@ private:
     QTimer *timer;
     QRect region;
 
-//    double ringWidth;
     double cur_radar_angle;
 ////    int curRange;
 //    int cur_arpa_id_count,cur_arpa_id_count1;
 //    int cur_arpa_number;
 //    quint64 arpa_measure_time;
 //    quint64 arpa_measure_time1;
-//    qint64 dummy_timeout;
 //    bool old_motion_mode;
-
-//    int old_x1;
-//    int old_y1;
-
-//    int counter;
 };
 
 
