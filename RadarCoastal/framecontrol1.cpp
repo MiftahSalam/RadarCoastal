@@ -61,8 +61,9 @@ void FrameControl1::stateChange(int state)
         ui->pushButtonTxStnb->setEnabled(true);
         ui->pushButtonTxStnb->setText("Transmit");
     }
-    else if(static_cast<RadarEngine::RadarState>(state) == RadarEngine::RADAR_TRANSMIT &&
-            static_cast<RadarEngine::RadarState>(state) == RadarEngine::RADAR_NO_SPOKE)
+    else if((static_cast<RadarEngine::RadarState>(state) == RadarEngine::RADAR_TRANSMIT &&
+            static_cast<RadarEngine::RadarState>(state) == RadarEngine::RADAR_NO_SPOKE) ||
+            static_cast<RadarEngine::RadarState>(state) == RadarEngine::RADAR_TRANSMIT)
     {
         ui->pushButtonTxStnb->setEnabled(true);
         ui->pushButtonTxStnb->setText("Standby");
