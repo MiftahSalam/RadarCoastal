@@ -9,11 +9,13 @@ QString loadStylesheetFile( const QString &path );
 
 int main(int argc, char *argv[])
 {
-    QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL); //tiap pc beda.why??
-    QApplication a(argc, argv);
-
     RadarConfig::RadarConfig *instance = RadarConfig::RadarConfig::getInstance(QDir::homePath()+QDir::separator()+"mpsr"+QDir::separator()+".radar.conf");
     if(!instance) qFatal("Cannot provide config service");
+
+    if(instance->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_USE_OPENGL_SOFTWARE).toBool())
+        QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL); //tiap pc beda.why??
+    QApplication a(argc, argv);
+
 
     QString appStyle;
     if(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_DISPLAY_PRESET_COLOR).toInt() == 0)
