@@ -7,6 +7,9 @@
 #include <QSettings>
 #include <QDir>
 
+
+#define MAX_UPDATE_NUMBER 5
+
 FrameTrackDisplay::FrameTrackDisplay(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameTrackDisplay)
@@ -18,76 +21,121 @@ FrameTrackDisplay::FrameTrackDisplay(QWidget *parent) :
 
     model = new QStandardItemModel(this);
     model->setColumnCount(5);
+    ui->tableViewTrack->setModel(model);
 
     modelSend = new QStandardItemModel(this);
     modelSend->setColumnCount(7);
 
+    m_re = RadarEngine::RadarEngine::getInstance();
+    connect(m_re->radarArpa,&RadarEngine::RadarArpa::signal_LostTarget,
+            this,&FrameTrackDisplay::trigger_LostTarget);
+
+    arpaSender = new ArpaSender(this);
     dataCount_mqtt = 0;
-
-    QSettings config(QDir::homePath()+"/.armed20/radar.conf",QSettings::IniFormat);
-
-    serverUdpIP = config.value("server/ip","127.0.0.1").toString();
-    serverUdpPort = config.value("server/port",1883).toUInt();
-    qDebug()<<Q_FUNC_INFO<<serverUdpIP<<serverUdpPort;
-//    serverUdpPort = 45454;
-
-    udpSocket = new QUdpSocket(this);
-
-    ui->tableViewTrack->setModel(model);
+    updateCount = 0;
+    cur_arpa_id_count = 0;
 
     timer->start(1000);
 }
 
+void FrameTrackDisplay::trigger_LostTarget(int id)
+{
+    qDebug()<<Q_FUNC_INFO<<id;
+    removeTarget(id);
+}
+
+void FrameTrackDisplay::removeTarget(int id)
+{
+    QList<QStandardItem *> listTarget = model->findItems(QString::number(id),Qt::MatchExactly,0);
+    if(!listTarget.isEmpty())
+    {
+        int row = listTarget.at(0)->row();
+        model->removeRow(row);
+        modelSend->removeRow(row);
+    }
+}
+
+void FrameTrackDisplay::updateTarget()
+{
+    qDebug()<<Q_FUNC_INFO;
+    if(m_re->radarArpa->m_number_of_targets > 0)
+    {
+        RadarEngine::Position own_pos;
+        own_pos.lat = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
+        own_pos.lon = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+        Polar pol;
+        double brn;
+        double range;
+        int num_limit = MAX_UPDATE_NUMBER;
+        int curRange = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
+        const bool heading_up = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
+        const double currentHeading = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+
+        while ((cur_arpa_id_count < m_re->radarArpa->m_number_of_targets) && num_limit > 0)
+        {
+            if(m_re->radarArpa->m_target[cur_arpa_id_count]->m_target_id > 0)
+            {
+                pol = Pos2Polar(m_re->radarArpa->m_target[cur_arpa_id_count]->m_position,own_pos,curRange);
+                brn = SCALE_RAW_TO_DEGREES2048(pol.angle);
+                //                brn -= 270;
+                brn = heading_up ? brn+currentHeading : brn;
+                while(brn>360 || brn<0)
+                {
+                    if(brn>360)
+                        brn -= 360;
+                    if(brn<0)
+                        brn += 360;
+                }
+
+                double arpa_course = m_re->radarArpa->m_target[cur_arpa_id_count]->m_course;
+                //                arpa_course -= 270;
+                arpa_course = heading_up ? arpa_course+currentHeading : arpa_course;
+                while(arpa_course>360 || arpa_course<0)
+                {
+                    if(arpa_course>360)
+                        arpa_course -= 360;
+                    if(arpa_course<0)
+                        arpa_course += 360;
+                }
+
+                range = static_cast<double>(curRange*pol.r/RETURNS_PER_LINE)/1000.;
+                /* untuk menghitung posisi yang sudah dikoreksi
+                    pol.angle = SCALE_DEGREES_TO_RAW2048(brn);
+                    Position arpa_pos = Polar2Pos(pol,own_pos,curRange);
+                    */
+                //                qDebug()<<Q_FUNC_INFO<<arpa->m_target[cur_arpa_id_count]->m_position.lat<<arpa->m_target[cur_arpa_id_count]->m_position.lon;
+               trigger_target_update(
+                           m_re->radarArpa->m_target[cur_arpa_id_count]->m_target_id,
+                           m_re->radarArpa->m_target[cur_arpa_id_count]->m_position.lat,
+                           m_re->radarArpa->m_target[cur_arpa_id_count]->m_position.lon,
+                           0.0,
+                           range,
+                           brn,
+                           m_re->radarArpa->m_target[cur_arpa_id_count]->m_speed_kn,
+                           arpa_course
+                           );
+               arpaSender->sendData(
+                           m_re->radarArpa->m_target[cur_arpa_id_count]->m_target_id,
+                           m_re->radarArpa->m_target[cur_arpa_id_count]->m_position.lat,
+                           m_re->radarArpa->m_target[cur_arpa_id_count]->m_position.lon,
+                           0.0,
+                           range,
+                           brn,
+                           m_re->radarArpa->m_target[cur_arpa_id_count]->m_speed_kn,
+                           arpa_course
+                           );
+            }
+            cur_arpa_id_count++;
+            num_limit--;
+        }
+        if(cur_arpa_id_count >= m_re->radarArpa->m_number_of_targets)
+            cur_arpa_id_count = 0;
+    }
+
+}
 void FrameTrackDisplay::timerTimeout()
 {
-    QHashIterator<int,quint64> i(target_time_tag_list);
-    QList<int> target_to_delete;
-    quint64 now = QDateTime::currentMSecsSinceEpoch();
-
-    target_to_delete.clear();
-    while(i.hasNext())
-    {
-        i.next();
-        if(now-i.value()>1000)
-            target_to_delete.append(i.key());
-    }
-
-    for(int i=0;i<target_to_delete.size();i++)
-    {
-        target_time_tag_list.remove(target_to_delete.at(i));
-
-        QList<QStandardItem *> listTarget = model->findItems("R1-"+QString::number(target_to_delete.at(i)),Qt::MatchExactly,0);
-        if(!listTarget.isEmpty())
-        {
-            int row = listTarget.at(0)->row();
-            model->removeRow(row);
-            modelSend->removeRow(row);
-        }
-    }
-
-    QHashIterator<int,quint64> j(target_time_tag_list1);
-
-    target_to_delete.clear();
-    while(j.hasNext())
-    {
-        j.next();
-        if(now-j.value()>1000)
-            target_to_delete.append(j.key());
-    }
-
-    for(int i=0;i<target_to_delete.size();i++)
-    {
-        target_time_tag_list1.remove(target_to_delete.at(i));
-
-        QList<QStandardItem *> listTarget = model->findItems("R2-"+QString::number(target_to_delete.at(i)),Qt::MatchExactly,0);
-        if(!listTarget.isEmpty())
-        {
-            int row = listTarget.at(0)->row();
-            model->removeRow(row);
-            modelSend->removeRow(row);
-        }
-    }
-
+    updateTarget();
     if(modelSend->rowCount()>0 && modelSend->rowCount()>dataCount_mqtt)
     {
         QString id,lat,lon,alt,spd,crs,mq_data,ttg;
@@ -114,8 +162,8 @@ void FrameTrackDisplay::timerTimeout()
         crs.replace(".",",");
 
         mq_data = "!"+id+"#"+ttg+"#"+lat+"#"+lon+"#"+alt+"#"+spd+"#"+crs+"@";
-        mq_databyte = mq_data.toUtf8();
-        udpSocket->writeDatagram(mq_databyte,QHostAddress::Broadcast,serverUdpPort);
+//        mq_databyte = mq_data.toUtf8();
+//        udpSocket->writeDatagram(mq_databyte,QHostAddress::Broadcast,serverUdpPort);
 
         dataCount_mqtt++;
 //        qDebug()<<"mq_data"<<mq_data;
@@ -138,7 +186,6 @@ void FrameTrackDisplay::timerTimeout()
 }
 
 void FrameTrackDisplay::trigger_target_update(
-        bool r1,
         int id,
         double lat,
         double lon,
@@ -149,23 +196,12 @@ void FrameTrackDisplay::trigger_target_update(
         double crs
         )
 {
-    spd *= 1.852;
-    quint64 new_target_tt;
-    QHash<int,quint64> *cur_target_time_tag_list = r1 ? &target_time_tag_list : &target_time_tag_list1;
-    if(cur_target_time_tag_list->contains(id))
-    {
-//        new_target_tt = cur_target_time_tag_list->value(id);
-        new_target_tt = QDateTime::currentMSecsSinceEpoch();
-        cur_target_time_tag_list->remove(id);
-        cur_target_time_tag_list->insert(id,new_target_tt);
-
-        QList<QStandardItem *> listTarget = model->findItems(r1 ? "R1-"+QString::number(id) : "R2-"+QString::number(id)
-                                                                  ,Qt::MatchExactly,0);
+//    spd *= 1.852;
+        QList<QStandardItem *> listTarget = model->findItems(QString::number(id),Qt::MatchExactly,0);
         if(!listTarget.isEmpty())
         {
             int row = listTarget.at(0)->row();
-            model->setData(model->index(row,0,QModelIndex()),
-                           r1 ? "R1-"+QString::number(id) : "R2-"+QString::number(id));
+            model->setData(model->index(row,0,QModelIndex()),QString::number(id));
             model->setData(model->index(row,1,QModelIndex()),
                            QString::number(rng,'f',1));
             model->setData(model->index(row,2,QModelIndex()),
@@ -176,7 +212,7 @@ void FrameTrackDisplay::trigger_target_update(
                            QString::number(crs,'f',1));
 
             modelSend->setData(modelSend->index(row,0,QModelIndex()),
-                           r1 ? "R1-"+QString::number(id) : "R2-"+QString::number(id));
+                           QString::number(id));
             /*
             modelSend->setData(modelSend->index(row,1,QModelIndex()),
                            QString::number(QDateTime::currentMSecsSinceEpoch()));
@@ -193,16 +229,9 @@ void FrameTrackDisplay::trigger_target_update(
                            QString::number(crs,'f',1));
         }
         else
-            insertList(r1,id, lat, lon, alt, rng, brn, spd, crs);
-    }
-    else
-    {
-        cur_target_time_tag_list->insert(id,QDateTime::currentMSecsSinceEpoch());
-        insertList(r1,id, lat, lon, alt, rng, brn, spd, crs);
-    }
+            insertList(id, lat, lon, alt, rng, brn, spd, crs);
 }
 void FrameTrackDisplay::insertList(
-        bool r1,
         int id,
         double lat,
         double lon,
@@ -216,8 +245,7 @@ void FrameTrackDisplay::insertList(
     model->insertRow(model->rowCount(),QModelIndex());
     modelSend->insertRow(modelSend->rowCount(),QModelIndex());
 
-    model->setData(model->index(model->rowCount()-1,0,QModelIndex()),
-                   r1 ? "R1-"+QString::number(id) : "R2-"+QString::number(id));
+    model->setData(model->index(model->rowCount()-1,0,QModelIndex()),QString::number(id));
     model->setData(model->index(model->rowCount()-1,1,QModelIndex()),
                    QString::number(rng,'f',1));
     model->setData(model->index(model->rowCount()-1,2,QModelIndex()),
@@ -227,8 +255,7 @@ void FrameTrackDisplay::insertList(
     model->setData(model->index(model->rowCount()-1,4,QModelIndex()),
                    QString::number(crs,'f',1));
 
-    modelSend->setData(modelSend->index(modelSend->rowCount()-1,0,QModelIndex()),
-                   r1 ? "R1-"+QString::number(id) : "R2-"+QString::number(id));
+    modelSend->setData(modelSend->index(modelSend->rowCount()-1,0,QModelIndex()), QString::number(id));
     modelSend->setData(modelSend->index(modelSend->rowCount()-1,1,QModelIndex()),
                    QString::number(QDateTime::currentMSecsSinceEpoch()));
     modelSend->setData(modelSend->index(modelSend->rowCount()-1,2,QModelIndex()),
@@ -261,16 +288,16 @@ void FrameTrackDisplay::on_pushButtonDelSel_clicked()
     {
         int row = ui->tableViewTrack->currentIndex().row();
         QString id_str = model->index(row,0).data().toString();
-        bool r1 = id_str.contains("R1");
-        int id = id_str.remove(0,3).toInt();
+        int id = id_str.toInt();
 
-        emit signal_request_del_track(r1,id);
+        for(int i=0;i<m_re->radarArpa->m_number_of_targets;i++)
+            if(m_re->radarArpa->m_target[i]->m_target_id == id)
+                m_re->radarArpa->m_target[i]->SetStatusLost();
     }
 }
 
 void FrameTrackDisplay::on_pushButtonDelAll_clicked()
 {
     int row_count = model->rowCount();
-    if(row_count>0)
-        emit signal_request_del_track(true,-100);
+    if(row_count>0) m_re->radarArpa->DeleteAllTargets();
 }

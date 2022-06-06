@@ -4,7 +4,9 @@
 #include <QFrame>
 #include <QStandardItemModel>
 #include <QTimer>
-#include <QUdpSocket>
+
+#include "stream/arpasender.h"
+#include <radarengine.h>
 
 namespace Ui {
 class FrameTrackDisplay;
@@ -15,15 +17,29 @@ class FrameTrackDisplay : public QFrame
     Q_OBJECT
 
 public:
-    explicit FrameTrackDisplay(QWidget *parent = 0);
-    ~FrameTrackDisplay();
-
-signals:
-    void signal_request_del_track(bool r1,int id);
+    explicit FrameTrackDisplay(QWidget *parent = nullptr);
+    ~FrameTrackDisplay() override;
 
 private slots:
-    void trigger_target_update(
-            bool r1,
+    void timerTimeout();
+    void trigger_LostTarget(int id);
+
+    void on_pushButtonDelSel_clicked();
+
+    void on_pushButtonDelAll_clicked();
+
+private:
+    Ui::FrameTrackDisplay *ui;
+    QTimer *timer;
+    ArpaSender *arpaSender;
+    RadarEngine::RadarEngine* m_re;
+
+    int dataCount_mqtt, updateCount, cur_arpa_id_count;
+    QStandardItemModel *model,*modelSend;
+
+    void updateTarget();
+    void removeTarget(int id);
+    void insertList(
             int id,
             double lat,
             double lon,
@@ -33,25 +49,7 @@ private slots:
             double spd,
             double crs
             );
-    void timerTimeout();
-
-    void on_pushButtonDelSel_clicked();
-
-    void on_pushButtonDelAll_clicked();
-
-private:
-    Ui::FrameTrackDisplay *ui;
-    QTimer *timer;
-    QUdpSocket *udpSocket;
-    QString serverUdpIP;
-    quint16 serverUdpPort;
-
-    int dataCount_mqtt;
-    QHash<int,quint64> target_time_tag_list,target_time_tag_list1;
-    QStandardItemModel *model,*modelSend;
-
-    void insertList(
-            bool r1,
+    void trigger_target_update(
             int id,
             double lat,
             double lon,
