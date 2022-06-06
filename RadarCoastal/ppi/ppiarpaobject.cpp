@@ -72,7 +72,7 @@ void PPIArpaObject::draw(QPainter* painter, const int &side)
 
         for (int i = 0; i < m_re->radarArpa->m_number_of_targets; i++)
         {
-            qDebug()<<Q_FUNC_INFO<<"target"<<i<<m_re->radarArpa->m_target[i]->m_position.lat<<m_re->radarArpa->m_target[i]->m_position.lon<<m_re->radarArpa->m_target[i]->m_speed_kn;
+//            qDebug()<<Q_FUNC_INFO<<"target"<<i<<m_re->radarArpa->m_target[i]->m_position.lat<<m_re->radarArpa->m_target[i]->m_position.lon<<m_re->radarArpa->m_target[i]->m_speed_kn;
         }
 
         painter->setPen(curPen);
