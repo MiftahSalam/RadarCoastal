@@ -15,6 +15,16 @@ public:
     explicit ArpaSender(QObject *parent = nullptr);
 
     void sendData(const QString data);
+    void sendData(
+            int id,
+            double lat,
+            double lon,
+            double alt,
+            double rng,
+            double brn,
+            double spd,
+            double crs
+            );
 signals:
 
 private slots:
