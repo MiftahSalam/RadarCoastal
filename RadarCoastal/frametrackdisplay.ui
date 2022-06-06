@@ -163,7 +163,7 @@
        </property>
        <property name="text">
         <string>Speed
-(km/h)</string>
+(kts)</string>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
