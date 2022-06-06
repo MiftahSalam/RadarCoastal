@@ -27,9 +27,11 @@ public:
     Stream(QObject *parent = nullptr, QString config = "" );
     ~Stream() override;
 
-    QString getStreamError() const;
+    QString getStreamStatusString() const;
+    DeviceWrapper::DeviceStatus getStreamStatus() const;
     void sendData(const QString& data);
     void setConfig(const QString& config);
+    void reconnect();
 
 protected:
     QString streamError;

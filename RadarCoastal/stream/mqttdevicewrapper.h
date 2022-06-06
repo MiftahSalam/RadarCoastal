@@ -64,6 +64,7 @@ public:
 
     void write(const QString data) override;
     DeviceStatus getStatus() override;
+    void reconnect() override;
     void changeConfig(const QString command) override;
     bool initConfig(const QString config = "127.0.0.1:1883") override;
 

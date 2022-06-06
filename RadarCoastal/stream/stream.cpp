@@ -31,6 +31,11 @@ void Stream::setConfig(const QString& config)
     else m_streamDevice->initConfig(m_config.config);
 }
 
+void Stream::reconnect()
+{
+    m_streamDevice->reconnect();
+}
+
 void Stream::sendData(const QString &data)
 {
     m_streamDevice->write(data);
@@ -72,7 +77,12 @@ Stream::~Stream()
     delete m_streamDevice;
 }
 
-QString Stream::getStreamError() const
+DeviceWrapper::DeviceStatus Stream::getStreamStatus() const
+{
+    return m_streamDevice->getStatus();
+}
+
+QString Stream::getStreamStatusString() const
 {
     return streamError;
 }

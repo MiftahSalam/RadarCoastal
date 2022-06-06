@@ -66,6 +66,12 @@ bool MqttDeviceWrapper::initConfig(const QString config)
     return ret_val;
 }
 
+void MqttDeviceWrapper::reconnect()
+{
+    if(!_publisher->isConnectedToHost()) _publisher->connectToHost();
+    if(!_subsciber->isConnectedToHost()) _subsciber->connectToHost();
+}
+
 DeviceWrapper::DeviceStatus MqttDeviceWrapper::getStatus()
 {
     if(_publisher->isConnectedToHost() || _subsciber->isConnectedToHost())
