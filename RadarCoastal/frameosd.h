@@ -2,6 +2,7 @@
 #define FRAMEOSD_H
 
 #include <QFrame>
+#include <QTimer>
 
 #include "stream/navsensor.h"
 
@@ -15,7 +16,7 @@ class FrameOSD : public QFrame
 
 public:
     explicit FrameOSD(QWidget *parent = nullptr);
-    ~FrameOSD();
+    ~FrameOSD() override;
 
 private slots:
     void on_timeout();
@@ -24,10 +25,16 @@ private slots:
 
 private:
     Ui::FrameOSD *ui;
+    QTimer *timer;
     NavSensor* sensor;
 
     quint8 no_hdg_count,no_gps_count;
-    bool hdg_col_normal,gps_col_normal;
+    quint8 hdg_col_normal,gps_col_normal;
+
+    void updateGPSData();
+    void updateHDGData();
+    void updateGPSColor(const int status);
+    void updateHDGColor(const int status);
 
 };
 
