@@ -7,13 +7,13 @@ FrameStatus::FrameStatus(QWidget *parent) :
     ui(new Ui::FrameStatus)
 {
     ui->setupUi(this);
-    ui->labelRadarStatus->setText("No Radar");
-    ui->labelRadarStatus->setStyleSheet("color: rgb(164,0,0);");
+    initStatus();
 
     m_re = RadarEngine::RadarEngine::getInstance();
-
     gzAlarm = GZAlarm::getInstance(0);
     Alarm* baseAlarm = dynamic_cast<Alarm*>(gzAlarm);
+
+    alarmToggle = true;
 
     connect(RadarConfig::RadarConfig::getInstance(""), &RadarConfig::RadarConfig::configValueChange, this, &FrameStatus::trigger_statusChange);
     connect(baseAlarm, &Alarm::signal_alarmTriggered, this, &FrameStatus::trigger_GZAlarmTrigger);
@@ -22,6 +22,18 @@ FrameStatus::FrameStatus(QWidget *parent) :
 void FrameStatus::trigger_GZAlarmTrigger(const QString msg)
 {
     qDebug()<<Q_FUNC_INFO<<msg;
+
+    if(alarmToggle)
+    {
+        ui->labelAlarmStatus->setStyleSheet("background-color: rgb(164,0,0);");
+        ui->labelAlarmStatus->setText("GZ 1");
+        alarmToggle = false;
+    }
+    else
+    {
+        ui->labelAlarmStatus->setStyleSheet("background-color: rgb(0, 5, 83);");
+        alarmToggle = true;
+    }
 }
 
 void FrameStatus::updateRadarStatus(const RadarEngine::RadarState status)
@@ -97,3 +109,24 @@ FrameStatus::~FrameStatus()
 {
     delete ui;
 }
+
+void FrameStatus::on_alarmStatus_clicked(const QPoint &p)
+{
+    Q_UNUSED(p)
+    qDebug()<<Q_FUNC_INFO;
+}
+
+void FrameStatus::initStatus()
+{
+    ui->labelRadarStatus->setText("No Radar");
+    ui->labelRadarStatus->setStyleSheet("color: rgb(164,0,0);");
+    ui->labelNavStatus->setText("Offline");
+    ui->labelNavStatus->setStyleSheet("color: rgb(164,0,0);");
+    ui->labelAlarmStatus->setText("No Alarm");
+
+    alarmEvent = new PPIEvent(ui->labelAlarmStatus);
+    ui->labelAlarmStatus->installEventFilter(alarmEvent);
+
+    connect(alarmEvent,&PPIEvent::send_leftButtonReleased,this,&FrameStatus::on_alarmStatus_clicked);
+}
+

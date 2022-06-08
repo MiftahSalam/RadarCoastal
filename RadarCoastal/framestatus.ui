@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>139</width>
-    <height>96</height>
+    <height>139</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -109,6 +109,33 @@
       <widget class="QLabel" name="labelNavStatus">
        <property name="text">
         <string>Online</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(255, 255, 0);</string>
+       </property>
+       <property name="text">
+        <string>Alarm:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelAlarmStatus">
+       <property name="text">
+        <string>No Alarm</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
