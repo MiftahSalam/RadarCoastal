@@ -56,95 +56,9 @@ void RadarWidget::trigger_cursorLeftRelease(const QPoint pos)
 {
     emit signal_cursorLeftRelease(pos, width(), height());
 }
-/*
-void RadarWidget::trigger_ReqDelTrack(bool r1,int id)
-{
-    if(id>-10)
-    {
-        RA *cur_arpa = r1 ? arpa : arpa1;
-        for(int i=0;i<cur_arpa->m_number_of_targets;i++)
-            if(cur_arpa->m_target[i]->m_target_id == id)
-                cur_arpa->m_target[i]->SetStatusLost();
-    }
-    else
-    {
-        arpa->DeleteAllTargets();
-        arpa1->DeleteAllTargets();
-    }
-}
-*/
 
 void RadarWidget::timeOut()
 {
-//    Position own_pos;
-//    own_pos.lat = currentOwnShipLat;
-//    own_pos.lon = currentOwnShipLon;
-//    Polar pol;
-//    double brn;
-//    double range;
-
-//    qDebug()<<Q_FUNC_INFO;
-//    if(arpa->m_number_of_targets > 0)
-//    {
-//        int num_limit = 5;
-//        while ((cur_arpa_id_count < arpa->m_number_of_targets) && num_limit > 0)
-//        {
-//            if(arpa->m_target[cur_arpa_id_count]->m_target_id > 0)
-//            {
-//                pol = Pos2Polar(arpa->m_target[cur_arpa_id_count]->m_position,own_pos,curRange);
-//                brn = SCALE_RAW_TO_DEGREES2048(pol.angle);
-////                brn -= 270;
-//                brn = radar_settings.headingUp ? brn+currentHeading : brn;
-//                while(brn>360 || brn<0)
-//                {
-//                    if(brn>360)
-//                        brn -= 360;
-//                    if(brn<0)
-//                        brn += 360;
-//                }
-
-//                double arpa_course = arpa->m_target[cur_arpa_id_count]->m_course;
-////                arpa_course -= 270;
-//                arpa_course = radar_settings.headingUp ? arpa_course+currentHeading : arpa_course;
-//                while(arpa_course>360 || arpa_course<0)
-//                {
-//                    if(arpa_course>360)
-//                        arpa_course -= 360;
-//                    if(arpa_course<0)
-//                        arpa_course += 360;
-//                }
-
-//                range = static_cast<double>(curRange*pol.r/RETURNS_PER_LINE)/1000.;
-//                /* untuk menghitung posisi yang sudah dikoreksi
-//                pol.angle = SCALE_DEGREES_TO_RAW2048(brn);
-//                Position arpa_pos = Polar2Pos(pol,own_pos,curRange);
-//                */
-////                qDebug()<<Q_FUNC_INFO<<arpa->m_target[cur_arpa_id_count]->m_position.lat<<arpa->m_target[cur_arpa_id_count]->m_position.lon;
-//                emit signal_target_param(true,
-//                                         arpa->m_target[cur_arpa_id_count]->m_target_id,
-//                                         arpa->m_target[cur_arpa_id_count]->m_position.lat,
-//                                         arpa->m_target[cur_arpa_id_count]->m_position.lon,
-//                                         arpa->m_target[cur_arpa_id_count]->m_position.alt, //temp
-//                                         range,
-//                                         brn,
-//                                         arpa->m_target[cur_arpa_id_count]->m_speed_kn,
-//                                         arpa_course
-//                                         );
-//            }
-//            cur_arpa_id_count++;
-//            num_limit--;
-//        }
-//        if(cur_arpa_id_count >= arpa->m_number_of_targets)
-//            cur_arpa_id_count = 0;
-//    }
-
-//    if(old_motion_mode^radar_settings.headingUp)
-//    {
-//        arpa->DeleteAllTargets();
-//        arpa1->DeleteAllTargets();
-//        old_motion_mode = radar_settings.headingUp;
-//    }
-
     update();
 }
 
@@ -190,12 +104,11 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-//    saveGLState();
-
     m_re->radarDraw->DrawRadarImage();
 
     const bool show_sweep = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP).toBool();
-    if(show_sweep) m_re->radarDraw->DrawRadarSweep(cur_radar_angle);
+    const RadarEngine::RadarState cur_state = static_cast<const RadarEngine::RadarState>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_RADAR_STATUS).toInt());
+    if(show_sweep && cur_state == RadarEngine::RADAR_TRANSMIT) m_re->radarDraw->DrawRadarSweep(cur_radar_angle);
 
     glShadeModel(GL_FLAT);
     glMatrixMode(GL_MODELVIEW);
@@ -235,11 +148,6 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     */
     if(show_rings) drawRings(&painter,side);
 
-
-//    restoreGLState();
-//    painter.rotate(-bearing+180);
-
-//    painter.end();
 }
 
 void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data, size_t len)
@@ -282,16 +190,6 @@ void RadarWidget::setupViewport(int width, int height)
 //    int side = qMin(width, height)/2; //scale 0.5
     glViewport((width - side) / 2, (height - side) / 2, side, side);
 
-    /*
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-#ifdef QT_OPENGL_ES
-    glOrthof(-0.5, +0.5, -0.5, 0.5, 4.0, 15.0);
-#else
-    glOrtho(-0.5, +0.5, -0.5, 0.5, 4.0, 15.0);
-#endif
-    glMatrixMode(GL_MODELVIEW);
-    */
 }
 
 void RadarWidget::saveGLState()

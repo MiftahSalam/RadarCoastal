@@ -27,6 +27,8 @@ CONFIG += c++11
 include(stream/qmqtt/qmqtt.pri)
 
 SOURCES += \
+    alarm/alarm.cpp \
+    alarm/gzalarm.cpp \
     dialogconnections.cpp \
     dialoggz.cpp \
     framegz.cpp \
@@ -54,6 +56,8 @@ SOURCES += \
     utils.cpp
 
 HEADERS += \
+    alarm/alarm.h \
+    alarm/gzalarm.h \
     dialogconnections.h \
     dialoggz.h \
     framegz.h \

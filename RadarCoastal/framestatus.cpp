@@ -12,7 +12,72 @@ FrameStatus::FrameStatus(QWidget *parent) :
 
     m_re = RadarEngine::RadarEngine::getInstance();
 
+    gzAlarm = GZAlarm::getInstance(0);
+    Alarm* baseAlarm = dynamic_cast<Alarm*>(gzAlarm);
+
     connect(RadarConfig::RadarConfig::getInstance(""), &RadarConfig::RadarConfig::configValueChange, this, &FrameStatus::trigger_statusChange);
+    connect(baseAlarm, &Alarm::signal_alarmTriggered, this, &FrameStatus::trigger_GZAlarmTrigger);
+}
+
+void FrameStatus::trigger_GZAlarmTrigger(const QString msg)
+{
+    qDebug()<<Q_FUNC_INFO<<msg;
+}
+
+void FrameStatus::updateRadarStatus(const RadarEngine::RadarState status)
+{
+    /*tes
+    status = RadarEngine::RADAR_WAKING_UP;
+    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_RADAR_WAKINGUP_TIME,30);
+    */
+
+    switch (status) {
+    case RadarEngine::RADAR_OFF:
+        ui->labelRadarStatus->setText("No Radar");
+        ui->labelRadarStatus->setStyleSheet("color: rgb(164,0,0);");
+        break;
+    case RadarEngine::RADAR_WAKING_UP:
+    {
+        quint8 tick = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_RADAR_WAKINGUP_TIME).toInt());
+        ui->labelRadarStatus->setText("Waking up\n"+tickToTime(tick));
+        ui->labelRadarStatus->setStyleSheet("color: rgb(196, 160, 0);");
+    }
+        break;
+    case RadarEngine::RADAR_STANDBY:
+        ui->labelRadarStatus->setText("Standby");
+        ui->labelRadarStatus->setStyleSheet("color: color: rgb(196, 160, 0);");
+        break;
+    case RadarEngine::RADAR_TRANSMIT:
+        ui->labelRadarStatus->setText("Transmiting");
+        ui->labelRadarStatus->setStyleSheet("color: rgb(78, 154, 6);");
+        break;
+    case RadarEngine::RADAR_NO_SPOKE:
+        ui->labelRadarStatus->setText("No Spoke");
+        ui->labelRadarStatus->setStyleSheet("color: rgb(164,0,0);");
+        break;
+    }
+}
+
+void FrameStatus::updateNavStatus(const int status)
+{
+    switch (status) {
+    case 0:
+        ui->labelNavStatus->setText("Offline");
+        ui->labelNavStatus->setStyleSheet("color: rgb(164,0,0);");
+        break;
+    case 1:
+        ui->labelNavStatus->setText("No Data");
+        ui->labelNavStatus->setStyleSheet("color: rgb(196, 160, 0);");
+        break;
+    case 2:
+        ui->labelNavStatus->setText("Invalid");
+        ui->labelNavStatus->setStyleSheet("color: rgb(164,0,0);");
+        break;
+    case 4:
+        ui->labelNavStatus->setText("Ok");
+        ui->labelNavStatus->setStyleSheet("color: rgb(78, 154, 6);");
+        break;
+    }
 }
 
 void FrameStatus::trigger_statusChange(const QString& key, const QVariant& val)
@@ -20,37 +85,11 @@ void FrameStatus::trigger_statusChange(const QString& key, const QVariant& val)
     if(key == RadarConfig::VOLATILE_RADAR_STATUS)
     {
         RadarEngine::RadarState status = static_cast<RadarEngine::RadarState>(val.toInt());
-
-        /*tes
-        status = RadarEngine::RADAR_WAKING_UP;
-        RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_RADAR_WAKINGUP_TIME,30);
-        */
-
-        switch (status) {
-        case RadarEngine::RADAR_OFF:
-            ui->labelRadarStatus->setText("No Radar");
-            ui->labelRadarStatus->setStyleSheet("color: rgb(164,0,0);");
-            break;
-        case RadarEngine::RADAR_WAKING_UP:
-        {
-            quint8 tick = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_RADAR_WAKINGUP_TIME).toInt());
-            ui->labelRadarStatus->setText("Waking up\n"+tickToTime(tick));
-            ui->labelRadarStatus->setStyleSheet("color: rgb(196, 160, 0);");
-        }
-            break;
-        case RadarEngine::RADAR_STANDBY:
-            ui->labelRadarStatus->setText("Standby");
-            ui->labelRadarStatus->setStyleSheet("color: color: rgb(196, 160, 0);");
-            break;
-        case RadarEngine::RADAR_TRANSMIT:
-            ui->labelRadarStatus->setText("Transmiting");
-            ui->labelRadarStatus->setStyleSheet("color: rgb(78, 154, 6);");
-            break;
-        case RadarEngine::RADAR_NO_SPOKE:
-            ui->labelRadarStatus->setText("No Spoke");
-            ui->labelRadarStatus->setStyleSheet("color: rgb(164,0,0);");
-            break;
-        }
+        updateRadarStatus(status);
+    }
+    else if(key == RadarConfig::VOLATILE_NAV_STATUS_GPS || key == RadarConfig::VOLATILE_NAV_STATUS_HEADING)
+    {
+        updateNavStatus(val.toInt());
     }
 }
 
