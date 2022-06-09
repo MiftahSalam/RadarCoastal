@@ -22,6 +22,13 @@ void FrameStatus::trigger_Alarm(const QString id, const QString msg)
 {
     qDebug()<<Q_FUNC_INFO<<msg;
 
+    if(id == "No Alarm")
+    {
+        ui->labelAlarmStatus->setStyleSheet("background-color: rgb(78, 154, 6);");
+        ui->labelAlarmStatus->setText(id);
+        return;
+    }
+
     if(alarmToggle)
     {
         ui->labelAlarmStatus->setStyleSheet("background-color: rgb(164,0,0);");

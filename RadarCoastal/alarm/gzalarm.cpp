@@ -29,7 +29,8 @@ void GZAlarm::checkAlarm()
                     if(TIMED_OUT(now,(gz_settings_time)))
                         RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_GZ_CONFIRMED,false);
 
-                    emit signal_alarmTriggered(getId(), "Guarzone 1 alarm");
+                    setCurrentMessage("Guarzone 1 alarm");
+                    emit signal_alarmTriggered(getId(), getCurrentMessage());
 //                    char d=(char)(7);
 //                    printf("%c\n",d);
 //                    alarm->play();
@@ -79,10 +80,19 @@ void GZAlarm::checkAlarm()
 
 }
 
+bool GZAlarm::isConfirmed()
+{
+    const bool gz_settings_show = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ).toBool();
+    const bool gz_settings_enable_alarm = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ).toBool();
+
+    if(gz_settings_show && gz_settings_enable_alarm) return RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_GZ_CONFIRMED).toBool();
+    else return false;
+}
+
 void GZAlarm::confirm()
 {
-    bool gz_settings_show = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ).toBool();
-    bool gz_settings_enable_alarm = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ).toBool();
+    const bool gz_settings_show = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ).toBool();
+    const bool gz_settings_enable_alarm = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ).toBool();
 
     if(gz_settings_show && gz_settings_enable_alarm)
     {

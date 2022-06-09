@@ -14,6 +14,7 @@ public:
     ~GZAlarm() override;
 
     void confirm() override;
+    bool isConfirmed() override;
 
 protected:
     void checkAlarm() override;

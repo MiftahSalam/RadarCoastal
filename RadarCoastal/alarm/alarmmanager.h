@@ -2,8 +2,8 @@
 #define ALARMMANAGER_H
 
 #include <QObject>
+#include <QTimer>
 
-//#include "alarm/alarm.h"
 #include "alarm/gzalarm.h"
 
 class AlarmManager : public QObject
@@ -25,12 +25,17 @@ signals:
 public slots:
     void trigger_alarm(const QString id, const QString message);
 
+private slots:
+    void trigger_timerTimeOut();
+
 protected:
     explicit AlarmManager(QObject *parent = nullptr);
 
 private:
     QMap<QString, Alarm*> listAlarms;
     static AlarmManager* alarmManager;
+    QTimer *timer;
+    int no_alarm_count;
 };
 
 #endif // ALARMMANAGER_H

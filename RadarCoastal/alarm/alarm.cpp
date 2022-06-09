@@ -12,6 +12,16 @@ QString Alarm::getId() const
     return m_id;
 }
 
+void Alarm::setCurrentMessage(const QString message)
+{
+    m_current_messsage = message;
+}
+
+QString Alarm::getCurrentMessage() const
+{
+    return m_current_messsage;
+}
+
 AlarmType Alarm::getType() const
 {
     return m_type;

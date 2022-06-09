@@ -16,9 +16,12 @@ class Alarm : public QObject
 public:
     explicit Alarm(QObject *parent = nullptr, AlarmType type = ALARM_UNKNOWN, QString id = "");
 
+    void setCurrentMessage(const QString message);
+    QString getCurrentMessage() const;
     QString getId() const;
     AlarmType getType() const;
     virtual void confirm() = 0;
+    virtual bool isConfirmed() = 0;
 
 signals:
     void signal_alarmTriggered(const QString id, const QString message);
@@ -33,6 +36,7 @@ protected slots:
 
 private:
     QString m_id;
+    QString m_current_messsage;
     AlarmType m_type;
 };
 
