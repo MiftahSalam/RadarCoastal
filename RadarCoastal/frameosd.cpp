@@ -29,7 +29,7 @@ FrameOSD::FrameOSD(QWidget *parent) :
     const double lon = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
     const double hdt = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
     const bool gps_auto = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
-    const bool hdg_auto = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
+    const bool hdg_auto = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
 
     ui->lineEditLat->setValidator(new QDoubleValidator(-90,90,6,ui->lineEditLat));
     ui->lineEditLon->setValidator(new QDoubleValidator(-180,180,6,ui->lineEditLon));
