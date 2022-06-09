@@ -10,16 +10,15 @@ FrameStatus::FrameStatus(QWidget *parent) :
     initStatus();
 
     m_re = RadarEngine::RadarEngine::getInstance();
-    gzAlarm = GZAlarm::getInstance(0);
-    Alarm* baseAlarm = dynamic_cast<Alarm*>(gzAlarm);
+    alarmManager = AlarmManager::getInstance();
 
     alarmToggle = true;
 
     connect(RadarConfig::RadarConfig::getInstance(""), &RadarConfig::RadarConfig::configValueChange, this, &FrameStatus::trigger_statusChange);
-    connect(baseAlarm, &Alarm::signal_alarmTriggered, this, &FrameStatus::trigger_GZAlarmTrigger);
+    connect(alarmManager, &AlarmManager::signal_alarm, this, &FrameStatus::trigger_Alarm);
 }
 
-void FrameStatus::trigger_GZAlarmTrigger(const QString msg)
+void FrameStatus::trigger_Alarm(const QString msg)
 {
     qDebug()<<Q_FUNC_INFO<<msg;
 

@@ -10,19 +10,13 @@ class GZAlarm : public Alarm
 {
     Q_OBJECT
 public:
-    GZAlarm(GZAlarm& other) = delete;
-    void operator=(const GZAlarm&) = delete;
+    GZAlarm(QObject *parent = nullptr, QString id = "");
     ~GZAlarm() override;
-
-    static GZAlarm* getInstance(uint id);
 
 protected:
     void checkAlarm() override;
-    GZAlarm(QObject *parent = nullptr);
 
 private:
-    static QMap<uint, GZAlarm*> m_GZAlarms;
-
     RadarEngine::RadarEngine* m_re;
 
 };

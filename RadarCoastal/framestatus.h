@@ -4,8 +4,8 @@
 #include <QFrame>
 
 #include <radarengine.h>
-#include <alarm/gzalarm.h>
 #include "ppi/ppievent.h"
+#include "alarm/alarmmanager.h"
 
 namespace Ui {
 class FrameStatus;
@@ -21,14 +21,14 @@ public:
 
 private slots:
     void trigger_statusChange(const QString& key, const QVariant& val);
-    void trigger_GZAlarmTrigger(const QString msg);
+    void trigger_Alarm(const QString msg);
     void on_alarmStatus_clicked(const QPoint &p);
 
 private:
     Ui::FrameStatus *ui;
     RadarEngine::RadarEngine* m_re;
-    GZAlarm* gzAlarm;
     PPIEvent *alarmEvent;
+    AlarmManager *alarmManager;
     bool alarmToggle;
 
     void updateRadarStatus(const RadarEngine::RadarState status);

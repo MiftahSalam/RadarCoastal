@@ -1,10 +1,9 @@
 #include "gzalarm.h"
 
-QMap<uint, GZAlarm*> GZAlarm::m_GZAlarms{};
-
-GZAlarm::GZAlarm(QObject *parent): Alarm(parent)
+GZAlarm::GZAlarm(QObject *parent, QString id): Alarm(parent, AlarmType::ALARM_GZ, id)
 {
     m_re = RadarEngine::RadarEngine::getInstance();
+    init(1000);
 }
 
 void GZAlarm::checkAlarm()
@@ -30,7 +29,7 @@ void GZAlarm::checkAlarm()
                     if(TIMED_OUT(now,gz_settings_time))
                         RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_GZ_CONFIRMED,false);
 
-                    emit signal_alarmTriggered("Guarzone 1 alarm");
+                    emit signal_alarmTriggered(getId(), "Guarzone 1 alarm");
 //                    char d=(char)(7);
 //                    printf("%c\n",d);
 //                    alarm->play();
@@ -82,19 +81,4 @@ void GZAlarm::checkAlarm()
 
 GZAlarm::~GZAlarm()
 {
-    m_GZAlarms.clear();
 }
-
-GZAlarm* GZAlarm::getInstance(uint id)
-{
-    qDebug()<<Q_FUNC_INFO;
-    if(!m_GZAlarms.contains(id))
-    {
-        GZAlarm* alarm = new GZAlarm(nullptr);
-        alarm->init(1000);
-        m_GZAlarms.insert(id,alarm);
-    }
-
-    return m_GZAlarms.value(id);
-}
-

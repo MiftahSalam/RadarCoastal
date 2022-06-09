@@ -28,6 +28,7 @@ include(stream/qmqtt/qmqtt.pri)
 
 SOURCES += \
     alarm/alarm.cpp \
+    alarm/alarmmanager.cpp \
     alarm/gzalarm.cpp \
     dialogconnections.cpp \
     dialoggz.cpp \
@@ -57,6 +58,7 @@ SOURCES += \
 
 HEADERS += \
     alarm/alarm.h \
+    alarm/alarmmanager.h \
     alarm/gzalarm.h \
     dialogconnections.h \
     dialoggz.h \
