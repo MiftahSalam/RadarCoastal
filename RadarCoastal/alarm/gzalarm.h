@@ -13,6 +13,8 @@ public:
     GZAlarm(QObject *parent = nullptr, QString id = "");
     ~GZAlarm() override;
 
+    void confirm() override;
+
 protected:
     void checkAlarm() override;
 

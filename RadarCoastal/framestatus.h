@@ -21,7 +21,7 @@ public:
 
 private slots:
     void trigger_statusChange(const QString& key, const QVariant& val);
-    void trigger_Alarm(const QString msg);
+    void trigger_Alarm(const QString id, const QString msg);
     void on_alarmStatus_clicked(const QPoint &p);
 
 private:

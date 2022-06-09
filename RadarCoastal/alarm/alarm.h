@@ -18,6 +18,7 @@ public:
 
     QString getId() const;
     AlarmType getType() const;
+    virtual void confirm() = 0;
 
 signals:
     void signal_alarmTriggered(const QString id, const QString message);

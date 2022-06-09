@@ -10,10 +10,16 @@ AlarmManager::AlarmManager(QObject *parent)
     addAlarm(ALARM_GZ,"GZ1");
 }
 
+void AlarmManager::confirm(const QString id)
+{
+    Alarm* alarm = listAlarms.value(id,nullptr);
+    if(alarm) alarm->confirm();
+}
+
 void AlarmManager::trigger_alarm(const QString id, const QString message)
 {
     qDebug()<<Q_FUNC_INFO<<id<<message;
-    emit signal_alarm(message);
+    emit signal_alarm(id, message);
 }
 
 bool AlarmManager::addAlarm(const AlarmType type, const QString id)

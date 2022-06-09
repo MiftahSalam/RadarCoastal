@@ -18,14 +18,14 @@ FrameStatus::FrameStatus(QWidget *parent) :
     connect(alarmManager, &AlarmManager::signal_alarm, this, &FrameStatus::trigger_Alarm);
 }
 
-void FrameStatus::trigger_Alarm(const QString msg)
+void FrameStatus::trigger_Alarm(const QString id, const QString msg)
 {
     qDebug()<<Q_FUNC_INFO<<msg;
 
     if(alarmToggle)
     {
         ui->labelAlarmStatus->setStyleSheet("background-color: rgb(164,0,0);");
-        ui->labelAlarmStatus->setText("GZ 1");
+        ui->labelAlarmStatus->setText(id);
         alarmToggle = false;
     }
     else
@@ -113,6 +113,7 @@ void FrameStatus::on_alarmStatus_clicked(const QPoint &p)
 {
     Q_UNUSED(p)
     qDebug()<<Q_FUNC_INFO;
+    alarmManager->confirm(ui->labelAlarmStatus->text());
 }
 
 void FrameStatus::initStatus()
@@ -122,6 +123,7 @@ void FrameStatus::initStatus()
     ui->labelNavStatus->setText("Offline");
     ui->labelNavStatus->setStyleSheet("color: rgb(164,0,0);");
     ui->labelAlarmStatus->setText("No Alarm");
+    ui->labelAlarmStatus->setStyleSheet("background-color: rgb(78, 154, 6);");
 
     alarmEvent = new PPIEvent(ui->labelAlarmStatus);
     ui->labelAlarmStatus->installEventFilter(alarmEvent);
