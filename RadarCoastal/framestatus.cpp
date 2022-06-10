@@ -45,7 +45,7 @@ void FrameStatus::trigger_Alarm(const QString id, const QString msg)
 void FrameStatus::updateRadarStatus(const RadarEngine::RadarState status)
 {
     /*tes
-    status = RadarEngine::RADAR_WAKING_UP;
+    RadarEngine::RadarState test_status = RadarEngine::RADAR_STANDBY;
     RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_RADAR_WAKINGUP_TIME,30);
     */
 
@@ -63,7 +63,7 @@ void FrameStatus::updateRadarStatus(const RadarEngine::RadarState status)
         break;
     case RadarEngine::RADAR_STANDBY:
         ui->labelRadarStatus->setText("Standby");
-        ui->labelRadarStatus->setStyleSheet("color: color: rgb(196, 160, 0);");
+        ui->labelRadarStatus->setStyleSheet("color: rgb(196, 160, 0);");
         break;
     case RadarEngine::RADAR_TRANSMIT:
         ui->labelRadarStatus->setText("Transmiting");
