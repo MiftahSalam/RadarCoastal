@@ -78,6 +78,7 @@ void FrameStatus::updateRadarStatus(const RadarEngine::RadarState status)
 
 void FrameStatus::updateNavStatus(const int status)
 {
+    qDebug()<<Q_FUNC_INFO<<status;
     switch (status) {
     case 0:
         ui->labelNavStatus->setText("Offline");
@@ -91,7 +92,7 @@ void FrameStatus::updateNavStatus(const int status)
         ui->labelNavStatus->setText("Invalid");
         ui->labelNavStatus->setStyleSheet("color: rgb(164,0,0);");
         break;
-    case 4:
+    case 3:
         ui->labelNavStatus->setText("Ok");
         ui->labelNavStatus->setStyleSheet("color: rgb(78, 154, 6);");
         break;
