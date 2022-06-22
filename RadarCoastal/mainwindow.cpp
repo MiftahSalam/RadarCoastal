@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ppi = new RadarWidget(centralWidget());
     dConns = new DialogConnections(this);
     dGZ = new DialogGZ(this);
+    dBIT = new DialogBIT(this);
 
     connect(ui->frameControl1,SIGNAL(signal_req_shutdown()),
             this,SLOT(trigger_shutdown()));
@@ -105,6 +106,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButtonBIT_clicked()
 {
+    dBIT->show();
 }
 
 void MainWindow::on_pushButtonConnections_clicked()

@@ -8,6 +8,7 @@
 #include "ppi/radarwidget.h"
 #include "dialogconnections.h"
 #include "dialoggz.h"
+#include "dialogbit.h"
 
 namespace Ui {
 class MainWindow;
@@ -44,6 +45,7 @@ private:
     RadarWidget* ppi;
     DialogConnections* dConns;
     DialogGZ *dGZ;
+    DialogBIT *dBIT;
 };
 
 #endif // MAINWINDOW_H

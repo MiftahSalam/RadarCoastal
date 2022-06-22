@@ -30,6 +30,7 @@ SOURCES += \
     alarm/alarm.cpp \
     alarm/alarmmanager.cpp \
     alarm/gzalarm.cpp \
+    dialogbit.cpp \
     dialogconnections.cpp \
     dialoggz.cpp \
     framegz.cpp \
@@ -60,6 +61,7 @@ HEADERS += \
     alarm/alarm.h \
     alarm/alarmmanager.h \
     alarm/gzalarm.h \
+    dialogbit.h \
     dialogconnections.h \
     dialoggz.h \
     framegz.h \
@@ -86,6 +88,7 @@ HEADERS += \
     utils.h
 
 FORMS += \
+    dialogbit.ui \
     dialogconnections.ui \
     dialoggz.ui \
     framegz.ui \
