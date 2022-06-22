@@ -48,7 +48,7 @@ void ArpaSender::sendData(int id,
     spd_str.replace(".",",");
     crs_str.replace(".",",");
 
-    mq_data = topic+":"+id_str+"#"+id_str+"#"+rng_str+"#"+brn_str+"#"+lat_str+"#"+lon_str+"#"+alt_str+"#"+spd_str+"#"+crs_str;
+    mq_data = topic+":"+id_str+"#"+"#"+rng_str+"#"+brn_str+"#"+lat_str+"#"+lon_str+"#"+"#"+spd_str+"#"+crs_str;
 
     if(stream->getStreamStatus() == DeviceWrapper::NOT_AVAIL) stream->reconnect();
     else stream->sendData(mq_data);
