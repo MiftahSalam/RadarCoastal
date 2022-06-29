@@ -32,7 +32,8 @@ RadarWidget::RadarWidget(QWidget *parent)
 
     m_re = RadarEngine::RadarEngine::getInstance();
     PPIArpaObject* arpa = new PPIArpaObject(this);
-    PPIGZObject* gz = new PPIGZObject(this);
+    PPIGZObject* gz = new PPIGZObject(this,"GZ 1");
+    PPIGZObject* gz1 = new PPIGZObject(this,"GZ 2");
     PPICompassObject* compass = new PPICompassObject(this);
 
     connect(ppiEvent,&PPIEvent::send_leftButtonReleased,this,&RadarWidget::trigger_cursorLeftRelease);
@@ -40,7 +41,7 @@ RadarWidget::RadarWidget(QWidget *parent)
     connect(this,&RadarWidget::signal_cursorLeftRelease,arpa,&PPIArpaObject::createMARPA);
     connect(timer, SIGNAL(timeout()), this, SLOT(timeOut()));
 
-    drawObjects<<arpa<<gz<<compass;
+    drawObjects<<arpa<<gz<<gz1<<compass;
 
     cur_radar_angle = 0.;
     timer->start(100);

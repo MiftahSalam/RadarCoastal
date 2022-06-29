@@ -34,6 +34,24 @@ private slots:
 
     void on_lineEditNotifTHR_textChanged(const QString &arg1);
 
+    void on_checkBoxShowGZ2_clicked(bool checked);
+
+    void on_checkBoxAlarmGZ2_clicked(bool checked);
+
+    void on_radioButtonArc2_clicked(bool checked);
+
+    void on_radioButtonCircle2_clicked(bool checked);
+
+    void on_lineEditInner2_textChanged(const QString &arg1);
+
+    void on_lineEditOuter2_textChanged(const QString &arg1);
+
+    void on_lineEditStart2_textChanged(const QString &arg1);
+
+    void on_lineEditEnd2_textChanged(const QString &arg1);
+
+    void on_lineEditNotifTHR2_textChanged(const QString &arg1);
+
 private:
     Ui::FrameGZ *ui;
 };

@@ -1,32 +1,55 @@
 #include "ppigzobject.h"
 #include "qmath.h"
 
-PPIGZObject::PPIGZObject(QObject *parent): PPIObject(parent)
+PPIGZObject::PPIGZObject(QObject *parent, QString id): PPIObject(parent), m_id(id)
 {
     m_re = RadarEngine::RadarEngine::getInstance();
+
+    if(id == "GZ 1")
+    {
+        inner_range_key = RadarConfig::NON_VOLATILE_GZ_START_RANGE;
+        outer_range_key = RadarConfig::NON_VOLATILE_GZ_END_RANGE;
+        start_bearing_key = RadarConfig::NON_VOLATILE_GZ_START_BEARING;
+        end_bearing_key = RadarConfig::NON_VOLATILE_GZ_END_BEARING;
+        mode_key = RadarConfig::NON_VOLATILE_GZ_MODE;
+        shown_key = RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ;
+    }
+    else if(id == "GZ 2")
+    {
+        inner_range_key = RadarConfig::NON_VOLATILE_GZ_START_RANGE1;
+        outer_range_key = RadarConfig::NON_VOLATILE_GZ_END_RANGE1;
+        start_bearing_key = RadarConfig::NON_VOLATILE_GZ_START_BEARING1;
+        end_bearing_key = RadarConfig::NON_VOLATILE_GZ_END_BEARING1;
+        mode_key = RadarConfig::NON_VOLATILE_GZ_MODE1;
+        shown_key = RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ1;
+    }
+
 }
 
 void PPIGZObject::draw(QPainter* painter, const int &side)
 {
-    const bool show_gz = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ).toBool();
+    const bool show_gz = RadarConfig::RadarConfig::getInstance("")->getConfig(shown_key).toBool();
     if(show_gz)
     {
 //        qDebug()<<Q_FUNC_INFO<<"bogey"<<m_re->guardZone->GetBogeyCount();
 
-        const bool heading_up = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toInt();
+//        const bool heading_up = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toInt();
 //        const int preset_color = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_DISPLAY_PRESET_COLOR).toInt();
-        const int inner_range = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_GZ_START_RANGE).toInt();
-        const int outer_range = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_GZ_END_RANGE).toInt();
-        const int start_bearing = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_GZ_START_BEARING).toInt();
-        const int end_bearing = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_GZ_END_BEARING).toInt();
+        const int inner_range = RadarConfig::RadarConfig::getInstance("")->getConfig(inner_range_key).toInt();
+        const int outer_range = RadarConfig::RadarConfig::getInstance("")->getConfig(outer_range_key).toInt();
+        const int start_bearing = RadarConfig::RadarConfig::getInstance("")->getConfig(start_bearing_key).toInt();
+        const int end_bearing = RadarConfig::RadarConfig::getInstance("")->getConfig(end_bearing_key).toInt();
         const int curRange = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
-        const int mode = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_GZ_MODE).toInt();
-        const double bearing = heading_up ? 0. : RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+        const int mode = RadarConfig::RadarConfig::getInstance("")->getConfig(mode_key).toInt();
+//        const double bearing = heading_up ? 0. : RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+        const double bearing = 0.;
 
         QPen curPen = painter->pen();
 
         //    painter.rotate(bearing-180);
-        QPen pen(Qt::yellow);
+        QPen pen;
+        if(m_id == "GZ 1") pen.setColor(Qt::yellow);
+        else if(m_id == "GZ 2") pen.setColor(Qt::red);
         pen.setWidth(2);
         painter->setPen(pen);
 

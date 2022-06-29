@@ -35,6 +35,7 @@ private:
     QMap<QString, Alarm*> listAlarms;
     static AlarmManager* alarmManager;
     QTimer *timer;
+    QString currentId, currentMsg;
     int no_alarm_count;
 };
 
