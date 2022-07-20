@@ -13,6 +13,7 @@ public:
     explicit NavSensor(QObject *parent = nullptr);
     void reconnect();
     void updateStatus();
+    void sendData(QString lat, QString lon, QString hdt);
 
 signals:
 

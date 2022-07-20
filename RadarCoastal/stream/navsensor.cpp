@@ -12,11 +12,20 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
         exit(1);
     }
 
-    topic = nav_config_str_list.last();
+    bool gps_auto = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
+    if(!gps_auto)
+    {
+        nav_config_str_list.removeLast();
+        topic = "gps_man";
+        nav_config_str_list.append(topic);
+    }
+    else
+        topic = nav_config_str_list.last();
+
     append_data_osd = "";
     no_osd_count = 11;
 
-    stream = new Stream(this,nav_config_str);
+    stream = new Stream(this,nav_config_str_list.join(":"));
     connect(stream,&Stream::signal_receiveData,this,&NavSensor::trigger_receivedData);
     connect(RadarConfig::RadarConfig::getInstance(""),&RadarConfig::RadarConfig::configValueChange,
             this,&NavSensor::trigger_configChange);
@@ -29,6 +38,46 @@ void NavSensor::trigger_configChange(const QString key, const QVariant val)
     {
         stream->setConfig(val.toString());
     }
+    else if(key == RadarConfig::NON_VOLATILE_NAV_CONTROL_GPS_AUTO)
+    {
+        if(val.toBool())
+        {
+            QString nav_config_str = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_NET_CONFIG).toString();
+            QStringList nav_config_str_list = nav_config_str.split(":");
+
+            if(nav_config_str_list.size() != 3)
+            {
+                qDebug()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
+                return;
+            }
+
+            topic = nav_config_str_list.last();
+            stream->setConfig(nav_config_str);
+        }
+        else
+        {
+            QString nav_config_str = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_NET_CONFIG).toString();
+            QStringList nav_config_str_list = nav_config_str.split(":");
+
+            if(nav_config_str_list.size() != 3)
+            {
+                qDebug()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
+                return;
+            }
+
+            nav_config_str_list.removeLast();
+            topic = "gps_man";
+            nav_config_str_list.append(topic);
+
+            stream->setConfig(nav_config_str_list.join(":"));
+        }
+    }
+}
+
+void NavSensor::sendData(QString lat, QString lon, QString hdt)
+{
+    QString m_data = topic+":"+"?"+lat+"#"+lon+"#"+hdt+"!";
+    stream->sendData(m_data);
 }
 
 bool NavSensor::isGPSDataValid(const QString lat_str, const QString lon_str)
@@ -79,7 +128,7 @@ void NavSensor::trigger_receivedData(const QString data)
 {
     qDebug()<<Q_FUNC_INFO<<data;
     QString msg = data;
-    if(msg.contains("gps") )
+    if(msg.contains("gps:") )
         {
             no_osd_count = 0;
 
