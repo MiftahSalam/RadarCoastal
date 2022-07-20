@@ -42,13 +42,13 @@ void ArpaSender::sendData(int id,
     QString crs_str = QString::number(crs,'f',1);
     QString alt_str =  QString::number(alt,'f',1);
 
-    lat_str.replace(".",",");
-    lon_str.replace(".",",");
-    alt_str.replace(".",",");
-    spd_str.replace(".",",");
-    crs_str.replace(".",",");
+//    lat_str.replace(".",",");
+//    lon_str.replace(".",",");
+//    alt_str.replace(".",",");
+//    spd_str.replace(".",",");
+//    crs_str.replace(".",",");
 
-    mq_data = topic+":"+id_str+"#"+"#"+rng_str+"#"+brn_str+"#"+lat_str+"#"+lon_str+"#"+"#"+spd_str+"#"+crs_str;
+    mq_data = topic+":"+id_str+"#"+rng_str+"#"+brn_str+"#"+lat_str+"#"+lon_str+"#"+spd_str+"#"+crs_str;
 
     if(stream->getStreamStatus() == DeviceWrapper::NOT_AVAIL) stream->reconnect();
     else stream->sendData(mq_data);
