@@ -8,7 +8,6 @@ QT       += core gui opengl network multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = RadarCoastal
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -23,6 +22,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
+
+#MODE += DEBUG_MODE
+
+equals(MODE,"DEBUG_MODE") {
+    TARGET = RadarCoastal-console
+    CONFIG += console
+}
+else {
+    TARGET = RadarCoastal
+}
 
 include(stream/qmqtt/qmqtt.pri)
 

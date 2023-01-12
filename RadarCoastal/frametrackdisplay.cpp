@@ -203,13 +203,13 @@ void FrameTrackDisplay::trigger_target_update(
             int row = listTarget.at(0)->row();
             model->setData(model->index(row,0,QModelIndex()),QString::number(id));
             model->setData(model->index(row,1,QModelIndex()),
-                           QString::number(rng,'f',1));
+                           QString::number(rng,'f',2));
             model->setData(model->index(row,2,QModelIndex()),
-                           QString::number(brn,'f',1));
+                           QString::number(brn,'f',2));
             model->setData(model->index(row,3,QModelIndex()),
-                           QString::number(spd,'f',1));
+                           QString::number(spd,'f',2));
             model->setData(model->index(row,4,QModelIndex()),
-                           QString::number(crs,'f',1));
+                           QString::number(crs,'f',2));
 
             modelSend->setData(modelSend->index(row,0,QModelIndex()),
                            QString::number(id));
@@ -222,11 +222,11 @@ void FrameTrackDisplay::trigger_target_update(
             modelSend->setData(modelSend->index(row,3,QModelIndex()),
                            QString::number(lon,'f',5));
             modelSend->setData(modelSend->index(row,4,QModelIndex()),
-                           QString::number(alt,'f',1));
+                           QString::number(alt,'f',2));
             modelSend->setData(modelSend->index(row,5,QModelIndex()),
-                           QString::number(spd,'f',1));
+                           QString::number(spd,'f',2));
             modelSend->setData(modelSend->index(row,6,QModelIndex()),
-                           QString::number(crs,'f',1));
+                           QString::number(crs,'f',2));
         }
         else
             insertList(id, lat, lon, alt, rng, brn, spd, crs);
@@ -247,13 +247,13 @@ void FrameTrackDisplay::insertList(
 
     model->setData(model->index(model->rowCount()-1,0,QModelIndex()),QString::number(id));
     model->setData(model->index(model->rowCount()-1,1,QModelIndex()),
-                   QString::number(rng,'f',1));
+                   QString::number(rng,'f',2));
     model->setData(model->index(model->rowCount()-1,2,QModelIndex()),
-                   QString::number(brn,'f',1));
+                   QString::number(brn,'f',2));
     model->setData(model->index(model->rowCount()-1,3,QModelIndex()),
-                   QString::number(spd,'f',1));
+                   QString::number(spd,'f',2));
     model->setData(model->index(model->rowCount()-1,4,QModelIndex()),
-                   QString::number(crs,'f',1));
+                   QString::number(crs,'f',2));
 
     modelSend->setData(modelSend->index(modelSend->rowCount()-1,0,QModelIndex()), QString::number(id));
     modelSend->setData(modelSend->index(modelSend->rowCount()-1,1,QModelIndex()),
@@ -263,11 +263,11 @@ void FrameTrackDisplay::insertList(
     modelSend->setData(modelSend->index(modelSend->rowCount()-1,3,QModelIndex()),
                    QString::number(lon,'f',5));
     modelSend->setData(modelSend->index(modelSend->rowCount()-1,4,QModelIndex()),
-                   QString::number(alt,'f',1));
+                   QString::number(alt,'f',2));
     modelSend->setData(modelSend->index(modelSend->rowCount()-1,5,QModelIndex()),
-                   QString::number(spd,'f',1));
+                   QString::number(spd,'f',2));
     modelSend->setData(modelSend->index(modelSend->rowCount()-1,6,QModelIndex()),
-                   QString::number(crs,'f',1));
+                   QString::number(crs,'f',2));
 
     model->item(model->rowCount()-1,0)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     model->item(model->rowCount()-1,1)->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter);

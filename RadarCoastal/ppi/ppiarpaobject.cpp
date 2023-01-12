@@ -92,6 +92,7 @@ void PPIArpaObject::createMARPA(const QPoint& pos, const int vp_width, const int
     double const curLon = instance->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
     QPoint screen_middle(vp_width/2,vp_height/2);
     QPointF gps = pixToGPS(pos.x()-screen_middle.x(),-pos.y()+screen_middle.y(),vp_width,vp_height,curRange,curLat,curLon);
+
     RadarEngine::Position target_pos;
     target_pos.lat = gps.y();
     target_pos.lon = gps.x();

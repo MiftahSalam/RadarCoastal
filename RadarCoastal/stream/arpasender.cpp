@@ -1,4 +1,5 @@
 #include "arpasender.h"
+#include "utils.h"
 
 ArpaSender::ArpaSender(QObject *parent)
     : QObject{parent}
@@ -32,10 +33,11 @@ void ArpaSender::sendData(int id,
         )
 {
     QString mq_data;
+    QPointF gpsCorrection = gpsAbsolute(lat,lon);
 
     QString id_str = QString::number(id);
-    QString lat_str = QString::number(lat,'f',5);
-    QString lon_str = QString::number(lon,'f',5);
+    QString lat_str = QString::number(gpsCorrection.y(),'f',5);
+    QString lon_str = QString::number(gpsCorrection.x(),'f',5);
     QString rng_str = QString::number(rng,'f',1);
     QString brn_str = QString::number(brn,'f',1);
     QString spd_str = QString::number(spd,'f',1);

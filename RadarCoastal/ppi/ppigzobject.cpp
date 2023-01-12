@@ -33,7 +33,7 @@ void PPIGZObject::draw(QPainter* painter, const int &side)
     {
 //        qDebug()<<Q_FUNC_INFO<<"bogey"<<m_re->guardZone->GetBogeyCount();
 
-//        const bool heading_up = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toInt();
+        const bool heading_up = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toInt();
 //        const int preset_color = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_DISPLAY_PRESET_COLOR).toInt();
         const int inner_range = RadarConfig::RadarConfig::getInstance("")->getConfig(inner_range_key).toInt();
         const int outer_range = RadarConfig::RadarConfig::getInstance("")->getConfig(outer_range_key).toInt();
@@ -41,8 +41,8 @@ void PPIGZObject::draw(QPainter* painter, const int &side)
         const int end_bearing = RadarConfig::RadarConfig::getInstance("")->getConfig(end_bearing_key).toInt();
         const int curRange = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
         const int mode = RadarConfig::RadarConfig::getInstance("")->getConfig(mode_key).toInt();
-//        const double bearing = heading_up ? 0. : RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
-        const double bearing = 0.;
+        const double bearing = heading_up ? -RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble() : 0.;
+//        const double bearing = 0.;
 
         QPen curPen = painter->pen();
 

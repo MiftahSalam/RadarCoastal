@@ -12,9 +12,9 @@ FrameControl3::FrameControl3(QWidget *parent) :
     ui(new Ui::FrameControl3)
 {
     ui->setupUi(this);
-    ui->label->hide();
+//    ui->label->hide();
     ui->label_2->hide();
-    ui->comboBoxMotion->hide();
+//    ui->comboBoxMotion->hide();
     ui->comboBoxDisplayMode->hide();
 
     ui->comboBoxMotion->setCurrentIndex(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool() ? 1 : 0);

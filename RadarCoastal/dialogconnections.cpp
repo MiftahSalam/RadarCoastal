@@ -55,6 +55,28 @@ DialogConnections::DialogConnections(QWidget *parent) :
         }
     }
 
+    QString nav_conf = rcInstance->getConfig(RadarConfig::NON_VOLATILE_NAV_NET_CONFIG).toString();
+    QStringList nav_conf_list = nav_conf.split(";",Qt::SkipEmptyParts);
+
+    if(nav_conf_list.size() != 3)
+    {
+        ui->lineEditNavMqttServer->setText("invalid config "+nav_conf);
+        ui->lineEditNavMqttTopic->setText("invalid config "+nav_conf);
+    }
+    else
+    {
+        nav_conf_list = nav_conf_list.at(2).split(":",Qt::SkipEmptyParts);
+        if(nav_conf_list.size() != 3)
+        {
+            ui->lineEditNavMqttServer->setText("invalid config "+nav_conf);
+            ui->lineEditNavMqttTopic->setText("invalid config "+nav_conf);
+        }
+        else
+        {
+            ui->lineEditNavMqttServer->setText(nav_conf_list.at(0)+":"+nav_conf_list.at(1));
+            ui->lineEditNavMqttTopic->setText(nav_conf_list.at(2));
+        }
+    }
 }
 
 DialogConnections::~DialogConnections()
@@ -128,3 +150,59 @@ void DialogConnections::on_pushButtonApply_clicked()
         }
     }
 }
+
+void DialogConnections::on_pushButtonApplyNav_clicked()
+{
+    RadarConfig::RadarConfig* rcInstance = RadarConfig::RadarConfig::getInstance("");
+
+    QString nav_conf = ui->lineEditNavMqttServer->text();
+    QStringList nav_conf_list = nav_conf.split(":",Qt::SkipEmptyParts);
+
+    if(nav_conf_list.size() != 2)
+    {
+        ui->lineEditNavMqttServer->setText("");
+        QMessageBox::information(this,"Warning","Invalid Mqtt server input.\n"
+                                 "Input should be IP:port formatted");
+        return;
+    }
+    else
+    {
+        QHostAddress host(nav_conf_list.at(0));
+        if(host.isNull())
+        {
+            ui->lineEditNavMqttServer->setText("");
+            QMessageBox::information(this,"Warning","Invalid Mqtt server input host.\n"
+                                     "Input should be IP formatted");
+            return;
+        }
+        else
+        {
+            bool ok = false;
+            uint port = nav_conf_list.at(1).toUInt(&ok);
+            Q_UNUSED(port)
+            if(!ok)
+            {
+                ui->lineEditNavMqttServer->setText("");
+                QMessageBox::information(this,"Warning","Invalid Mqtt server input port.\n"
+                                         "Input port should be 2000-65500");
+                return;
+            }
+            else
+            {
+                if(ui->lineEditNavMqttTopic->text().isEmpty())
+                {
+                    ui->lineEditNavMqttTopic->setText("");
+                    QMessageBox::information(this,"Warning","Invalid Mqtt topic input.\n"
+                                             "Input cannot be empty");
+                    return;
+                }
+                else
+                {
+                    rcInstance->setConfig(RadarConfig::NON_VOLATILE_NAV_NET_CONFIG,"mqtt;InOut;"+ui->lineEditNavMqttServer->text()+":"+ui->lineEditNavMqttTopic->text());
+                }
+            }
+        }
+    }
+
+}
+
