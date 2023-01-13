@@ -87,9 +87,19 @@ void PPIArpaObject::createMARPA(const QPoint& pos, const int vp_width, const int
 
     if(!instance->getConfig(RadarConfig::NON_VOLATILE_ARPA_CONTROL_CREATE_ARPA_BY_CLICK).toBool()) return;
 
-    double const curRange = instance->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
     double const curLat = instance->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
     double const curLon = instance->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+    double curRange = instance->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
+    const quint8 unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+
+    switch (unit) {
+    case 1:
+        curRange *= KM_TO_NM;
+        break;
+    default:
+        break;
+    }
+
     QPoint screen_middle(vp_width/2,vp_height/2);
     QPointF gps = pixToGPS(pos.x()-screen_middle.x(),-pos.y()+screen_middle.y(),vp_width,vp_height,curRange,curLat,curLon);
 

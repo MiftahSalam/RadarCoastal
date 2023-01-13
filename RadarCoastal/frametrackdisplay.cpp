@@ -67,9 +67,18 @@ void FrameTrackDisplay::updateTarget()
         double brn;
         double range;
         int num_limit = MAX_UPDATE_NUMBER;
-        int curRange = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
         const bool heading_up = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
         const double currentHeading = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+        double curRange = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
+        const quint8 unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+
+        switch (unit) {
+        case 1:
+            curRange *= KM_TO_NM;
+            break;
+        default:
+            break;
+        }
 
         while ((cur_arpa_id_count < m_re->radarArpa->m_number_of_targets) && num_limit > 0)
         {
@@ -135,6 +144,19 @@ void FrameTrackDisplay::updateTarget()
 }
 void FrameTrackDisplay::timerTimeout()
 {
+    const quint8 unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+
+    switch (unit) {
+    case 0:
+        ui->label_3->setText("Range\n(Km)");
+        break;
+    case 1:
+        ui->label_3->setText("Range\n(NM)");
+        break;
+    default:
+        break;
+    }
+
     updateTarget();
     if(modelSend->rowCount()>0 && modelSend->rowCount()>dataCount_mqtt)
     {
