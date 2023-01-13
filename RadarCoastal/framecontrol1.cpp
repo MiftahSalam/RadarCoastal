@@ -43,14 +43,13 @@ void FrameControl1::handleRingRangeChange()
 
     if(rng < 1)
     {
-        ui->labelRange->setText(QString::number(static_cast<int>(rng))+" m");
+        ui->labelRange->setText(QString::number(static_cast<int>(rng*1000.))+" m");
     }
     else
     {
         switch (unit) {
         case 1:
             rng *= KM_TO_NM;
-            rng_ring *= KM_TO_NM;
             break;
         default:
             break;
@@ -60,20 +59,19 @@ void FrameControl1::handleRingRangeChange()
 
     if(rng_ring < 1)
     {
+        ringValue = QString::number(static_cast<int>(rng_ring*1000.))+" m";
+    }
+    else
+    {
         switch (unit) {
-        case 0:
-            rng_ring *= 1000.;
-            break;
         case 1:
-            rng_ring *= (1000./KM_TO_NM);
+            rng_ring *= KM_TO_NM;
             break;
         default:
             break;
         }
-        ringValue = QString::number(static_cast<int>(rng_ring))+" m";
-    }
-    else
         ringValue = QString::number(rng_ring,'f',1)+unit_str;
+    }
 
     if(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool())
         ui->labelRingRange->setText("Rings "+ringValue);
@@ -127,17 +125,16 @@ void FrameControl1::on_pushButtonZoomIn_clicked()
     case 0:
         cur_zoom_lvl = RadarEngine::distanceList.indexOf(cur_range)+1;
         if(cur_zoom_lvl > RadarEngine::distanceList.size()-1) cur_zoom_lvl -=1;
+        RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, RadarEngine::distanceList.at(cur_zoom_lvl));
         break;
     case 1:
         cur_zoom_lvl = RadarEngine::distanceListNautical.indexOf(cur_range)+1;
         if(cur_zoom_lvl > RadarEngine::distanceListNautical.size()-1) cur_zoom_lvl -=1;
+        RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, RadarEngine::distanceListNautical.at(cur_zoom_lvl));
         break;
     default:
         break;
     }
-
-
-    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, RadarEngine::distanceList.at(cur_zoom_lvl));
 }
 
 void FrameControl1::on_pushButtonZoomOut_clicked()
@@ -148,17 +145,17 @@ void FrameControl1::on_pushButtonZoomOut_clicked()
     switch (unit) {
     case 0:
         cur_zoom_lvl = RadarEngine::distanceList.indexOf(cur_range)-1;
+        if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
+        RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, RadarEngine::distanceList.at(cur_zoom_lvl));
         break;
     case 1:
         cur_zoom_lvl = RadarEngine::distanceListNautical.indexOf(cur_range)-1;
+        if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
+        RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, RadarEngine::distanceListNautical.at(cur_zoom_lvl));
         break;
     default:
         break;
     }
-
-
-    if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
-    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, RadarEngine::distanceList.at(cur_zoom_lvl));
 }
 
 void FrameControl1::on_pushButtonTxStnb_clicked()
@@ -166,10 +163,25 @@ void FrameControl1::on_pushButtonTxStnb_clicked()
     if(ui->pushButtonTxStnb->text().contains("Transmit"))
     {
         const int cur_range = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
-        int cur_zoom_lvl = RadarEngine::distanceList.indexOf(cur_range);
 
-        if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
-        RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, RadarEngine::distanceList.at(cur_zoom_lvl));
+        switch (unit) {
+        case 0:
+        {
+            int cur_zoom_lvl = RadarEngine::distanceList.indexOf(cur_range);
+            if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
+            RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, RadarEngine::distanceList.at(cur_zoom_lvl));
+            break;
+        }
+        case 1:
+        {
+            int cur_zoom_lvl = RadarEngine::distanceListNautical.indexOf(cur_range);
+            if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
+            RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, RadarEngine::distanceListNautical.at(cur_zoom_lvl));
+            break;
+        }
+        default:
+            break;
+        }
 
         m_re->trigger_ReqTx();
     }

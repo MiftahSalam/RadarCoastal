@@ -42,15 +42,15 @@ void PPIGZObject::draw(QPainter* painter, const int &side)
         const int mode = RadarConfig::RadarConfig::getInstance("")->getConfig(mode_key).toInt();
         const double bearing = heading_up ? -RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble() : 0.;
         double curRange = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
-        const quint8 unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+//        const quint8 unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
 
-        switch (unit) {
-        case 1:
-            curRange *= KM_TO_NM;
-            break;
-        default:
-            break;
-        }
+//        switch (unit) {
+//        case 1:
+//            curRange *= KM_TO_NM;
+//            break;
+//        default:
+//            break;
+//        }
 
         QPen curPen = painter->pen();
 
