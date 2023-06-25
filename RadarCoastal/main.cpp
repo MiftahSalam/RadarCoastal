@@ -14,8 +14,8 @@ int main(int argc, char *argv[])
 
     if(instance->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_USE_OPENGL_SOFTWARE).toBool())
         QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL); //tiap pc beda.why??
-    QApplication a(argc, argv);
 
+    QApplication a(argc, argv);
 
     QString appStyle;
     if(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_DISPLAY_PRESET_COLOR).toInt() == 0)

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl network multimedia
+QT       += core gui opengl network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -112,11 +112,7 @@ FORMS += \
     frametrail.ui
 
 unix: {
-    LIBS += -L/usr/lib/RadarConfig -lRadarConfig
     LIBS += -L/usr/lib/RadarEngine -lRadarEngine
-
-    INCLUDEPATH += /usr/include/RadarConfig
-    DEPENDPATH += /usr/include/RadarConfig
 
     INCLUDEPATH += /usr/include/RadarEngine
     DEPENDPATH += /usr/include/RadarEngine
@@ -124,17 +120,9 @@ unix: {
 } else:win32 {
     LIBS += -lOpenGL32
 
-    INCLUDEPATH += C:\Users\miftah\RadarConfigLib\include
-    DEPENDPATH += C:\Users\miftah\RadarConfigLib\lib\include
-
     INCLUDEPATH += C:\Users\miftah\RadarEngineLib\include
     DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include
 }
-
-#LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfigd
-
-win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfig
-else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarConfigLib\lib\ -lRadarConfigd
 
 win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\ -lRadarEngine
 else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\ -lRadarEngined
