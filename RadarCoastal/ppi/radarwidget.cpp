@@ -67,9 +67,17 @@ void RadarWidget::timeOut()
 void RadarWidget::drawRings(QPainter *painter, const int &side)
 {
     Q_UNUSED(side)
-//    int ringCount = qCeil(side/2)-20;
-//    int bufRng = ringCount;
-    const qreal range = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble()/1000.;
+    double range = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
+    const quint8 unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+
+    switch (unit) {
+    case 1:
+        range *= KM_TO_NM;
+        break;
+    default:
+        break;
+    }
+
     const qreal range_ring = range/RING_COUNT;
 
 //    painter->setPen(QColor(255,255,0,100));

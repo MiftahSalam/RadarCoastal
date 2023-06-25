@@ -1,5 +1,6 @@
 #include "framecontrol3.h"
 #include "ui_framecontrol3.h"
+#include "utils.h"
 
 #include <radarconfig.h>
 #include <radarengine_global.h>
@@ -21,6 +22,9 @@ FrameControl3::FrameControl3(QWidget *parent) :
     ui->checkBoxShowCompass->setChecked(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_COMPASS).toBool());
     ui->checkBoxShowHM->setChecked(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_HEADING_MARKER).toBool());
     ui->checkBoxShowRSweep->setChecked(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP).toBool());
+    ui->comboBoxDisplayUnit->setCurrentIndex(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toInt());
+
+    prev_unit_idx = ui->comboBoxDisplayMode->currentIndex();
 }
 
 FrameControl3::~FrameControl3()
@@ -83,5 +87,41 @@ void FrameControl3::on_comboBoxDisplayMode_currentIndexChanged(int index)
     }
 
     RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_DISPLAY_PRESET_COLOR,index);
+}
+
+
+void FrameControl3::on_comboBoxDisplayUnit_currentIndexChanged(int index)
+{
+    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT,index);
+    unit = static_cast<quint8>(index);
+
+    const int cur_range = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
+    int cur_zoom_lvl = RadarEngine::distanceList.indexOf(cur_range);
+
+    switch (prev_unit_idx) {
+    case 0:
+        cur_zoom_lvl = RadarEngine::distanceList.indexOf(cur_range);
+        break;
+    case 1:
+        cur_zoom_lvl = RadarEngine::distanceListNautical.indexOf(cur_range);
+        break;
+    default:
+        break;
+    }
+
+    if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
+
+    switch (index) {
+    case 0:
+        RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, RadarEngine::distanceList.at(cur_zoom_lvl));
+        break;
+    case 1:
+        RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, RadarEngine::distanceListNautical.at(cur_zoom_lvl));
+        break;
+    default:
+        break;
+    }
+
+    prev_unit_idx = index;
 }
 

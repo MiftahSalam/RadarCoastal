@@ -29,8 +29,11 @@ private slots:
 
     void on_comboBoxDisplayMode_currentIndexChanged(int index);
 
+    void on_comboBoxDisplayUnit_currentIndexChanged(int index);
+
 private:
     Ui::FrameControl3 *ui;
+    int prev_unit_idx;
 };
 
 #endif // FRAMECONTROL3_H

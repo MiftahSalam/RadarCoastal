@@ -1,15 +1,20 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "utils.h"
 
 #include <QDebug>
 #include <QResizeEvent>
 #include <QMessageBox>
 #include <unistd.h>
 
+quint8 unit;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+
     ui->setupUi(this);
     ui->pushButtonTilting->hide();
 
