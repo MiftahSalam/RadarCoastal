@@ -9,6 +9,7 @@
 #endif
 
 #include "radarwidget.h"
+#include "utils.h"
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
@@ -65,14 +66,21 @@ void RadarWidget::timeOut()
 
 void RadarWidget::drawRings(QPainter *painter, const int &side)
 {
-    int ringCount = qCeil(side/2)-20;
-    int bufRng = ringCount;
+    Q_UNUSED(side)
+//    int ringCount = qCeil(side/2)-20;
+//    int bufRng = ringCount;
+    const qreal range = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble()/1000.;
+    const qreal range_ring = range/RING_COUNT;
 
 //    painter->setPen(QColor(255,255,0,100));
     for(int i=0;i<RING_COUNT;i++)
     {
-        painter->drawEllipse(-bufRng/2,-bufRng/2,bufRng,bufRng);
-        bufRng += ringCount;
+        int range_calc = static_cast<int>(distanceFromCenterInPix(range_ring*(i+1),width(), height(), range)/1.);
+//        qDebug()<<Q_FUNC_INFO<<"bufRng"<<bufRng;
+//        qDebug()<<Q_FUNC_INFO<<"bufRng calc"<<range_calc;
+        painter->drawEllipse(-range_calc,-range_calc,range_calc*2,range_calc*2);
+//        painter->drawEllipse(-bufRng/2,-bufRng/2,bufRng,bufRng);
+//        bufRng += ringCount;
     }
 
 }

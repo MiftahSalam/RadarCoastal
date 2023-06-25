@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>278</width>
-    <height>360</height>
+    <height>364</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabRadar">
       <attribute name="title">
@@ -367,6 +367,109 @@
       <attribute name="title">
        <string>Nav</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QLabel" name="label_15">
+           <property name="styleSheet">
+            <string notr="true">color: rgb(255, 255, 0);</string>
+           </property>
+           <property name="text">
+            <string>mqtt Nav topic:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEditNavMqttTopic">
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>gps</string>
+           </property>
+           <property name="maxLength">
+            <number>100</number>
+           </property>
+           <property name="frame">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="styleSheet">
+            <string notr="true">color: rgb(255, 255, 0);</string>
+           </property>
+           <property name="text">
+            <string>mqtt Nav server:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEditNavMqttServer">
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="inputMask">
+            <string>000.000.000.000:00000</string>
+           </property>
+           <property name="text">
+            <string>127.123.343.123:565</string>
+           </property>
+           <property name="maxLength">
+            <number>21</number>
+           </property>
+           <property name="frame">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonApplyNav">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>Apply</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>205</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>

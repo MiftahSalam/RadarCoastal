@@ -23,6 +23,8 @@ private slots:
 
     void on_pushButtonApply_clicked();
 
+    void on_pushButtonApplyNav_clicked();
+
 private:
     Ui::DialogConnections *ui;
 };

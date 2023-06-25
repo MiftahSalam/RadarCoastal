@@ -28,8 +28,8 @@ void FrameCursor::trigger_cursorMove(const QPoint pos, const int vp_width, const
 
 //    qDebug()<<Q_FUNC_INFO<<"pos"<<pos<<"width"<<vp_width<<"height"<<vp_height;
 //    qDebug()<<Q_FUNC_INFO<<"curRange"<<curRange<<"curLat"<<curLat<<"curLon"<<curLon<<"cursor"<<distance;
-    ui->labelCursorRange->setText(QString::number(distance.x(),'f',1)+" Km");
-    ui->labelCursorBrn->setText(QString::number(distance.y(),'f',1));
+    ui->labelCursorRange->setText(QString::number(distance.x(),'f',2)+" Km");
+    ui->labelCursorBrn->setText(QString::number(distance.y(),'f',2));
     ui->labelCursorLat->setText(gps_str.at(0));
     ui->labelCursorLon->setText(gps_str.at(1));
 }
