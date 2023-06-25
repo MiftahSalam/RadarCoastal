@@ -6,9 +6,9 @@
 #include <radarengine.h>
 
 #include "ppi/radarwidget.h"
-#include "dialogconnections.h"
-#include "dialoggz.h"
-#include "dialogbit.h"
+#include "view/dialog/dialogconnections.h"
+#include "view/dialog/dialoggz.h"
+#include "view/dialog/dialogbit.h"
 
 namespace Ui {
 class MainWindow;

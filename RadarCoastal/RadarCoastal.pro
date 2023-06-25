@@ -33,83 +33,83 @@ else {
     TARGET = RadarCoastal
 }
 
-include(stream/qmqtt/qmqtt.pri)
+include(infra/qmqtt/qmqtt.pri)
 
 SOURCES += \
-    alarm/alarm.cpp \
-    alarm/alarmmanager.cpp \
-    alarm/gzalarm.cpp \
-    dialogbit.cpp \
-    dialogconnections.cpp \
-    dialoggz.cpp \
-    framegz.cpp \
-    framestatus.cpp \
+    usecase/alarm/alarm.cpp \
+    usecase/alarm/alarmmanager.cpp \
+    usecase/alarm/gzalarm.cpp \
+    view/dialog/dialogbit.cpp \
+    view/dialog/dialogconnections.cpp \
+    view/dialog/dialoggz.cpp \
+    view/panel/framegz.cpp \
+    view/panel/framestatus.cpp \
         main.cpp \
-        mainwindow.cpp \
-    framecontrol1.cpp \
-    framecontrol2.cpp \
-    frameosd.cpp \
-    ppi/ppiarpaobject.cpp \
-    ppi/ppigzobject.cpp \
-    ppi/ppiobject.cpp \
-    ppi/ppicompassobject.cpp \
-    stream/arpasender.cpp \
-    stream/navsensor.cpp \
-    stream/stream.cpp \
-    stream/mqttdevicewrapper.cpp \
-    stream/devicewrapper.cpp \
-    frametrackdisplay.cpp \
-    ppi/radarwidget.cpp \
-    ppi/ppievent.cpp \
-    framecontrol3.cpp \
-    framecursor.cpp \
-    frametrail.cpp \
-    utils.cpp
+        view/mainwindow.cpp \
+    view/panel/framecontrol1.cpp \
+    view/panel/framecontrol2.cpp \
+    view/panel/frameosd.cpp \
+    usecase/ppi/ppiarpaobject.cpp \
+    usecase/ppi/ppigzobject.cpp \
+    usecase/ppi/ppiobject.cpp \
+    usecase/ppi/ppicompassobject.cpp \
+    usecase/stream/arpasender.cpp \
+    usecase/stream/navsensor.cpp \
+    usecase/stream/stream.cpp \
+    usecase/stream/mqttdevicewrapper.cpp \
+    usecase/stream/devicewrapper.cpp \
+    view/panel/frametrackdisplay.cpp \
+    view/ppi/radarwidget.cpp \
+    usecase/ppi/ppievent.cpp \
+    view/panel/framecontrol3.cpp \
+    view/panel/framecursor.cpp \
+    view/panel/frametrail.cpp \
+    shared/utils.cpp
 
 HEADERS += \
-    alarm/alarm.h \
-    alarm/alarmmanager.h \
-    alarm/gzalarm.h \
-    dialogbit.h \
-    dialogconnections.h \
-    dialoggz.h \
-    framegz.h \
-    framestatus.h \
-        mainwindow.h \
-    framecontrol1.h \
-    framecontrol2.h \
-    frameosd.h \
-    ppi/ppiarpaobject.h \
-    ppi/ppigzobject.h \
-    ppi/ppiobject.h \
-    ppi/ppicompassobject.h \
-    stream/arpasender.h \
-    stream/navsensor.h \
-    stream/stream.h \
-    stream/mqttdevicewrapper.h \
-    stream/devicewrapper.h \
-    frametrackdisplay.h \
-    ppi/radarwidget.h \
-    ppi/ppievent.h \
-    framecontrol3.h \
-    framecursor.h \
-    frametrail.h \
-    utils.h
+    usecase/alarm/alarm.h \
+    usecase/alarm/alarmmanager.h \
+    usecase/alarm/gzalarm.h \
+    view/dialog/dialogbit.h \
+    view/dialog/dialogconnections.h \
+    view/dialog/dialoggz.h \
+    view/panel/framegz.h \
+    view/panel/framestatus.h \
+        view/mainwindow.h \
+    view/panel/framecontrol1.h \
+    view/panel/framecontrol2.h \
+    view/panel/frameosd.h \
+    usecase/ppi/ppiarpaobject.h \
+    usecase/ppi/ppigzobject.h \
+    usecase/ppi/ppiobject.h \
+    usecase/ppi/ppicompassobject.h \
+    usecase/stream/arpasender.h \
+    usecase/stream/navsensor.h \
+    usecase/stream/stream.h \
+    usecase/stream/mqttdevicewrapper.h \
+    usecase/stream/devicewrapper.h \
+    view/panel/frametrackdisplay.h \
+    view/ppi/radarwidget.h \
+    usecase/ppi/ppievent.h \
+    view/panel/framecontrol3.h \
+    view/panel/framecursor.h \
+    view/panel/frametrail.h \
+    shared/utils.h
 
 FORMS += \
-    dialogbit.ui \
-    dialogconnections.ui \
-    dialoggz.ui \
-    framegz.ui \
-    framestatus.ui \
-        mainwindow.ui \
-    framecontrol1.ui \
-    framecontrol2.ui \
-    frameosd.ui \
-    frametrackdisplay.ui \
-    framecontrol3.ui \
-    framecursor.ui \
-    frametrail.ui
+    view/dialog/dialogbit.ui \
+    view/dialog/dialogconnections.ui \
+    view/dialog/dialoggz.ui \
+    view/panel/framegz.ui \
+    view/panel/framestatus.ui \
+        view/mainwindow.ui \
+    view/panel/framecontrol1.ui \
+    view/panel/framecontrol2.ui \
+    view/panel/frameosd.ui \
+    view/panel/frametrackdisplay.ui \
+    view/panel/framecontrol3.ui \
+    view/panel/framecursor.ui \
+    view/panel/frametrail.ui
 
 unix: {
     LIBS += -L/usr/lib/RadarEngine -lRadarEngine

@@ -16,15 +16,15 @@ class Alarm : public QObject
 public:
     explicit Alarm(QObject *parent = nullptr, AlarmType type = ALARM_UNKNOWN, QString id = "");
 
-    void setCurrentMessage(const QString message);
-    QString getCurrentMessage() const;
-    QString getId() const;
-    AlarmType getType() const;
-    virtual void confirm() = 0;
-    virtual bool isConfirmed() = 0;
+    void SetCurrentMessage(const QString message);
+    QString GetCurrentMessage() const;
+    QString GetId() const;
+    AlarmType GetType() const;
+    virtual void Confirm() = 0;
+    virtual bool IsConfirmed() = 0;
 
 signals:
-    void signal_alarmTriggered(const QString id, const QString message);
+    void SignalAlarmTriggered(const QString id, const QString message);
 
 protected:
     virtual void checkAlarm() = 0;
@@ -32,7 +32,7 @@ protected:
     QTimer *timer;
 
 protected slots:
-    void trigger_timeOut();
+    void triggerTimeOut();
 
 private:
     QString m_id;

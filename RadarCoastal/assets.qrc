@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/css">
-        <file>HMI_style.css</file>
-        <file>HMI_style_night.css</file>
+        <file>view/assets/css/HMI_style.css</file>
+        <file>view/assets/css/HMI_style_night.css</file>
     </qresource>
 </RCC>
