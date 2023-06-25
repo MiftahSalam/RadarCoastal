@@ -5,13 +5,13 @@ PPICompassObject::PPICompassObject(QObject *parent): PPIObject(parent)
 {
 }
 
-void PPICompassObject::draw(QPainter* painter, const int &side)
+void PPICompassObject::Draw(QPainter* painter, const int &side)
 {
-    const bool show_compass = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_COMPASS).toBool();
+    const bool show_compass = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_COMPASS).toBool();
     if(show_compass)
     {
-        const bool heading_up = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toInt();
-        const double bearing = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+        const bool heading_up = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toInt();
+        const double bearing = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
 
         QPen curPen = painter->pen();
 

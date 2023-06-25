@@ -13,7 +13,7 @@ class PPIGZObject : public PPIObject
 public:
     PPIGZObject(QObject* parent = nullptr, QString id = "");
 
-    void draw(QPainter* painter, const int &side) override;
+    void Draw(QPainter* painter, const int &side) override;
 
 public slots:
 

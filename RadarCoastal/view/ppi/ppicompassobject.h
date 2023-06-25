@@ -13,7 +13,7 @@ class PPICompassObject : public PPIObject
 public:
     PPICompassObject(QObject* parent = nullptr);
 
-    void draw(QPainter* painter, const int &side) override;
+    void Draw(QPainter* painter, const int &side) override;
 };
 
 #endif // PPICOMPASSOBJECT_H
