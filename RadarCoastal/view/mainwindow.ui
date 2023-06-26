@@ -433,55 +433,55 @@
   <customwidget>
    <class>FrameControl1</class>
    <extends>QFrame</extends>
-   <header location="global">framecontrol1.h</header>
+   <header location="global">view/panel/framecontrol1.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameControl2</class>
    <extends>QFrame</extends>
-   <header location="global">framecontrol2.h</header>
+   <header location="global">view/panel/framecontrol2.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameOSD</class>
    <extends>QFrame</extends>
-   <header location="global">frameosd.h</header>
+   <header location="global">view/panel/frameosd.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameTrackDisplay</class>
    <extends>QFrame</extends>
-   <header location="global">frametrackdisplay.h</header>
+   <header location="global">view/panel/frametrackdisplay.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameControl3</class>
    <extends>QFrame</extends>
-   <header location="global">framecontrol3.h</header>
+   <header location="global">view/panel/framecontrol3.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameCursor</class>
    <extends>QFrame</extends>
-   <header location="global">framecursor.h</header>
+   <header location="global">view/panel/framecursor.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameTrail</class>
    <extends>QFrame</extends>
-   <header location="global">frametrail.h</header>
+   <header location="global">view/panel/frametrail.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameStatus</class>
    <extends>QFrame</extends>
-   <header location="global">framestatus.h</header>
+   <header location="global">view/panel/framestatus.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameGZ</class>
    <extends>QFrame</extends>
-   <header location="global">framegz.h</header>
+   <header location="global">view/panel/framegz.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

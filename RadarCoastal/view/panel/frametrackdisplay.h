@@ -5,8 +5,8 @@
 #include <QStandardItemModel>
 #include <QTimer>
 
-#include "stream/arpasender.h"
-#include <radarengine.h>
+#include "usecase/stream/arpasender.h"
+#include <RadarEngine/radarengine.h>
 
 namespace Ui {
 class FrameTrackDisplay;

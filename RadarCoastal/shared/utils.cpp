@@ -1,12 +1,14 @@
-#include "utils.h"
-#include "radarconfig.h"
+#include "shared/utils.h"
 
 #include <QLineF>
 #include <qmath.h>
 
-#include <radarconfig_global.h>
+#include <RadarEngine/shared/global.h>
+#include <RadarEngine/radarconfig.h>
 
-QPointF pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
+quint8 Utils::unit = 0;
+
+QPointF Utils::PixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
 {
     QPoint screen_middle(0,0);
     QPointF event_pos_scaled(pos_x,pos_y);
@@ -43,7 +45,7 @@ QPointF pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int
     return pos_to_convert;
 }
 
-QPointF GPSToPix(const double lon, const double lat, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
+QPointF Utils::GPSToPix(const double lon, const double lat, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
 {
     QPoint screen_middle(0,0);
     QPointF event_pos_scaled(1,1);
@@ -97,10 +99,10 @@ QPointF GPSToPix(const double lon, const double lat, const int vp_width, const i
     return pos_to_convert;
 }
 
-QPointF distancePolar(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
+QPointF Utils::DistancePolar(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
 {
     QPoint screen_middle(vp_width/2,vp_height/2);
-    QPointF gps = pixToGPS(pos_x-screen_middle.x(), -pos_y+screen_middle.y(),vp_width,vp_height,vp_range,own_lat,own_lon);
+    QPointF gps = Utils::PixToGPS(pos_x-screen_middle.x(), -pos_y+screen_middle.y(),vp_width,vp_height,vp_range,own_lat,own_lon);
     double const R = 6371.;
 
     double dif_lat = deg2rad(gps.y());
@@ -119,7 +121,7 @@ QPointF distancePolar(const int pos_x, const int pos_y, const int vp_width, cons
     return QPointF(km,bearing);
 }
 
-qreal distanceFromCenterInPix(const qreal distance_in_km, const int vp_width, const int vp_height, const double vp_range)
+qreal Utils::DistanceFromCenterInPix(const qreal distance_in_km, const int vp_width, const int vp_height, const double vp_range)
 {
     double r_radar_pix;
     const int MAX_PIX = qMin(vp_width/2,vp_height/2);
@@ -130,7 +132,7 @@ qreal distanceFromCenterInPix(const qreal distance_in_km, const int vp_width, co
     return r_radar_pix;
 }
 
-QStringList GPSString(const double lon, const double lat)
+QStringList Utils::GPSString(const double lon, const double lat)
 {
     QString lat_hemis,lon_hemis;
 
@@ -187,7 +189,7 @@ QStringList GPSString(const double lon, const double lat)
     return QStringList()<<latitude_string<<longitude_string;
 }
 
-QString tickToTime(quint8 tick)
+QString Utils::TickToTime(quint8 tick)
 {
     //    qDebug()<<Q_FUNC_INFO<<"tick"<<tick;
 
@@ -213,16 +215,16 @@ QString tickToTime(quint8 tick)
     return min+":"+sec;
 }
 
-QPointF gpsAbsolute(double lat, double lon)
+QPointF Utils::GpsAbsolute(double lat, double lon)
 {
-    RadarConfig::RadarConfig* instance = RadarConfig::RadarConfig::getInstance("");
+    RadarEngine::RadarConfig* instance = RadarEngine::RadarConfig::getInstance("");
     double dlon = 0.;
     double dlat = 0.;
-    if(instance->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool())
+    if(instance->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool())
     {
-        double hdt = instance->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
-        double mid_lat = instance->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
-        double mid_lon = instance->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+        double hdt = instance->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+        double mid_lat = instance->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
+        double mid_lon = instance->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
         double offset_lon = lon-mid_lon;
         double offset_lat = lat-mid_lat;
         double cos_angle = qCos(hdt*M_PI/180);

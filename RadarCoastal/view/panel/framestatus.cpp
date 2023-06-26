@@ -1,6 +1,6 @@
+#include "shared/utils.h"
 #include "framestatus.h"
 #include "ui_framestatus.h"
-#include "utils.h"
 
 FrameStatus::FrameStatus(QWidget *parent) :
     QFrame(parent),
@@ -9,13 +9,13 @@ FrameStatus::FrameStatus(QWidget *parent) :
     ui->setupUi(this);
     initStatus();
 
-    m_re = RadarEngine::RadarEngine::getInstance();
-    alarmManager = AlarmManager::getInstance();
+    m_re = RadarEngine::RadarEngine::GetInstance();
+    alarmManager = AlarmManager::GetInstance();
 
     alarmToggle = true;
 
-    connect(RadarConfig::RadarConfig::getInstance(""), &RadarConfig::RadarConfig::configValueChange, this, &FrameStatus::trigger_statusChange);
-    connect(alarmManager, &AlarmManager::signal_alarm, this, &FrameStatus::trigger_Alarm);
+    connect(RadarEngine::RadarConfig::getInstance(""), &RadarEngine::RadarConfig::configValueChange, this, &FrameStatus::trigger_statusChange);
+    connect(alarmManager, &AlarmManager::SignalAlarm, this, &FrameStatus::trigger_Alarm);
 }
 
 void FrameStatus::trigger_Alarm(const QString id, const QString msg)
@@ -46,7 +46,7 @@ void FrameStatus::updateRadarStatus(const RadarEngine::RadarState status)
 {
     /*tes
     RadarEngine::RadarState test_status = RadarEngine::RADAR_STANDBY;
-    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_RADAR_WAKINGUP_TIME,30);
+    RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_RADAR_WAKINGUP_TIME,30);
     */
 
     switch (status) {
@@ -56,8 +56,8 @@ void FrameStatus::updateRadarStatus(const RadarEngine::RadarState status)
         break;
     case RadarEngine::RADAR_WAKING_UP:
     {
-        quint8 tick = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_RADAR_WAKINGUP_TIME).toInt());
-        ui->labelRadarStatus->setText("Waking up\n"+tickToTime(tick));
+        quint8 tick = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_RADAR_WAKINGUP_TIME).toInt());
+        ui->labelRadarStatus->setText("Waking up\n"+Utils::TickToTime(tick));
         ui->labelRadarStatus->setStyleSheet("color: rgb(196, 160, 0);");
     }
         break;
@@ -101,12 +101,12 @@ void FrameStatus::updateNavStatus(const int status)
 
 void FrameStatus::trigger_statusChange(const QString& key, const QVariant& val)
 {
-    if(key == RadarConfig::VOLATILE_RADAR_STATUS)
+    if(key == RadarEngine::VOLATILE_RADAR_STATUS)
     {
         RadarEngine::RadarState status = static_cast<RadarEngine::RadarState>(val.toInt());
         updateRadarStatus(status);
     }
-    else if(key == RadarConfig::VOLATILE_NAV_STATUS_GPS || key == RadarConfig::VOLATILE_NAV_STATUS_HEADING)
+    else if(key == RadarEngine::VOLATILE_NAV_STATUS_GPS || key == RadarEngine::VOLATILE_NAV_STATUS_HEADING)
     {
         updateNavStatus(val.toInt());
     }
@@ -121,7 +121,7 @@ void FrameStatus::on_alarmStatus_clicked(const QPoint &p)
 {
     Q_UNUSED(p)
     qDebug()<<Q_FUNC_INFO;
-    alarmManager->confirm(ui->labelAlarmStatus->text());
+    alarmManager->Confirm(ui->labelAlarmStatus->text());
 }
 
 void FrameStatus::initStatus()

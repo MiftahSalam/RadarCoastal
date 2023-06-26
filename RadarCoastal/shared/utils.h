@@ -4,14 +4,19 @@
 #include <QPointF>
 #include <QStringList>
 
-extern quint8 unit;
+class Utils
+{
+public:
+    static quint8 unit;
 
-extern QPointF pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
-extern QPointF GPSToPix(const double lon, const double lat, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
-extern QPointF distancePolar(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
-extern qreal distanceFromCenterInPix(const qreal distance_in_km, const int vp_width, const int vp_height, const double vp_range);
-extern QStringList GPSString(const double lon, const double lat);
-extern QString tickToTime(quint8 tick);
-extern QPointF gpsAbsolute(double lat, double lon);
+    static QPointF PixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
+    static QPointF GPSToPix(const double lon, const double lat, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
+    static QPointF DistancePolar(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
+    static qreal DistanceFromCenterInPix(const qreal distance_in_km, const int vp_width, const int vp_height, const double vp_range);
+    static QStringList GPSString(const double lon, const double lat);
+    static QString TickToTime(quint8 tick);
+    static QPointF GpsAbsolute(double lat, double lon);
+};
+
 
 #endif // UTILS_H

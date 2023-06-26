@@ -13,9 +13,9 @@ DialogConnections::DialogConnections(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    RadarConfig::RadarConfig* rcInstance = RadarConfig::RadarConfig::getInstance("");
+    RadarEngine::RadarConfig* rcInstance = RadarEngine::RadarConfig::getInstance("");
 
-    ui->checkBoxShowARPA->setChecked(rcInstance->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_ARPA).toBool());
+    ui->checkBoxShowARPA->setChecked(rcInstance->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_ARPA).toBool());
 
     ui->lineEditIPData->setValidator(new QIntValidator(0,255,ui->lineEditIPData));
     ui->lineEditPortData->setValidator(new QIntValidator(3000,65536,ui->lineEditPortData));
@@ -24,16 +24,16 @@ DialogConnections::DialogConnections(QWidget *parent) :
     ui->lineEditIPcmd->setValidator(new QIntValidator(0,255,ui->lineEditIPcmd));
     ui->lineEditPortcmd->setValidator(new QIntValidator(3000,65536,ui->lineEditPortcmd));
 
-    ui->lineEditIPData->setText(rcInstance->getConfig(RadarConfig::NON_VOLATILE_RADAR_NET_IP_DATA).toString());
-    ui->lineEditPortData->setText(QString::number(rcInstance->getConfig(RadarConfig::NON_VOLATILE_RADAR_NET_PORT_DATA).toInt()));
-    ui->lineEditIPReport->setText(rcInstance->getConfig(RadarConfig::NON_VOLATILE_RADAR_NET_IP_REPORT).toString());
-    ui->lineEditPortReport->setText(QString::number(rcInstance->getConfig(RadarConfig::NON_VOLATILE_RADAR_NET_PORT_REPORT).toInt()));
-    ui->lineEditIPcmd->setText(rcInstance->getConfig(RadarConfig::NON_VOLATILE_RADAR_NET_IP_CMD).toString());
-    ui->lineEditPortcmd->setText(QString::number(rcInstance->getConfig(RadarConfig::NON_VOLATILE_RADAR_NET_PORT_CMD).toInt()));
+    ui->lineEditIPData->setText(rcInstance->getConfig(RadarEngine::NON_VOLATILE_RADAR_NET_IP_DATA).toString());
+    ui->lineEditPortData->setText(QString::number(rcInstance->getConfig(RadarEngine::NON_VOLATILE_RADAR_NET_PORT_DATA).toInt()));
+    ui->lineEditIPReport->setText(rcInstance->getConfig(RadarEngine::NON_VOLATILE_RADAR_NET_IP_REPORT).toString());
+    ui->lineEditPortReport->setText(QString::number(rcInstance->getConfig(RadarEngine::NON_VOLATILE_RADAR_NET_PORT_REPORT).toInt()));
+    ui->lineEditIPcmd->setText(rcInstance->getConfig(RadarEngine::NON_VOLATILE_RADAR_NET_IP_CMD).toString());
+    ui->lineEditPortcmd->setText(QString::number(rcInstance->getConfig(RadarEngine::NON_VOLATILE_RADAR_NET_PORT_CMD).toInt()));
 
 
-    QString arpa_conf = rcInstance->getConfig(RadarConfig::NON_VOLATILE_ARPA_NET_CONFIG).toString();
-    QStringList arpa_conf_list = arpa_conf.split(";",Qt::SkipEmptyParts);
+    QString arpa_conf = rcInstance->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG).toString();
+    QStringList arpa_conf_list = arpa_conf.split(";",QString::SkipEmptyParts);
 
     if(arpa_conf_list.size() != 3)
     {
@@ -42,7 +42,7 @@ DialogConnections::DialogConnections(QWidget *parent) :
     }
     else
     {
-        arpa_conf_list = arpa_conf_list.at(2).split(":",Qt::SkipEmptyParts);
+        arpa_conf_list = arpa_conf_list.at(2).split(":",QString::SkipEmptyParts);
         if(arpa_conf_list.size() != 3)
         {
             ui->lineEditIPARPA->setText("invalid config "+arpa_conf);
@@ -55,8 +55,8 @@ DialogConnections::DialogConnections(QWidget *parent) :
         }
     }
 
-    QString nav_conf = rcInstance->getConfig(RadarConfig::NON_VOLATILE_NAV_NET_CONFIG).toString();
-    QStringList nav_conf_list = nav_conf.split(";",Qt::SkipEmptyParts);
+    QString nav_conf = rcInstance->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
+    QStringList nav_conf_list = nav_conf.split(";",QString::SkipEmptyParts);
 
     if(nav_conf_list.size() != 3)
     {
@@ -65,7 +65,7 @@ DialogConnections::DialogConnections(QWidget *parent) :
     }
     else
     {
-        nav_conf_list = nav_conf_list.at(2).split(":",Qt::SkipEmptyParts);
+        nav_conf_list = nav_conf_list.at(2).split(":",QString::SkipEmptyParts);
         if(nav_conf_list.size() != 3)
         {
             ui->lineEditNavMqttServer->setText("invalid config "+nav_conf);
@@ -86,23 +86,23 @@ DialogConnections::~DialogConnections()
 
 void DialogConnections::on_checkBoxShow_clicked(bool checked)
 {
-    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_SHOW_ARPA,checked);
+    RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_ARPA,checked);
 }
 
 
 void DialogConnections::on_pushButtonApply_clicked()
 {
-    RadarConfig::RadarConfig* rcInstance = RadarConfig::RadarConfig::getInstance("");
+    RadarEngine::RadarConfig* rcInstance = RadarEngine::RadarConfig::getInstance("");
 
-    rcInstance->setConfig(RadarConfig::NON_VOLATILE_RADAR_NET_IP_DATA,ui->lineEditIPData->text().remove(" "));
-    rcInstance->setConfig(RadarConfig::NON_VOLATILE_RADAR_NET_PORT_DATA,ui->lineEditPortData->text().toUInt());
-    rcInstance->setConfig(RadarConfig::NON_VOLATILE_RADAR_NET_IP_REPORT,ui->lineEditIPReport->text().remove(" "));
-    rcInstance->setConfig(RadarConfig::NON_VOLATILE_RADAR_NET_PORT_REPORT,ui->lineEditPortReport->text().toUInt());
-    rcInstance->setConfig(RadarConfig::NON_VOLATILE_RADAR_NET_IP_CMD,ui->lineEditIPcmd->text().remove(" "));
-    rcInstance->setConfig(RadarConfig::NON_VOLATILE_RADAR_NET_PORT_CMD,ui->lineEditPortcmd->text().toUInt());
+    rcInstance->setConfig(RadarEngine::NON_VOLATILE_RADAR_NET_IP_DATA,ui->lineEditIPData->text().remove(" "));
+    rcInstance->setConfig(RadarEngine::NON_VOLATILE_RADAR_NET_PORT_DATA,ui->lineEditPortData->text().toUInt());
+    rcInstance->setConfig(RadarEngine::NON_VOLATILE_RADAR_NET_IP_REPORT,ui->lineEditIPReport->text().remove(" "));
+    rcInstance->setConfig(RadarEngine::NON_VOLATILE_RADAR_NET_PORT_REPORT,ui->lineEditPortReport->text().toUInt());
+    rcInstance->setConfig(RadarEngine::NON_VOLATILE_RADAR_NET_IP_CMD,ui->lineEditIPcmd->text().remove(" "));
+    rcInstance->setConfig(RadarEngine::NON_VOLATILE_RADAR_NET_PORT_CMD,ui->lineEditPortcmd->text().toUInt());
 
     QString arpa_conf = ui->lineEditIPARPA->text();
-    QStringList arpa_conf_list = arpa_conf.split(":",Qt::SkipEmptyParts);
+    QStringList arpa_conf_list = arpa_conf.split(":",QString::SkipEmptyParts);
 
     if(arpa_conf_list.size() != 2)
     {
@@ -144,7 +144,7 @@ void DialogConnections::on_pushButtonApply_clicked()
                 }
                 else
                 {
-                    rcInstance->setConfig(RadarConfig::NON_VOLATILE_ARPA_NET_CONFIG,"mqtt;InOut;"+ui->lineEditIPARPA->text()+":"+ui->lineEditPortARPA->text());
+                    rcInstance->setConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG,"mqtt;InOut;"+ui->lineEditIPARPA->text()+":"+ui->lineEditPortARPA->text());
                 }
             }
         }
@@ -153,10 +153,10 @@ void DialogConnections::on_pushButtonApply_clicked()
 
 void DialogConnections::on_pushButtonApplyNav_clicked()
 {
-    RadarConfig::RadarConfig* rcInstance = RadarConfig::RadarConfig::getInstance("");
+    RadarEngine::RadarConfig* rcInstance = RadarEngine::RadarConfig::getInstance("");
 
     QString nav_conf = ui->lineEditNavMqttServer->text();
-    QStringList nav_conf_list = nav_conf.split(":",Qt::SkipEmptyParts);
+    QStringList nav_conf_list = nav_conf.split(":",QString::SkipEmptyParts);
 
     if(nav_conf_list.size() != 2)
     {
@@ -198,7 +198,7 @@ void DialogConnections::on_pushButtonApplyNav_clicked()
                 }
                 else
                 {
-                    rcInstance->setConfig(RadarConfig::NON_VOLATILE_NAV_NET_CONFIG,"mqtt;InOut;"+ui->lineEditNavMqttServer->text()+":"+ui->lineEditNavMqttTopic->text());
+                    rcInstance->setConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG,"mqtt;InOut;"+ui->lineEditNavMqttServer->text()+":"+ui->lineEditNavMqttTopic->text());
                 }
             }
         }

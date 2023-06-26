@@ -26,8 +26,8 @@ FrameTrackDisplay::FrameTrackDisplay(QWidget *parent) :
     modelSend = new QStandardItemModel(this);
     modelSend->setColumnCount(7);
 
-    m_re = RadarEngine::RadarEngine::getInstance();
-    connect(m_re->radarArpa,&RadarEngine::RadarArpa::signal_LostTarget,
+    m_re = RadarEngine::RadarEngine::GetInstance();
+    connect(m_re->radarArpa,&RadarEngine::RadarArpa::Signal_LostTarget,
             this,&FrameTrackDisplay::trigger_LostTarget);
 
     arpaSender = new ArpaSender(this);
@@ -58,19 +58,19 @@ void FrameTrackDisplay::removeTarget(int id)
 void FrameTrackDisplay::updateTarget()
 {
     qDebug()<<Q_FUNC_INFO;
-    if(m_re->radarArpa->m_number_of_targets > 0)
+    if(m_re->radarArpa->targetNumber > 0)
     {
         RadarEngine::Position own_pos;
-        own_pos.lat = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
-        own_pos.lon = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+        own_pos.lat = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
+        own_pos.lon = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
         Polar pol;
         double brn;
         double range;
         int num_limit = MAX_UPDATE_NUMBER;
-        const bool heading_up = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
-        const double currentHeading = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
-        double curRange = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
-        //        const quint8 unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+        const bool heading_up = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
+        const double currentHeading = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+        double curRange = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
+        //        const quint8 unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
 
         //        switch (unit) {
         //        case 1:
@@ -80,11 +80,11 @@ void FrameTrackDisplay::updateTarget()
         //            break;
         //        }
 
-        while ((cur_arpa_id_count < m_re->radarArpa->m_number_of_targets) && num_limit > 0)
+        while ((cur_arpa_id_count < m_re->radarArpa->targetNumber) && num_limit > 0)
         {
-            if(m_re->radarArpa->m_target[cur_arpa_id_count]->m_target_id > 0)
+            if(m_re->radarArpa->targets[cur_arpa_id_count]->targetId > 0)
             {
-                pol = Pos2Polar(m_re->radarArpa->m_target[cur_arpa_id_count]->m_position,own_pos,curRange);
+                pol = Pos2Polar(m_re->radarArpa->targets[cur_arpa_id_count]->position,own_pos,curRange);
                 brn = SCALE_RAW_TO_DEGREES2048(pol.angle);
                 //                brn -= 270;
                 brn = heading_up ? brn+currentHeading : brn;
@@ -96,7 +96,7 @@ void FrameTrackDisplay::updateTarget()
                         brn += 360;
                 }
 
-                double arpa_course = m_re->radarArpa->m_target[cur_arpa_id_count]->m_course;
+                double arpa_course = m_re->radarArpa->targets[cur_arpa_id_count]->course;
                 //                arpa_course -= 270;
                 arpa_course = heading_up ? arpa_course+currentHeading : arpa_course;
                 while(arpa_course>360 || arpa_course<0)
@@ -114,37 +114,37 @@ void FrameTrackDisplay::updateTarget()
                     */
                 //                qDebug()<<Q_FUNC_INFO<<arpa->m_target[cur_arpa_id_count]->m_position.lat<<arpa->m_target[cur_arpa_id_count]->m_position.lon;
                 trigger_target_update(
-                            m_re->radarArpa->m_target[cur_arpa_id_count]->m_target_id,
-                            m_re->radarArpa->m_target[cur_arpa_id_count]->m_position.lat,
-                            m_re->radarArpa->m_target[cur_arpa_id_count]->m_position.lon,
+                            m_re->radarArpa->targets[cur_arpa_id_count]->targetId,
+                            m_re->radarArpa->targets[cur_arpa_id_count]->position.lat,
+                            m_re->radarArpa->targets[cur_arpa_id_count]->position.lon,
                             0.0,
                             range,
                             brn,
-                            m_re->radarArpa->m_target[cur_arpa_id_count]->m_speed_kn,
+                            m_re->radarArpa->targets[cur_arpa_id_count]->speedKts,
                             arpa_course
                             );
-                arpaSender->sendData(
-                            m_re->radarArpa->m_target[cur_arpa_id_count]->m_target_id,
-                            m_re->radarArpa->m_target[cur_arpa_id_count]->m_position.lat,
-                            m_re->radarArpa->m_target[cur_arpa_id_count]->m_position.lon,
+                arpaSender->SendData(
+                            m_re->radarArpa->targets[cur_arpa_id_count]->targetId,
+                            m_re->radarArpa->targets[cur_arpa_id_count]->position.lat,
+                            m_re->radarArpa->targets[cur_arpa_id_count]->position.lon,
                             0.0,
                             range,
                             brn,
-                            m_re->radarArpa->m_target[cur_arpa_id_count]->m_speed_kn,
+                            m_re->radarArpa->targets[cur_arpa_id_count]->speedKts,
                             arpa_course
                             );
             }
             cur_arpa_id_count++;
             num_limit--;
         }
-        if(cur_arpa_id_count >= m_re->radarArpa->m_number_of_targets)
+        if(cur_arpa_id_count >= m_re->radarArpa->targetNumber)
             cur_arpa_id_count = 0;
     }
 
 }
 void FrameTrackDisplay::timerTimeout()
 {
-    const quint8 unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+    const quint8 unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
 
     switch (unit) {
     case 0:
@@ -218,7 +218,7 @@ void FrameTrackDisplay::trigger_target_update(
         double crs
         )
 {
-    const quint8 unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+    const quint8 unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
     switch (unit) {
     case 1:
         rng *= KM_TO_NM;
@@ -321,9 +321,9 @@ void FrameTrackDisplay::on_pushButtonDelSel_clicked()
         QString id_str = model->index(row,0).data().toString();
         int id = id_str.toInt();
 
-        for(int i=0;i<m_re->radarArpa->m_number_of_targets;i++)
-            if(m_re->radarArpa->m_target[i]->m_target_id == id)
-                m_re->radarArpa->m_target[i]->SetStatusLost();
+        for(int i=0;i<m_re->radarArpa->targetNumber;i++)
+            if(m_re->radarArpa->targets[i]->targetId == id)
+                m_re->radarArpa->targets[i]->SetStatusLost();
     }
 }
 

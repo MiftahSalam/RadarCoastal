@@ -3,30 +3,30 @@
 
 #include <QObject>
 
-#include "stream/stream.h"
-#include <radarconfig.h>
+#include "infra/stream/stream.h"
+#include <RadarEngine/radarconfig.h>
 
 class NavSensor : public QObject
 {
     Q_OBJECT
 public:
     explicit NavSensor(QObject *parent = nullptr);
-    void reconnect();
-    void updateStatus();
-    void sendData(QString lat, QString lon, QString hdt);
+    void Reconnect();
+    void UpdateStatus();
+    void SendData(QString lat, QString lon, QString hdt);
 
 signals:
 
 private slots:
-    void trigger_receivedData(const QString data);
-    void trigger_configChange(const QString key, const QVariant val);
+    void triggerReceivedData(const QString data);
+    void triggerConfigChange(const QString key, const QVariant val);
 
 private:
-    Stream *stream;
-    QString topic;
-    QString append_data_osd;
-    int no_osd_count;
-    quint8 no_hdg_count,no_gps_count;
+    Stream *m_stream;
+    QString m_topic;
+    QString m_append_data_osd;
+    int m_no_osd_count;
+    quint8 m_no_hdg_count,m_no_gps_count;
 
     Stream::StreamConfig generateStreamConfig(const QString config);
     bool isGPSDataValid(const QString lat_str, const QString lon_str);

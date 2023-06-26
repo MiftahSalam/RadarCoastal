@@ -3,9 +3,10 @@
 
 #include <QFrame>
 
-#include <radarengine.h>
-#include "ppi/ppievent.h"
-#include "alarm/alarmmanager.h"
+#include <RadarEngine/radarengine.h>
+
+#include "view/ppi/ppievent.h"
+#include "usecase/alarm/alarmmanager.h"
 
 namespace Ui {
 class FrameStatus;

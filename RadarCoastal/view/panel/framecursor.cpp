@@ -1,8 +1,8 @@
 #include "framecursor.h"
 #include "ui_framecursor.h"
-#include "utils.h"
+#include "shared/utils.h"
 
-#include <radarconfig.h>
+#include <RadarEngine/radarconfig.h>
 
 #include <QDebug>
 
@@ -17,11 +17,11 @@ FrameCursor::FrameCursor(QWidget *parent) :
 void FrameCursor::trigger_cursorMove(const QPoint pos, const int vp_width, const int vp_height)
 {
 
-    RadarConfig::RadarConfig* instance = RadarConfig::RadarConfig::getInstance("");
-    double const curLat = instance->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
-    double const curLon = instance->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
-    double curRange = instance->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
-    const quint8 unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+    RadarEngine::RadarConfig* instance = RadarEngine::RadarConfig::getInstance("");
+    double const curLat = instance->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
+    double const curLon = instance->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+    double curRange = instance->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
+    const quint8 unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
 
     switch (unit) {
     case 1:
@@ -31,10 +31,10 @@ void FrameCursor::trigger_cursorMove(const QPoint pos, const int vp_width, const
         break;
     }
 
-    QPointF distance = distancePolar(pos.x(),pos.y(),vp_width,vp_height,curRange,curLat,curLon);
+    QPointF distance = Utils::DistancePolar(pos.x(),pos.y(),vp_width,vp_height,curRange,curLat,curLon);
     QPoint screen_middle(vp_width/2,vp_height/2);
-    QPointF gps = pixToGPS(pos.x()-screen_middle.x(),-pos.y()+screen_middle.y(),vp_width,vp_height,curRange,curLat,curLon);
-    QStringList gps_str = GPSString(gps.x(),gps.y());
+    QPointF gps = Utils::PixToGPS(pos.x()-screen_middle.x(),-pos.y()+screen_middle.y(),vp_width,vp_height,curRange,curLat,curLon);
+    QStringList gps_str = Utils::GPSString(gps.x(),gps.y());
 
 //    qDebug()<<Q_FUNC_INFO<<"pos"<<pos<<"width"<<vp_width<<"height"<<vp_height;
 //    qDebug()<<Q_FUNC_INFO<<"curRange"<<curRange<<"curLat"<<curLat<<"curLon"<<curLon<<"cursor"<<distance;

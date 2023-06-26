@@ -25,13 +25,13 @@ public:
     RadarEngine::RadarEngine *m_re;
 
 private slots:
-    void trigger_shutdown();
+    void TriggerShutdown();
 
-    void on_pushButtonBIT_clicked();
+    void OnPushButtonBITClicked();
 
-    void on_pushButtonConnections_clicked();
+    void OnPushButtonConnectionsClicked();
 
-    void on_pushButtonSetGZ_clicked();
+    void OnPushButtonSetGZClicked();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -42,10 +42,10 @@ private:
 
     Ui::MainWindow *ui;
 
-    RadarWidget* ppi;
-    DialogConnections* dConns;
-    DialogGZ *dGZ;
-    DialogBIT *dBIT;
+    RadarWidget* m_ppi;
+    DialogConnections* m_dialog_conns;
+    DialogGZ *m_dialog_gz;
+    DialogBIT *m_dialog_bit;
 };
 
 #endif // MAINWINDOW_H

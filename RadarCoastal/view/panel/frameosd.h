@@ -4,7 +4,7 @@
 #include <QFrame>
 #include <QTimer>
 
-#include "stream/navsensor.h"
+#include "usecase/stream/navsensor.h"
 
 namespace Ui {
 class FrameOSD;

@@ -1,35 +1,37 @@
+#include "shared/utils.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "utils.h"
 
 #include <QDebug>
 #include <QResizeEvent>
 #include <QMessageBox>
 #include <unistd.h>
 
-quint8 unit;
+const int PADDING = 5;
+const int MARGIN = 10;
+const int MAX_HEIGHT_THRESHOLD = 900;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    unit = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+    Utils::unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
 
     ui->setupUi(this);
     ui->pushButtonTilting->hide();
 
     setWindowTitle("Coastal Radar");
 
-    m_re = RadarEngine::RadarEngine::getInstance(this);
-    ppi = new RadarWidget(centralWidget());
-    dConns = new DialogConnections(this);
-    dGZ = new DialogGZ(this);
-    dBIT = new DialogBIT(this);
+    m_re = RadarEngine::RadarEngine::GetInstance(this);
+    m_ppi = new RadarWidget(centralWidget());
+    m_dialog_conns = new DialogConnections(this);
+    m_dialog_gz = new DialogGZ(this);
+    m_dialog_bit = new DialogBIT(this);
 
     connect(ui->frameControl1,SIGNAL(signal_req_shutdown()),
             this,SLOT(trigger_shutdown()));
-    connect(m_re,&RadarEngine::RadarEngine::signal_plotRadarSpoke,ppi,&RadarWidget::trigger_DrawSpoke);
-    connect(ppi,&RadarWidget::signal_cursorMove,ui->frameCursor,&FrameCursor::trigger_cursorMove);
+    connect(m_re,&RadarEngine::RadarEngine::SignalPlotRadarSpoke,m_ppi,&RadarWidget::trigger_DrawSpoke);
+    connect(m_ppi,&RadarWidget::signal_cursorMove,ui->frameCursor,&FrameCursor::trigger_cursorMove);
 
 }
 
@@ -41,36 +43,36 @@ void MainWindow::setupPPILayout()
     int radarWidgetX = (radarWidgetWidth/2)-(side/2);
     int radarWidgetY = (height()/2)-(side/2);
 
-    ppi->clearMask();
+    m_ppi->clearMask();
 
     /*
     */
     QRect rect;
-    ppi->setGeometry(radarWidgetX,radarWidgetY,side,side);
-    rect = QRect(5,5,ppi->width()-10,ppi->height()-10);
+    m_ppi->setGeometry(radarWidgetX,radarWidgetY,side,side);
+    rect = QRect(PADDING,PADDING,m_ppi->width()-MARGIN,m_ppi->height()-MARGIN);
     QRegion region = QRegion(rect,QRegion::Ellipse);
-    ppi->setRectRegoin(rect);
-    ppi->setMask(region);
+    m_ppi->setRectRegoin(rect);
+    m_ppi->setMask(region);
 
 }
 
-void MainWindow::trigger_shutdown()
+void MainWindow::TriggerShutdown()
 {
-    if(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_RADAR_STATUS).toInt() == RadarEngine::RADAR_TRANSMIT)
+    if(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_RADAR_STATUS).toInt() == RadarEngine::RADAR_TRANSMIT)
     {
         QMessageBox::information(this,"Warning","Radar is in Transmit Mode.\n"
                                  "Please turn to Standby Mode first");
         return;
     }
 
-    m_re->trigger_stopRadar();
+    m_re->TriggerStopRadar();
     sleep(1);
     close();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    RadarConfig::RadarConfig *instance = RadarConfig::RadarConfig::getInstance("");
+    RadarEngine::RadarConfig *instance = RadarEngine::RadarConfig::getInstance("");
     if(!instance) qFatal("Cannot provide config service");
     instance->saveConfig();
 
@@ -87,7 +89,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     ui->frameLeft->resize(ui->frameLeft->width(),height());
     ui->frameCursor->move(width()-ui->frameRight->width()-ui->frameLeft->width()-ui->frameCursor->width(),height()-ui->frameCursor->height());
     ui->frameCursor->resize(ui->frameCursor->width(),ui->frameCursor->height());
-    if(height() > 900)
+    if(height() > MAX_HEIGHT_THRESHOLD)
     {
         ui->frameStatus->move(width()-ui->frameRight->width()-ui->frameLeft->width()-ui->frameStatus->width(),height()-ui->frameStatus->height()-ui->frameCursor->height());
         ui->pushButtonSetGZ->hide();
@@ -109,18 +111,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pushButtonBIT_clicked()
+void MainWindow::OnPushButtonBITClicked()
 {
-    dBIT->show();
+    m_dialog_bit->show();
 }
 
-void MainWindow::on_pushButtonConnections_clicked()
+void MainWindow::OnPushButtonConnectionsClicked()
 {
-    dConns->show();
+    m_dialog_conns->show();
 }
 
-void MainWindow::on_pushButtonSetGZ_clicked()
+void MainWindow::OnPushButtonSetGZClicked()
 {
-    dGZ->show();
+    m_dialog_gz->show();
 }
 

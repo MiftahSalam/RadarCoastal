@@ -1,23 +1,21 @@
-#ifndef PPIARPAOBJECT_H
-#define PPIARPAOBJECT_H
+#ifndef PPIARPA_H
+#define PPIARPA_H
 
-#include "ppiobject.h"
+#include <RadarEngine/radarengine.h>
 
-#include <radarengine.h>
-
-class PPIArpaObject : public PPIObject
+class PPIArpa : public QObject
 {
     Q_OBJECT
 public:
-    PPIArpaObject(QObject* parent = nullptr);
+    PPIArpa(QObject* parent = nullptr, RadarEngine::RadarEngine* re = nullptr, RadarEngine::RadarConfig* config = nullptr);
 
-    void draw(QPainter* painter, const int &side) override;
+    RadarEngine::RadarEngine* m_re;
 
 public slots:
     void createMARPA(const QPoint &pos, const int vp_width, const int vp_height);
 
 private:
-    RadarEngine::RadarEngine* m_re;
+    RadarEngine::RadarConfig* m_config_instance;
 };
 
-#endif // PPIARPAOBJECT_H
+#endif // PPIARPA_H

@@ -4,7 +4,9 @@
 #include <QFrame>
 #include <QVariant>
 
-#include <radarengine.h>
+#include <RadarEngine/radarengine.h>
+
+using namespace RadarEngine;
 
 namespace Ui {
 class FrameControl1;

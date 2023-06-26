@@ -39,28 +39,29 @@ SOURCES += \
     usecase/alarm/alarm.cpp \
     usecase/alarm/alarmmanager.cpp \
     usecase/alarm/gzalarm.cpp \
+    usecase/ppi/arpa.cpp \
     view/dialog/dialogbit.cpp \
     view/dialog/dialogconnections.cpp \
     view/dialog/dialoggz.cpp \
     view/panel/framegz.cpp \
     view/panel/framestatus.cpp \
-        main.cpp \
-        view/mainwindow.cpp \
+    main.cpp \
+    view/mainwindow.cpp \
     view/panel/framecontrol1.cpp \
     view/panel/framecontrol2.cpp \
     view/panel/frameosd.cpp \
-    usecase/ppi/ppiarpaobject.cpp \
-    usecase/ppi/ppigzobject.cpp \
-    usecase/ppi/ppiobject.cpp \
-    usecase/ppi/ppicompassobject.cpp \
     usecase/stream/arpasender.cpp \
     usecase/stream/navsensor.cpp \
-    usecase/stream/stream.cpp \
-    usecase/stream/mqttdevicewrapper.cpp \
-    usecase/stream/devicewrapper.cpp \
+    infra/stream/stream.cpp \
+    infra/stream/mqttdevicewrapper.cpp \
+    infra/stream/devicewrapper.cpp \
     view/panel/frametrackdisplay.cpp \
+    view/ppi/ppiarpaobject.cpp \
+    view/ppi/ppicompassobject.cpp \
+    view/ppi/ppievent.cpp \
+    view/ppi/ppigzobject.cpp \
+    view/ppi/ppiobject.cpp \
     view/ppi/radarwidget.cpp \
-    usecase/ppi/ppievent.cpp \
     view/panel/framecontrol3.cpp \
     view/panel/framecursor.cpp \
     view/panel/frametrail.cpp \
@@ -70,27 +71,28 @@ HEADERS += \
     usecase/alarm/alarm.h \
     usecase/alarm/alarmmanager.h \
     usecase/alarm/gzalarm.h \
+    usecase/ppi/arpa.h \
     view/dialog/dialogbit.h \
     view/dialog/dialogconnections.h \
     view/dialog/dialoggz.h \
     view/panel/framegz.h \
     view/panel/framestatus.h \
-        view/mainwindow.h \
+    view/mainwindow.h \
     view/panel/framecontrol1.h \
     view/panel/framecontrol2.h \
     view/panel/frameosd.h \
-    usecase/ppi/ppiarpaobject.h \
-    usecase/ppi/ppigzobject.h \
-    usecase/ppi/ppiobject.h \
-    usecase/ppi/ppicompassobject.h \
     usecase/stream/arpasender.h \
     usecase/stream/navsensor.h \
-    usecase/stream/stream.h \
-    usecase/stream/mqttdevicewrapper.h \
-    usecase/stream/devicewrapper.h \
+    infra/stream/stream.h \
+    infra/stream/mqttdevicewrapper.h \
+    infra/stream/devicewrapper.h \
     view/panel/frametrackdisplay.h \
+    view/ppi/ppiarpaobject.h \
+    view/ppi/ppicompassobject.h \
+    view/ppi/ppievent.h \
+    view/ppi/ppigzobject.h \
+    view/ppi/ppiobject.h \
     view/ppi/radarwidget.h \
-    usecase/ppi/ppievent.h \
     view/panel/framecontrol3.h \
     view/panel/framecursor.h \
     view/panel/frametrail.h \
@@ -102,7 +104,7 @@ FORMS += \
     view/dialog/dialoggz.ui \
     view/panel/framegz.ui \
     view/panel/framestatus.ui \
-        view/mainwindow.ui \
+    view/mainwindow.ui \
     view/panel/framecontrol1.ui \
     view/panel/framecontrol2.ui \
     view/panel/frameosd.ui \

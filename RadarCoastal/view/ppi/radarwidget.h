@@ -9,11 +9,11 @@
 #include <QOpenGLFunctions>
 #include <QTimer>
 
-#include <radarconfig.h>
-#include <radarengine_global.h>
-#include <radarengine.h>
+#include <RadarEngine/radarconfig.h>
+#include <RadarEngine/shared/global.h>
+#include <RadarEngine/radarengine.h>
 
-#include "ppi/ppievent.h"
+#include "view/ppi/ppievent.h"
 #include "ppiarpaobject.h"
 #include "ppigzobject.h"
 #include "ppicompassobject.h"

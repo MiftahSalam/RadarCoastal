@@ -5,8 +5,8 @@
 
 #include <QObject>
 
-#include "stream/stream.h"
-#include <radarconfig.h>
+#include "infra/stream/stream.h"
+#include <RadarEngine/radarconfig.h>
 
 class ArpaSender : public QObject
 {
@@ -14,8 +14,8 @@ class ArpaSender : public QObject
 public:
     explicit ArpaSender(QObject *parent = nullptr);
 
-    void sendData(const QString data);
-    void sendData(
+    void SendData(const QString data);
+    void SendData(
             int id,
             double lat,
             double lon,
@@ -28,11 +28,11 @@ public:
 signals:
 
 private slots:
-    void trigger_configChange(const QString key, const QVariant val);
+    void triggerConfigChange(const QString key, const QVariant val);
 
 private:
-    Stream *stream;
-    QString topic;
+    Stream *m_stream;
+    QString m_topic;
 
     Stream::StreamConfig generateStreamConfig(const QString config);
 

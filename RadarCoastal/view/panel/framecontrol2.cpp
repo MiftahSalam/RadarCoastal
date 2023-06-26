@@ -10,7 +10,7 @@ FrameControl2::FrameControl2(QWidget *parent) :
     ui(new Ui::FrameControl2), m_re(nullptr)
 {
     ui->setupUi(this);
-    m_re = RadarEngine::RadarEngine::getInstance();
+    m_re = RadarEngine::RadarEngine::GetInstance();
 
     ui->lineEditGain->setValidator(new QIntValidator(0,255,ui->lineEditGain));
     ui->lineEditRain->setValidator(new QIntValidator(0,255,ui->lineEditRain));
@@ -22,7 +22,7 @@ FrameControl2::FrameControl2(QWidget *parent) :
     ui->lineEditSea->setText(QString::number(ui->horizontalSliderSea->value()));
     ui->lineEditMTI->setText(QString::number(ui->horizontalSliderMTI->value()));
 
-    ui->checkBoxMTI->setChecked(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_RADAR_PARAMS_FILTER_CONTROL_MTI).toBool());
+    ui->checkBoxMTI->setChecked(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_RADAR_PARAMS_FILTER_CONTROL_MTI).toBool());
 
 
 }
@@ -40,7 +40,7 @@ void FrameControl2::on_pushButtonGain_clicked()
         ui->horizontalSliderGain->setEnabled(false);
         ui->lineEditGain->setEnabled(false);
 
-        if(m_re) m_re->trigger_ReqControlChange(RadarEngine::CT_GAIN,-1);
+        if(m_re) m_re->TriggerReqControlChange(RadarEngine::CT_GAIN,-1);
 //        emit signal_change_gain_req(-1);
     }
     else
@@ -56,7 +56,7 @@ void FrameControl2::on_horizontalSliderGain_valueChanged(int value)
 {
     ui->lineEditGain->setText(QString::number(value));
 //    emit signal_change_gain_req(value);
-    if(m_re) m_re->trigger_ReqControlChange(RadarEngine::CT_GAIN,value);
+    if(m_re) m_re->TriggerReqControlChange(RadarEngine::CT_GAIN,value);
 }
 
 void FrameControl2::on_lineEditGain_textChanged(const QString &arg1)
@@ -64,7 +64,7 @@ void FrameControl2::on_lineEditGain_textChanged(const QString &arg1)
     int value = arg1.toInt();
     ui->horizontalSliderGain->setValue(value);
 //    emit signal_change_gain_req(value);
-    if(m_re) m_re->trigger_ReqControlChange(RadarEngine::CT_GAIN,value);
+    if(m_re) m_re->TriggerReqControlChange(RadarEngine::CT_GAIN,value);
 }
 
 void FrameControl2::on_pushButtonSea_clicked()
@@ -75,7 +75,7 @@ void FrameControl2::on_pushButtonSea_clicked()
         ui->horizontalSliderSea->setEnabled(false);
         ui->lineEditSea->setEnabled(false);
 //        emit signal_change_sea_req(-1);
-        if(m_re) m_re->trigger_ReqControlChange(RadarEngine::CT_SEA,-1);
+        if(m_re) m_re->TriggerReqControlChange(RadarEngine::CT_SEA,-1);
     }
     else
     {
@@ -89,7 +89,7 @@ void FrameControl2::on_horizontalSliderSea_valueChanged(int value)
 {
     ui->lineEditSea->setText(QString::number(value));
 //    emit signal_change_sea_req(value);
-    if(m_re) m_re->trigger_ReqControlChange(RadarEngine::CT_SEA,value);
+    if(m_re) m_re->TriggerReqControlChange(RadarEngine::CT_SEA,value);
 }
 
 void FrameControl2::on_lineEditSea_textChanged(const QString &arg1)
@@ -97,14 +97,14 @@ void FrameControl2::on_lineEditSea_textChanged(const QString &arg1)
     int value = arg1.toInt();
     ui->horizontalSliderSea->setValue(value);
 //    emit signal_change_sea_req(value);
-    if(m_re) m_re->trigger_ReqControlChange(RadarEngine::CT_SEA,value);
+    if(m_re) m_re->TriggerReqControlChange(RadarEngine::CT_SEA,value);
 }
 
 void FrameControl2::on_horizontalSliderRain_valueChanged(int value)
 {
     ui->lineEditRain->setText(QString::number(value));
 //    emit signal_change_rain_req(value);
-    if(m_re) m_re->trigger_ReqControlChange(RadarEngine::CT_RAIN,value);
+    if(m_re) m_re->TriggerReqControlChange(RadarEngine::CT_RAIN,value);
 }
 
 void FrameControl2::on_lineEditRain_textChanged(const QString &arg1)
@@ -112,12 +112,12 @@ void FrameControl2::on_lineEditRain_textChanged(const QString &arg1)
     int value = arg1.toInt();
     ui->horizontalSliderRain->setValue(value);
 //    emit signal_change_rain_req(value);
-    if(m_re) m_re->trigger_ReqControlChange(RadarEngine::CT_RAIN,value);
+    if(m_re) m_re->TriggerReqControlChange(RadarEngine::CT_RAIN,value);
 }
 
 void FrameControl2::on_checkBoxMTI_clicked(bool checked)
 {
-    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_RADAR_PARAMS_FILTER_CONTROL_MTI,checked);
+    RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_RADAR_PARAMS_FILTER_CONTROL_MTI,checked);
 //    enable_mti = checked;
     if(checked)
     {
@@ -135,14 +135,14 @@ void FrameControl2::on_checkBoxMTI_clicked(bool checked)
 void FrameControl2::on_lineEditMTI_textChanged(const QString &arg1)
 {
     const int mti_value = arg1.toInt();
-    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_RADAR_PARAMS_FILTER_DATA_MTI,mti_value);
+    RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_RADAR_PARAMS_FILTER_DATA_MTI,mti_value);
     ui->horizontalSliderMTI->setValue(mti_value);
 }
 
 void FrameControl2::on_horizontalSliderMTI_valueChanged(int value)
 {
     const int mti_value = value;
-    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::VOLATILE_RADAR_PARAMS_FILTER_DATA_MTI,mti_value);
+    RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_RADAR_PARAMS_FILTER_DATA_MTI,mti_value);
 //    mti_value = value;
     ui->lineEditMTI->setText(QString::number(mti_value));
 }

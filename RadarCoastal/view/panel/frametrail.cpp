@@ -8,13 +8,13 @@ FrameTrail::FrameTrail(QWidget *parent) :
     ui(new Ui::FrameTrail)
 {
     ui->setupUi(this);
-    m_re = RadarEngine::RadarEngine::getInstance();
+    m_re = RadarEngine::RadarEngine::GetInstance();
 
-    RadarConfig::RadarConfig* instance = RadarConfig::RadarConfig::getInstance("");
+    RadarEngine::RadarConfig* instance = RadarEngine::RadarConfig::getInstance("");
 
-    int curInx = instance->getConfig(RadarConfig::NON_VOLATILE_RADAR_TRAIL_TIME).toInt();
+    int curInx = instance->getConfig(RadarEngine::NON_VOLATILE_RADAR_TRAIL_TIME).toInt();
     ui->comboBoxTargetTail->setCurrentIndex(curInx);
-    ui->checkBoxTrailOff->setChecked(instance->getConfig(RadarConfig::NON_VOLATILE_RADAR_TRAIL_ENABLE).toBool());
+    ui->checkBoxTrailOff->setChecked(instance->getConfig(RadarEngine::NON_VOLATILE_RADAR_TRAIL_ENABLE).toBool());
 }
 
 FrameTrail::~FrameTrail()
@@ -24,17 +24,17 @@ FrameTrail::~FrameTrail()
 
 void FrameTrail::on_checkBoxTrailOff_clicked(bool checked)
 {
-    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_RADAR_TRAIL_ENABLE,checked);
+    RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_RADAR_TRAIL_ENABLE,checked);
 }
 
 void FrameTrail::on_pushButtonClearTrail_clicked()
 {
-    m_re->trigger_clearTrail();
+    m_re->TriggerClearTrail();
 }
 
 
 void FrameTrail::on_comboBoxTargetTail_currentIndexChanged(int index)
 {
-    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_RADAR_TRAIL_TIME,index);
+    RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_RADAR_TRAIL_TIME,index);
 }
 

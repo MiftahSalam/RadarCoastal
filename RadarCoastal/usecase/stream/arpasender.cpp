@@ -1,11 +1,11 @@
 #include "arpasender.h"
-#include "utils.h"
+#include "shared/utils.h"
 
 ArpaSender::ArpaSender(QObject *parent)
     : QObject{parent}
 {
     qDebug()<<Q_FUNC_INFO;
-    QString config_str = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_ARPA_NET_CONFIG).toString();
+    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG).toString();
     QStringList config_str_list = config_str.split(":");
 
     if(config_str_list.size() != 3)
@@ -14,15 +14,15 @@ ArpaSender::ArpaSender(QObject *parent)
         exit(1);
     }
 
-    topic = config_str_list.last();
+    m_topic = config_str_list.last();
 
-    stream = new Stream(this,config_str);
-    connect(RadarConfig::RadarConfig::getInstance(""),&RadarConfig::RadarConfig::configValueChange,
-            this,&ArpaSender::trigger_configChange);
+    m_stream = new Stream(this,config_str);
+    connect(RadarEngine::RadarConfig::getInstance(""),&RadarEngine::RadarConfig::configValueChange,
+            this,&ArpaSender::triggerConfigChange);
 
 }
 
-void ArpaSender::sendData(int id,
+void ArpaSender::SendData(int id,
         double lat,
         double lon,
         double alt,
@@ -33,7 +33,7 @@ void ArpaSender::sendData(int id,
         )
 {
     QString mq_data;
-    QPointF gpsCorrection = gpsAbsolute(lat,lon);
+    QPointF gpsCorrection = Utils::GpsAbsolute(lat,lon);
 
     QString id_str = QString::number(id);
     QString lat_str = QString::number(gpsCorrection.y(),'f',5);
@@ -50,17 +50,17 @@ void ArpaSender::sendData(int id,
 //    spd_str.replace(".",",");
 //    crs_str.replace(".",",");
 
-    mq_data = topic+":"+id_str+"#"+rng_str+"#"+brn_str+"#"+lat_str+"#"+lon_str+"#"+spd_str+"#"+crs_str;
+    mq_data = m_topic+":"+id_str+"#"+rng_str+"#"+brn_str+"#"+lat_str+"#"+lon_str+"#"+spd_str+"#"+crs_str;
 
-    if(stream->getStreamStatus() == DeviceWrapper::NOT_AVAIL) stream->reconnect();
-    else stream->sendData(mq_data);
+    if(m_stream->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream->Reconnect();
+    else m_stream->SendData(mq_data);
 
 }
-void ArpaSender::trigger_configChange(const QString key, const QVariant val)
+void ArpaSender::triggerConfigChange(const QString key, const QVariant val)
 {
 //    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
-    if(key == RadarConfig::NON_VOLATILE_ARPA_NET_CONFIG)
+    if(key == RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG)
     {
-        stream->setConfig(val.toString());
+        m_stream->SetConfig(val.toString());
     }
 }

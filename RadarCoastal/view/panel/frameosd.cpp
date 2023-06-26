@@ -21,15 +21,15 @@ FrameOSD::FrameOSD(QWidget *parent) :
     connect(timer,&QTimer::timeout,this,&FrameOSD::on_timeout);
 
     no_hdg_count = 0;
-    hdg_col_normal = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_NAV_STATUS_HEADING).toInt());
-    gps_col_normal = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_NAV_STATUS_GPS).toInt());
+    hdg_col_normal = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt());
+    gps_col_normal = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt());
     no_gps_count = 0;
 
-    const double lat = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
-    const double lon = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
-    const double hdt = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
-    const bool gps_auto = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
-    const bool hdg_auto = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
+    const double lat = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
+    const double lon = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+    const double hdt = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+    const bool gps_auto = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
+    const bool hdg_auto = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
 
     ui->lineEditLat->setValidator(new QDoubleValidator(-90,90,6,ui->lineEditLat));
     ui->lineEditLon->setValidator(new QDoubleValidator(-180,180,6,ui->lineEditLon));
@@ -80,13 +80,13 @@ FrameOSD::~FrameOSD()
 
 void FrameOSD::updateGPSData()
 {
-    const bool gps_auto = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
+    const bool gps_auto = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
 
     if(gps_auto)
     {
-        quint8 gps_col_normal_buf = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_NAV_STATUS_GPS).toInt());
-        const double lat = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
-        const double lon = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+        quint8 gps_col_normal_buf = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt());
+        const double lat = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
+        const double lon = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
 
         ui->lineEditLat->setText(QString::number(lat,'f',6));
         ui->lineEditLon->setText(QString::number(lon,'f',7));
@@ -101,12 +101,12 @@ void FrameOSD::updateGPSData()
 
 void FrameOSD::updateHDGData()
 {
-    const bool hdg_auto = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
+    const bool hdg_auto = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
 
     if(hdg_auto)
     {
-        quint8 hdg_col_normal_buf = static_cast<quint8>(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_NAV_STATUS_HEADING).toInt());
-        const double hdg = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+        quint8 hdg_col_normal_buf = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt());
+        const double hdg = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
 
         ui->lineEditHDG->setText(QString::number(hdg,'f',1));
 
@@ -171,10 +171,10 @@ void FrameOSD::on_timeout()
 
     updateGPSData();
     updateHDGData();
-    sensor->reconnect();
-    sensor->updateStatus();
+    sensor->Reconnect();
+    sensor->UpdateStatus();
     if(!ui->checkBoxGPS->isChecked())
-        sensor->sendData(ui->lineEditLat->text(),ui->lineEditLon->text(),ui->lineEditHDG->text());
+        sensor->SendData(ui->lineEditLat->text(),ui->lineEditLon->text(),ui->lineEditHDG->text());
 }
 
 void FrameOSD::on_pushButtonApply_clicked()
@@ -182,34 +182,34 @@ void FrameOSD::on_pushButtonApply_clicked()
     double currentHeading_buf = ui->lineEditHDG->text().toDouble();
     double currentOwnShipLat_buf = ui->lineEditLat->text().toDouble();
     double currentOwnShipLon_buf = ui->lineEditLon->text().toDouble();
-    const double currentOwnShipLat = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
-    const double currentOwnShipLon = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
-    const double currentHeading = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+    const double currentOwnShipLat = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
+    const double currentOwnShipLon = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+    const double currentHeading = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
 
     if(currentHeading_buf >=0 && currentHeading_buf <= 360)
-        RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_HEADING,currentHeading_buf);
+        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING,currentHeading_buf);
     else
         ui->lineEditHDG->setText(QString::number(currentHeading,'f',1));
 
     if(currentOwnShipLat_buf >=-90 && currentOwnShipLat_buf <= 90)
-        RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LATITUDE,currentOwnShipLat_buf);
+        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE,currentOwnShipLat_buf);
     else
         ui->lineEditLat->setText(QString::number(currentOwnShipLat,'f',6));
 
     if(currentOwnShipLon_buf >=-180 && currentOwnShipLon_buf <= 180)
-        RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE,currentOwnShipLon_buf);
+        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE,currentOwnShipLon_buf);
     else
         ui->lineEditLon->setText(QString::number(currentOwnShipLon,'f',6));
 
-    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO,ui->checkBoxHDG->isChecked());
-    RadarConfig::RadarConfig::getInstance("")->setConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_GPS_AUTO,ui->checkBoxGPS->isChecked());
+    RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO,ui->checkBoxHDG->isChecked());
+    RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO,ui->checkBoxGPS->isChecked());
 //    cur_hdg_auto = hdg_auto;
 //    gps_auto = ui->checkBoxGPS->isChecked();
 
     no_hdg_count = 0;
     no_gps_count = 0;
 
-    if(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool())
+    if(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool())
     {
         ui->lineEditHDG->setEnabled(false);
         updateHDGColor(hdg_col_normal);
@@ -220,7 +220,7 @@ void FrameOSD::on_pushButtonApply_clicked()
         ui->lineEditHDG->setStyleSheet("color: rgb(255,255,255);");
     }
 
-    if(RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool())
+    if(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool())
     {
         ui->lineEditLat->setEnabled(false);
         ui->lineEditLon->setEnabled(false);
