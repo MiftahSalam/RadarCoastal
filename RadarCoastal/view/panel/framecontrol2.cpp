@@ -5,11 +5,14 @@
 
 #include <QIntValidator>
 
-FrameControl2::FrameControl2(QWidget *parent, RadarEngine::RadarConfig *cfg, RadarEngine::RadarEngine *re) :
-    QFrame(parent), WithRadarEngine(re), WithConfig(cfg),
+FrameControl2::FrameControl2(QWidget *parent) :
+    QFrame(parent),
     ui(new Ui::FrameControl2)
 {
     ui->setupUi(this);
+
+    m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    m_instance_re = RadarEngine::RadarEngine::GetInstance(this);
 
     ui->lineEditGain->setValidator(new QIntValidator(0,255,ui->lineEditGain));
     ui->lineEditRain->setValidator(new QIntValidator(0,255,ui->lineEditRain));

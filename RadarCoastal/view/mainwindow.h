@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-#include <radarengine.h>
+#include <RadarEngine/radarengine.h>
 
 #include "ppi/radarwidget.h"
 #include "view/dialog/dialogconnections.h"
@@ -21,8 +21,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
-
-    RadarEngine::RadarEngine *m_re;
 
 private slots:
     void TriggerShutdown();
@@ -42,6 +40,8 @@ private:
 
     Ui::MainWindow *ui;
 
+    RadarEngine::RadarEngine* m_re;
+    RadarEngine::RadarConfig* m_cfg;
     RadarWidget* m_ppi;
     DialogConnections* m_dialog_conns;
     DialogGZ *m_dialog_gz;

@@ -16,13 +16,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     Utils::unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+    m_re = RadarEngine::RadarEngine::GetInstance(this);
+    m_cfg = RadarEngine::RadarConfig::getInstance("");
 
     ui->setupUi(this);
+    ui->retranslateUi(this);
     ui->pushButtonTilting->hide();
 
     setWindowTitle("Coastal Radar");
 
-    m_re = RadarEngine::RadarEngine::GetInstance(this);
     m_ppi = new RadarWidget(centralWidget());
     m_dialog_conns = new DialogConnections(this);
     m_dialog_gz = new DialogGZ(this);
@@ -125,4 +127,3 @@ void MainWindow::OnPushButtonSetGZClicked()
 {
     m_dialog_gz->show();
 }
-

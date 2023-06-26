@@ -5,18 +5,16 @@
 
 #include <RadarEngine/radarconfig.h>
 
-#include "infra/withconfig.h"
-
 namespace Ui {
 class DialogBIT;
 }
 
-class DialogBIT : public QDialog, protected WithConfig
+class DialogBIT : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DialogBIT(QWidget *parent = nullptr, RadarEngine::RadarConfig* cfg = nullptr);
+    explicit DialogBIT(QWidget *parent = nullptr);
     ~DialogBIT() override;
 
 private slots:
@@ -30,6 +28,9 @@ private slots:
 
 private:
     Ui::DialogBIT *ui;
+
+    RadarEngine::RadarConfig* m_instance_cfg;
+
 };
 
 #endif // DIALOGBIT_H

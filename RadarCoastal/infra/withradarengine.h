@@ -6,8 +6,10 @@
 class WithRadarEngine
 {
 public:
-    WithRadarEngine(RadarEngine::RadarEngine *re);
-    RadarEngine::RadarEngine* m_instance_re;
+    WithRadarEngine(RadarEngine::RadarEngine *re, QString caller);
+    static RadarEngine::RadarEngine* m_instance_re;
+
+    virtual void foo() {} // polymorphic
 };
 
 #endif // WITHRADARENGINE_H

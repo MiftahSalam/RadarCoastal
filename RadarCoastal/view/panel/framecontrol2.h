@@ -6,19 +6,16 @@
 #include <RadarEngine/radarengine.h>
 #include <RadarEngine/radarconfig.h>
 
-#include "infra/withconfig.h"
-#include "infra/withradarengine.h"
-
 namespace Ui {
 class FrameControl2;
 }
 
-class FrameControl2 : public QFrame, public WithRadarEngine, protected WithConfig
+class FrameControl2 : public QFrame
 {
     Q_OBJECT
 
 public:
-    explicit FrameControl2(QWidget *parent = nullptr, RadarEngine::RadarConfig* cfg = nullptr, RadarEngine::RadarEngine* re = nullptr);
+    explicit FrameControl2(QWidget *parent = nullptr);
     ~FrameControl2();
 
 signals:
@@ -54,6 +51,9 @@ protected:
 
 private:
     Ui::FrameControl2 *ui;
+
+    RadarEngine::RadarConfig* m_instance_cfg;
+    RadarEngine::RadarEngine* m_instance_re;
 };
 
 #endif // FRAMECONTROL2_H

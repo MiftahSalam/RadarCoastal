@@ -7,21 +7,18 @@
 #include <RadarEngine/radarengine.h>
 #include <RadarEngine/radarconfig.h>
 
-#include "infra/withconfig.h"
-#include "infra/withradarengine.h"
-
 using namespace RadarEngine;
 
 namespace Ui {
 class FrameControl1;
 }
 
-class FrameControl1 : public QFrame, public WithRadarEngine, protected WithConfig
+class FrameControl1 : public QFrame
 {
     Q_OBJECT
 
 public:
-    explicit FrameControl1(QWidget *parent = nullptr, RadarEngine::RadarConfig* cfg = nullptr, RadarEngine::RadarEngine* re = nullptr);
+    explicit FrameControl1(QWidget *parent = nullptr);
     ~FrameControl1();
 
 //    void setRangeRing(double ringWidth);
@@ -56,6 +53,8 @@ private:
     Ui::FrameControl1 *ui;
 
     QString ringValue;
+    RadarEngine::RadarConfig* m_instance_cfg;
+    RadarEngine::RadarEngine* m_instance_re;
 };
 
 #endif // FRAMECONTROL1_H

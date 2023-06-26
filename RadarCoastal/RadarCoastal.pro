@@ -36,8 +36,8 @@ else {
 include(infra/qmqtt/qmqtt.pri)
 
 SOURCES += \
-    infra/withconfig.cpp \
-    infra/withradarengine.cpp \
+#    infra/withconfig.cpp \
+#    infra/withradarengine.cpp \
     usecase/alarm/alarm.cpp \
     usecase/alarm/alarmmanager.cpp \
     usecase/alarm/gzalarm.cpp \
@@ -70,8 +70,8 @@ SOURCES += \
     shared/utils.cpp
 
 HEADERS += \
-    infra/withconfig.h \
-    infra/withradarengine.h \
+#    infra/withconfig.h \
+#    infra/withradarengine.h \
     usecase/alarm/alarm.h \
     usecase/alarm/alarmmanager.h \
     usecase/alarm/gzalarm.h \

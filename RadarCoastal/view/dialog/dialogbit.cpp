@@ -7,10 +7,11 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 
-DialogBIT::DialogBIT(QWidget *parent, RadarEngine::RadarConfig *cfg) :
-    QDialog(parent),WithConfig(cfg),
+DialogBIT::DialogBIT(QWidget *parent) :
+    QDialog(parent),
     ui(new Ui::DialogBIT)
 {
+    m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     ui->setupUi(this);
 }
 

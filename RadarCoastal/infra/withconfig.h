@@ -6,10 +6,11 @@
 class WithConfig
 {
 public:
-    WithConfig(RadarEngine::RadarConfig* cfg = nullptr);
+    WithConfig(RadarEngine::RadarConfig* cfg, QString caller);
 
-protected:
-    RadarEngine::RadarConfig* m_instance_cfg;
+    virtual void foo() {} // polymorphic
+
+    static RadarEngine::RadarConfig* m_instance_cfg;
 
     void initConfig(){}
 };

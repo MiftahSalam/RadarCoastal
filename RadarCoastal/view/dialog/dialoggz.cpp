@@ -1,8 +1,8 @@
 #include "dialoggz.h"
 #include "ui_dialoggz.h"
 
-DialogGZ::DialogGZ(QWidget *parent, RadarEngine::RadarConfig *cfg) :
-    QDialog(parent),WithConfig(cfg),
+DialogGZ::DialogGZ(QWidget *parent) :
+    QDialog(parent),
     ui(new Ui::DialogGZ)
 {
     ui->setupUi(this);

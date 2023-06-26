@@ -3,24 +3,20 @@
 
 #include <QDialog>
 
-#include <RadarEngine/radarconfig.h>
-
-#include "infra/withconfig.h"
-
 namespace Ui {
 class DialogGZ;
 }
 
-class DialogGZ : public QDialog, protected WithConfig
+class DialogGZ : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DialogGZ(QWidget *parent = nullptr, RadarEngine::RadarConfig* cfg = nullptr);
+    explicit DialogGZ(QWidget *parent = nullptr);
     ~DialogGZ();
 
 private:
     Ui::DialogGZ *ui;
-};
+    };
 
 #endif // DIALOGGZ_H

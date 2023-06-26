@@ -5,10 +5,12 @@
 #include <QIntValidator>
 #include <QHostAddress>
 
-DialogConnections::DialogConnections(QWidget *parent, RadarEngine::RadarConfig *cfg) :
-    QDialog(parent), WithConfig(cfg),
+DialogConnections::DialogConnections(QWidget *parent) :
+    QDialog(parent),
     ui(new Ui::DialogConnections)
 {    
+    m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+
     ui->setupUi(this);
 
     initConfig();

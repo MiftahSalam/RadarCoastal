@@ -9,10 +9,13 @@
 #include <unistd.h>
 
 
-FrameControl1::FrameControl1(QWidget *parent, RadarEngine::RadarConfig *cfg, RadarEngine::RadarEngine *re) :
-    QFrame(parent), WithRadarEngine(re), WithConfig(cfg), ui(new Ui::FrameControl1)
+FrameControl1::FrameControl1(QWidget *parent) :
+    QFrame(parent), ui(new Ui::FrameControl1)
 {
     ui->setupUi(this);
+
+    m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    m_instance_re = RadarEngine::RadarEngine::GetInstance(this);
 
     initConfig();
     stateChange(RadarEngine::RADAR_OFF);

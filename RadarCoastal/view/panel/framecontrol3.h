@@ -3,6 +3,10 @@
 
 #include <QFrame>
 
+#include <RadarEngine/radarconfig.h>
+
+#include "infra/withconfig.h"
+
 namespace Ui {
 class FrameControl3;
 }
