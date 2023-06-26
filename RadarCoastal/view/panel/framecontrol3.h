@@ -5,8 +5,6 @@
 
 #include <RadarEngine/radarconfig.h>
 
-#include "infra/withconfig.h"
-
 namespace Ui {
 class FrameControl3;
 }
@@ -36,7 +34,11 @@ private slots:
     void on_comboBoxDisplayUnit_currentIndexChanged(int index);
 
 private:
+    void initConfig();
+
     Ui::FrameControl3 *ui;
+
+    RadarEngine::RadarConfig* m_instance_cfg;
     int prev_unit_idx;
 };
 

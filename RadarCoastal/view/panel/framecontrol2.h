@@ -46,10 +46,9 @@ private slots:
 
     void on_horizontalSliderMTI_valueChanged(int value);
 
-protected:
+private:
     void initConfig();
 
-private:
     Ui::FrameControl2 *ui;
 
     RadarEngine::RadarConfig* m_instance_cfg;
