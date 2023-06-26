@@ -2,16 +2,20 @@
 #include "ui_dialogbit.h"
 
 #include <RadarEngine/shared/global.h>
-#include <RadarEngine/radarconfig.h>
 
 #include <QSettings>
 #include <QTcpSocket>
 #include <QHostAddress>
 
-DialogBIT::DialogBIT(QWidget *parent) :
+DialogBIT::DialogBIT(QWidget *parent, RadarEngine::RadarConfig *cfg) :
     QDialog(parent),
-    ui(new Ui::DialogBIT)
+    ui(new Ui::DialogBIT), m_instance_cfg(cfg)
 {
+    if (cfg == nullptr) {
+        qDebug()<<Q_FUNC_INFO<<"RadarConfig cannot be null";
+        exit(1);
+    }
+
     ui->setupUi(this);
 }
 
@@ -22,8 +26,7 @@ DialogBIT::~DialogBIT()
 
 void DialogBIT::on_pushButtonBITRadar_clicked()
 {
-    auto instance = RadarEngine::RadarConfig::getInstance("");
-    auto state_radar = instance->getConfig(RadarEngine::VOLATILE_RADAR_STATUS).toInt();
+    auto state_radar = m_instance_cfg->getConfig(RadarEngine::VOLATILE_RADAR_STATUS).toInt();
 
     if(state_radar == RadarEngine::RADAR_OFF)
     {
@@ -96,9 +99,8 @@ void DialogBIT::on_pushButtonBITLora_clicked()
 
 void DialogBIT::on_pushButtonBITNav_clicked()
 {
-    auto instance = RadarEngine::RadarConfig::getInstance("");
-    auto status_gps = instance->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt();
-    auto status_hdt = instance->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt();
+    auto status_gps = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt();
+    auto status_hdt = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt();
 
     qDebug()<<Q_FUNC_INFO<<status_gps<<status_hdt;
     switch (status_gps) {
