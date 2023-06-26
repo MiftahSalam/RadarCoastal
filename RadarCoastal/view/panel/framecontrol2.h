@@ -3,18 +3,22 @@
 
 #include <QFrame>
 
-#include <radarengine.h>
+#include <RadarEngine/radarengine.h>
+#include <RadarEngine/radarconfig.h>
+
+#include "infra/withconfig.h"
+#include "infra/withradarengine.h"
 
 namespace Ui {
 class FrameControl2;
 }
 
-class FrameControl2 : public QFrame
+class FrameControl2 : public QFrame, public WithRadarEngine, protected WithConfig
 {
     Q_OBJECT
 
 public:
-    explicit FrameControl2(QWidget *parent = nullptr);
+    explicit FrameControl2(QWidget *parent = nullptr, RadarEngine::RadarConfig* cfg = nullptr, RadarEngine::RadarEngine* re = nullptr);
     ~FrameControl2();
 
 signals:
@@ -45,9 +49,11 @@ private slots:
 
     void on_horizontalSliderMTI_valueChanged(int value);
 
+protected:
+    void initConfig();
+
 private:
     Ui::FrameControl2 *ui;
-    RadarEngine::RadarEngine* m_re;
 };
 
 #endif // FRAMECONTROL2_H
