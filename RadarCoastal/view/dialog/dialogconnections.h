@@ -3,15 +3,19 @@
 
 #include <QDialog>
 
+#include <RadarEngine/radarconfig.h>
+
+#include "infra/withconfig.h"
+
 namespace Ui {
 class DialogConnections;
 }
 
-class DialogConnections : public QDialog
+class DialogConnections : public QDialog, protected WithConfig
 {
     Q_OBJECT
 public:
-    explicit DialogConnections(QWidget *parent = nullptr);
+    explicit DialogConnections(QWidget *parent = nullptr,  RadarEngine::RadarConfig* cfg = nullptr);
     ~DialogConnections() override;
     
 signals:
@@ -25,8 +29,11 @@ private slots:
 
     void on_pushButtonApplyNav_clicked();
 
+protected:
+    void initConfig();
+
 private:
-    Ui::DialogConnections *ui;
+    Ui::DialogConnections *ui;    
 };
 
 #endif // DIALOGCONNECTIONS_H

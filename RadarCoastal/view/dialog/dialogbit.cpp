@@ -8,14 +8,9 @@
 #include <QHostAddress>
 
 DialogBIT::DialogBIT(QWidget *parent, RadarEngine::RadarConfig *cfg) :
-    QDialog(parent),
-    ui(new Ui::DialogBIT), m_instance_cfg(cfg)
+    QDialog(parent),WithConfig(cfg),
+    ui(new Ui::DialogBIT)
 {
-    if (cfg == nullptr) {
-        qDebug()<<Q_FUNC_INFO<<"RadarConfig cannot be null";
-        exit(1);
-    }
-
     ui->setupUi(this);
 }
 

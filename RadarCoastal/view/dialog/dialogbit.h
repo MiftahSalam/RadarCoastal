@@ -5,11 +5,13 @@
 
 #include <RadarEngine/radarconfig.h>
 
+#include "infra/withconfig.h"
+
 namespace Ui {
 class DialogBIT;
 }
 
-class DialogBIT : public QDialog
+class DialogBIT : public QDialog, protected WithConfig
 {
     Q_OBJECT
 
@@ -28,8 +30,6 @@ private slots:
 
 private:
     Ui::DialogBIT *ui;
-
-    RadarEngine::RadarConfig* m_instance_cfg;
 };
 
 #endif // DIALOGBIT_H
