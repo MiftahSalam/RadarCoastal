@@ -15,7 +15,7 @@ class DialogConnections : public QDialog, protected WithConfig
 {
     Q_OBJECT
 public:
-    explicit DialogConnections(QWidget *parent = nullptr,  RadarEngine::RadarConfig* cfg = nullptr);
+    explicit DialogConnections(QWidget *parent = nullptr, RadarEngine::RadarConfig* cfg = nullptr);
     ~DialogConnections() override;
     
 signals:

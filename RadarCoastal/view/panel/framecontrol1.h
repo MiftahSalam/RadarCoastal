@@ -5,6 +5,10 @@
 #include <QVariant>
 
 #include <RadarEngine/radarengine.h>
+#include <RadarEngine/radarconfig.h>
+
+#include "infra/withconfig.h"
+#include "infra/withradarengine.h"
 
 using namespace RadarEngine;
 
@@ -12,12 +16,12 @@ namespace Ui {
 class FrameControl1;
 }
 
-class FrameControl1 : public QFrame
+class FrameControl1 : public QFrame, public WithRadarEngine, protected WithConfig
 {
     Q_OBJECT
 
 public:
-    explicit FrameControl1(QWidget *parent = nullptr);
+    explicit FrameControl1(QWidget *parent = nullptr, RadarEngine::RadarConfig* cfg = nullptr, RadarEngine::RadarEngine* re = nullptr);
     ~FrameControl1();
 
 //    void setRangeRing(double ringWidth);
@@ -43,11 +47,13 @@ private slots:
 
     void on_pushButtonShutdown_clicked();
 
+protected:
+    void initConfig();
+
 private:
     void handleRingRangeChange();
 
     Ui::FrameControl1 *ui;
-    RadarEngine::RadarEngine* m_re;
 
     QString ringValue;
 };

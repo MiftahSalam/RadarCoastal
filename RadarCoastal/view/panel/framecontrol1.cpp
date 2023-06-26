@@ -9,25 +9,27 @@
 #include <unistd.h>
 
 
-FrameControl1::FrameControl1(QWidget *parent) :
-    QFrame(parent), ui(new Ui::FrameControl1)
+FrameControl1::FrameControl1(QWidget *parent, RadarEngine::RadarConfig *cfg, RadarEngine::RadarEngine *re) :
+    QFrame(parent), WithRadarEngine(re), WithConfig(cfg), ui(new Ui::FrameControl1)
 {
     ui->setupUi(this);
-    m_re = RadarEngine::RadarEngine::GetInstance();
 
-    RadarEngine::RadarConfig* rcInstance = RadarEngine::RadarConfig::getInstance("");
-
-    ui->checkBoxShowRing->setChecked(rcInstance->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
-    on_checkBoxShowRing_clicked(rcInstance->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
-    handleRingRangeChange();
+    initConfig();
     stateChange(RadarEngine::RADAR_OFF);
 
-    connect(rcInstance,&RadarEngine::RadarConfig::configValueChange,this,&FrameControl1::trigger_radarConfigChange);
+    connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,this,&FrameControl1::trigger_radarConfigChange);
+}
+
+void FrameControl1::initConfig()
+{
+    ui->checkBoxShowRing->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
+    on_checkBoxShowRing_clicked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
+    handleRingRangeChange();
 }
 
 void FrameControl1::handleRingRangeChange()
 {
-    double rng = static_cast<double>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt())/1000.;
+    double rng = static_cast<double>(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt())/1000.;
     double rng_ring = rng/RING_COUNT;
     QString unit_str;
 
@@ -74,7 +76,7 @@ void FrameControl1::handleRingRangeChange()
         ringValue = QString::number(rng_ring,'f',1)+unit_str;
     }
 
-    if(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool())
+    if(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool())
         ui->labelRingRange->setText("Rings "+ringValue);
 }
 
@@ -119,19 +121,19 @@ FrameControl1::~FrameControl1()
 
 void FrameControl1::on_pushButtonZoomIn_clicked()
 {
-    const int cur_range = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
+    const int cur_range = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
     int cur_zoom_lvl = distanceList.indexOf(cur_range)+1;
 
     switch (Utils::unit) {
     case 0:
         cur_zoom_lvl = distanceList.indexOf(cur_range)+1;
         if(cur_zoom_lvl > distanceList.size()-1) cur_zoom_lvl -=1;
-        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceList.at(cur_zoom_lvl));
+        m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceList.at(cur_zoom_lvl));
         break;
     case 1:
         cur_zoom_lvl = distanceListNautical.indexOf(cur_range)+1;
         if(cur_zoom_lvl > distanceListNautical.size()-1) cur_zoom_lvl -=1;
-        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceListNautical.at(cur_zoom_lvl));
+        m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceListNautical.at(cur_zoom_lvl));
         break;
     default:
         break;
@@ -140,19 +142,19 @@ void FrameControl1::on_pushButtonZoomIn_clicked()
 
 void FrameControl1::on_pushButtonZoomOut_clicked()
 {
-    const int cur_range = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
+    const int cur_range = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
     int cur_zoom_lvl = distanceList.indexOf(cur_range)-1;
 
     switch (Utils::unit) {
     case 0:
         cur_zoom_lvl = distanceList.indexOf(cur_range)-1;
         if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
-        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceList.at(cur_zoom_lvl));
+        m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceList.at(cur_zoom_lvl));
         break;
     case 1:
         cur_zoom_lvl = distanceListNautical.indexOf(cur_range)-1;
         if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
-        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceListNautical.at(cur_zoom_lvl));
+        m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceListNautical.at(cur_zoom_lvl));
         break;
     default:
         break;
@@ -163,39 +165,39 @@ void FrameControl1::on_pushButtonTxStnb_clicked()
 {
     if(ui->pushButtonTxStnb->text().contains("Transmit"))
     {
-        const int cur_range = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
+        const int cur_range = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
 
         switch (Utils::unit) {
         case 0:
         {
             int cur_zoom_lvl = distanceList.indexOf(cur_range);
             if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
-            RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceList.at(cur_zoom_lvl));
+            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceList.at(cur_zoom_lvl));
             break;
         }
         case 1:
         {
             int cur_zoom_lvl = distanceListNautical.indexOf(cur_range);
             if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
-            RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceListNautical.at(cur_zoom_lvl));
+            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceListNautical.at(cur_zoom_lvl));
             break;
         }
         default:
             break;
         }
 
-        m_re->TriggerReqTx();
+        m_instance_re->TriggerReqTx();
     }
     if(ui->pushButtonTxStnb->text().contains("Standby"))
     {
-        m_re->TriggerReqStby();
+        m_instance_re->TriggerReqStby();
         sleep(1);
     }
 }
 
 void FrameControl1::on_checkBoxShowRing_clicked(bool checked)
 {
-    RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING,checked);
+    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING,checked);
     if(checked)
         ui->labelRingRange->setText("Rings "+ringValue);
     else
