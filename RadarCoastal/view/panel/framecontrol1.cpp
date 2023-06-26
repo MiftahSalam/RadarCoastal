@@ -35,10 +35,10 @@ void FrameControl1::handleRingRangeChange()
 
     switch (Utils::unit) {
     case 0:
-        unit_str = " Km";
+        unit_str = Utils::KmUnitStr;
         break;
     case 1:
-        unit_str = " NM";
+        unit_str = Utils::NMUnitStr;
         break;
     default:
         break;
@@ -46,7 +46,7 @@ void FrameControl1::handleRingRangeChange()
 
     if(rng < 1)
     {
-        ui->labelRange->setText(QString::number(static_cast<int>(rng*1000.))+" m");
+        ui->labelRange->setText(QString::number(static_cast<int>(rng*1000.))+Utils::MtrUnitStr);
     }
     else
     {
@@ -62,7 +62,7 @@ void FrameControl1::handleRingRangeChange()
 
     if(rng_ring < 1)
     {
-        ringValue = QString::number(static_cast<int>(rng_ring*1000.))+" m";
+        ringValue = QString::number(static_cast<int>(rng_ring*1000.))+Utils::MtrUnitStr;
     }
     else
     {

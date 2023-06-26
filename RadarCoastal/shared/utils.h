@@ -7,6 +7,10 @@
 class Utils
 {
 public:
+    static const QString MtrUnitStr;
+    static const QString KmUnitStr;
+    static const QString NMUnitStr;
+
     static quint8 unit;
 
     static QPointF PixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
