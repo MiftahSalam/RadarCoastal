@@ -3,11 +3,11 @@
 
 #include <QObject>
 
-class PPIEvent : public QObject
+class FilterEvent : public QObject
 {
     Q_OBJECT
 public:
-    explicit PPIEvent(QObject *parent = nullptr);
+    explicit FilterEvent(QObject *parent = nullptr);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

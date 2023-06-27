@@ -38,10 +38,14 @@ include(infra/qmqtt/qmqtt.pri)
 SOURCES += \
 #    infra/withconfig.cpp \
 #    infra/withradarengine.cpp \
+    domain/track/trackmodel.cpp \
+    infra/database/track/memory/trackrepository_mem.cpp \
     usecase/alarm/alarm.cpp \
     usecase/alarm/alarmmanager.cpp \
     usecase/alarm/gzalarm.cpp \
     usecase/ppi/arpa.cpp \
+    usecase/track/track.cpp \
+    usecase/track/trackmodelview.cpp \
     view/dialog/dialogbit.cpp \
     view/dialog/dialogconnections.cpp \
     view/dialog/dialoggz.cpp \
@@ -57,10 +61,10 @@ SOURCES += \
     infra/stream/stream.cpp \
     infra/stream/mqttdevicewrapper.cpp \
     infra/stream/devicewrapper.cpp \
+    infra/filterevent.cpp \
     view/panel/frametrackdisplay.cpp \
     view/ppi/ppiarpaobject.cpp \
     view/ppi/ppicompassobject.cpp \
-    view/ppi/ppievent.cpp \
     view/ppi/ppigzobject.cpp \
     view/ppi/ppiobject.cpp \
     view/ppi/radarwidget.cpp \
@@ -72,10 +76,15 @@ SOURCES += \
 HEADERS += \
 #    infra/withconfig.h \
 #    infra/withradarengine.h \
+    domain/track/trackmodel.h \
+    domain/track/trackrepository.h \
+    infra/database/track/memory/trackrepository_mem.h \
     usecase/alarm/alarm.h \
     usecase/alarm/alarmmanager.h \
     usecase/alarm/gzalarm.h \
     usecase/ppi/arpa.h \
+    usecase/track/track.h \
+    usecase/track/trackmodelview.h \
     view/dialog/dialogbit.h \
     view/dialog/dialogconnections.h \
     view/dialog/dialoggz.h \
@@ -90,10 +99,10 @@ HEADERS += \
     infra/stream/stream.h \
     infra/stream/mqttdevicewrapper.h \
     infra/stream/devicewrapper.h \
+    infra/filterevent.h \
     view/panel/frametrackdisplay.h \
     view/ppi/ppiarpaobject.h \
     view/ppi/ppicompassobject.h \
-    view/ppi/ppievent.h \
     view/ppi/ppigzobject.h \
     view/ppi/ppiobject.h \
     view/ppi/radarwidget.h \

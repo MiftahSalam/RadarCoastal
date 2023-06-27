@@ -6,7 +6,7 @@
 #include <RadarEngine/radarengine.h>
 #include <RadarEngine/radarconfig.h>
 
-#include "view/ppi/ppievent.h"
+#include "infra/filterevent.h"
 #include "usecase/alarm/alarmmanager.h"
 
 namespace Ui {
@@ -31,7 +31,7 @@ private:
 
     RadarEngine::RadarConfig* m_instance_cfg;
     RadarEngine::RadarEngine* m_instance_re;
-    PPIEvent *m_alarm_event;
+    FilterEvent *m_alarm_event;
     AlarmManager *m_alarm_manager;
     bool m_alarm_toggle;
 

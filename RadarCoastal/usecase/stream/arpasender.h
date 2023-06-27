@@ -5,6 +5,7 @@
 
 #include <QObject>
 
+#include "domain/track/trackmodel.h"
 #include "infra/stream/stream.h"
 #include <RadarEngine/radarconfig.h>
 
@@ -15,6 +16,7 @@ public:
     explicit ArpaSender(QObject *parent = nullptr);
 
     void SendData(const QString data);
+    void SendData(const TrackModel& data);
     void SendData(
             int id,
             double lat,

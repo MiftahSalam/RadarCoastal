@@ -11,7 +11,9 @@ public:
     static const QString KmUnitStr;
     static const QString NMUnitStr;
 
+    static const int ONE_PRECISION;
     static const int TWO_PRECISION;
+    static const int FIVE_PRECISION;
 
     static quint8 unit;
 

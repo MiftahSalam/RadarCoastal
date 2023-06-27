@@ -13,7 +13,7 @@
 #include <RadarEngine/shared/global.h>
 #include <RadarEngine/radarengine.h>
 
-#include "view/ppi/ppievent.h"
+#include "infra/filterevent.h"
 #include "ppiarpaobject.h"
 #include "ppigzobject.h"
 #include "ppicompassobject.h"
@@ -67,7 +67,7 @@ private:
     void setupViewport(int width, int height);
 
     QList<PPIObject*> drawObjects;
-    PPIEvent *ppiEvent;
+    FilterEvent *ppiEvent;
     RadarEngine::RadarEngine* m_re;
     QTimer *timer;
     QRect region;

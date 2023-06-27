@@ -10,7 +10,9 @@ const QString Utils::MtrUnitStr = " m";
 const QString Utils::KmUnitStr = " Km";
 const QString Utils::NMUnitStr = " NM";
 
+const int Utils::ONE_PRECISION = 1;
 const int Utils::TWO_PRECISION = 2;
+const int Utils::FIVE_PRECISION = 5;
 
 quint8 Utils::unit = 0;
 

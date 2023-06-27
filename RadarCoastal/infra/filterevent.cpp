@@ -1,14 +1,14 @@
-#include "ppievent.h"
+#include "infra/filterevent.h"
 
 #include <QContextMenuEvent>
 #include <QMouseEvent>
 #include <QDebug>
 
-PPIEvent::PPIEvent(QObject *parent) : QObject(parent)
+FilterEvent::FilterEvent(QObject *parent) : QObject(parent)
 {
 
 }
-bool PPIEvent::eventFilter(QObject *obj, QEvent *event)
+bool FilterEvent::eventFilter(QObject *obj, QEvent *event)
 {
      if (event->type() == QEvent::ContextMenu) {
         qDebug()<<Q_FUNC_INFO<<"contex menu";

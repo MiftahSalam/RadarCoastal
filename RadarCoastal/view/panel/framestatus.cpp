@@ -134,9 +134,9 @@ void FrameStatus::initStatus()
     ui->labelAlarmStatus->setText("No Alarm");
     ui->labelAlarmStatus->setStyleSheet("background-color: rgb(78, 154, 6);");
 
-    m_alarm_event = new PPIEvent(ui->labelAlarmStatus);
+    m_alarm_event = new FilterEvent(ui->labelAlarmStatus);
     ui->labelAlarmStatus->installEventFilter(m_alarm_event);
 
-    connect(m_alarm_event,&PPIEvent::send_leftButtonReleased,this,&FrameStatus::on_alarmStatus_clicked);
+    connect(m_alarm_event,&FilterEvent::send_leftButtonReleased,this,&FrameStatus::on_alarmStatus_clicked);
 }
 

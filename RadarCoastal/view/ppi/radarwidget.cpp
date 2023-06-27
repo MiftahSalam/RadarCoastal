@@ -25,7 +25,7 @@ RadarWidget::RadarWidget(QWidget *parent)
     format.setSamples(16);
     setFormat(format);
 
-    ppiEvent = new PPIEvent(this);
+    ppiEvent = new FilterEvent(this);
     installEventFilter(ppiEvent);
     setMouseTracking(true);
 
@@ -37,8 +37,8 @@ RadarWidget::RadarWidget(QWidget *parent)
     PPIGZObject* gz1 = new PPIGZObject(this,"GZ 2");
     PPICompassObject* compass = new PPICompassObject(this);
 
-    connect(ppiEvent,&PPIEvent::send_leftButtonReleased,this,&RadarWidget::trigger_cursorLeftRelease);
-    connect(ppiEvent,&PPIEvent::move_mouse,this,&RadarWidget::trigger_cursorMove);
+    connect(ppiEvent,&FilterEvent::send_leftButtonReleased,this,&RadarWidget::trigger_cursorLeftRelease);
+    connect(ppiEvent,&FilterEvent::move_mouse,this,&RadarWidget::trigger_cursorMove);
     connect(this,&RadarWidget::signal_cursorLeftRelease,arpa->m_ppi_arpa,&PPIArpa::createMARPA);
     connect(timer, SIGNAL(timeout()), this, SLOT(timeOut()));
 

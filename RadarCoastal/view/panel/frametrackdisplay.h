@@ -5,8 +5,7 @@
 #include <QStandardItemModel>
 #include <QTimer>
 
-#include "usecase/stream/arpasender.h"
-#include <RadarEngine/radarengine.h>
+#include "usecase/track/track.h"
 
 namespace Ui {
 class FrameTrackDisplay;
@@ -22,7 +21,6 @@ public:
 
 private slots:
     void timerTimeout();
-    void trigger_LostTarget(int id);
 
     void on_pushButtonDelSel_clicked();
 
@@ -30,35 +28,9 @@ private slots:
 
 private:
     Ui::FrameTrackDisplay *ui;
+
     QTimer *timer;
-    ArpaSender *arpaSender;
-    RadarEngine::RadarEngine* m_re;
-
-    int dataCount_mqtt, updateCount, cur_arpa_id_count;
-    QStandardItemModel *model,*modelSend;
-
-    void updateTarget();
-    void removeTarget(int id);
-    void insertList(
-            int id,
-            double lat,
-            double lon,
-            double alt,
-            double rng,
-            double brn,
-            double spd,
-            double crs
-            );
-    void trigger_target_update(
-            int id,
-            double lat,
-            double lon,
-            double alt,
-            double rng,
-            double brn,
-            double spd,
-            double crs
-            );
+    Track* track;
 };
 
 #endif // FRAMETRACKDISPLAY_H

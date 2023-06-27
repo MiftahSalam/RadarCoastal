@@ -22,6 +22,33 @@ ArpaSender::ArpaSender(QObject *parent)
 
 }
 
+void ArpaSender::SendData(const TrackModel &data)
+{
+    QString mq_data;
+    QPointF gpsCorrection = Utils::GpsAbsolute(data.lat,data.lon);
+
+    QString id_str = QString::number(data.id);
+    QString lat_str = QString::number(gpsCorrection.y(),'f',Utils::FIVE_PRECISION);
+    QString lon_str = QString::number(gpsCorrection.x(),'f',Utils::FIVE_PRECISION);
+    QString rng_str = QString::number(data.rng,'f',Utils::ONE_PRECISION);
+    QString brn_str = QString::number(data.brn,'f',Utils::ONE_PRECISION);
+    QString spd_str = QString::number(data.spd,'f',Utils::ONE_PRECISION);
+    QString crs_str = QString::number(data.crs,'f',Utils::ONE_PRECISION);
+    QString alt_str =  QString::number(data.alt,'f',Utils::ONE_PRECISION);
+
+//    lat_str.replace(".",",");
+//    lon_str.replace(".",",");
+//    alt_str.replace(".",",");
+//    spd_str.replace(".",",");
+//    crs_str.replace(".",",");
+
+    mq_data = m_topic+":"+id_str+"#"+rng_str+"#"+brn_str+"#"+lat_str+"#"+lon_str+"#"+spd_str+"#"+crs_str;
+
+    if(m_stream->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream->Reconnect();
+    else m_stream->SendData(mq_data);
+
+}
+
 void ArpaSender::SendData(int id,
         double lat,
         double lon,
@@ -36,13 +63,13 @@ void ArpaSender::SendData(int id,
     QPointF gpsCorrection = Utils::GpsAbsolute(lat,lon);
 
     QString id_str = QString::number(id);
-    QString lat_str = QString::number(gpsCorrection.y(),'f',5);
-    QString lon_str = QString::number(gpsCorrection.x(),'f',5);
-    QString rng_str = QString::number(rng,'f',1);
-    QString brn_str = QString::number(brn,'f',1);
-    QString spd_str = QString::number(spd,'f',1);
-    QString crs_str = QString::number(crs,'f',1);
-    QString alt_str =  QString::number(alt,'f',1);
+    QString lat_str = QString::number(gpsCorrection.y(),'f',Utils::FIVE_PRECISION);
+    QString lon_str = QString::number(gpsCorrection.x(),'f',Utils::FIVE_PRECISION);
+    QString rng_str = QString::number(rng,'f',Utils::ONE_PRECISION);
+    QString brn_str = QString::number(brn,'f',Utils::ONE_PRECISION);
+    QString spd_str = QString::number(spd,'f',Utils::ONE_PRECISION);
+    QString crs_str = QString::number(crs,'f',Utils::ONE_PRECISION);
+    QString alt_str =  QString::number(alt,'f',Utils::ONE_PRECISION);
 
 //    lat_str.replace(".",",");
 //    lon_str.replace(".",",");
