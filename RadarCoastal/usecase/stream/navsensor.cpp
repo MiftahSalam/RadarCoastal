@@ -3,7 +3,14 @@
 NavSensor::NavSensor(QObject *parent) : QObject(parent)
 {
     qDebug()<<Q_FUNC_INFO;
-    QString nav_config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
+    m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+
+    initConfig();
+}
+
+void NavSensor::initConfig()
+{
+    QString nav_config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
     QStringList nav_config_str_list = nav_config_str.split(":");
 
     if(nav_config_str_list.size() != 3)
@@ -12,7 +19,7 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
         exit(1);
     }
 
-    bool gps_auto = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
+    bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
     if(!gps_auto)
     {
         nav_config_str_list.removeLast();
@@ -27,7 +34,7 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
 
     m_stream = new Stream(this,nav_config_str_list.join(":"));
     connect(m_stream,&Stream::SignalReceiveData,this,&NavSensor::triggerReceivedData);
-    connect(RadarEngine::RadarConfig::getInstance(""),&RadarEngine::RadarConfig::configValueChange,
+    connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,
             this,&NavSensor::triggerConfigChange);
 }
 
@@ -42,7 +49,7 @@ void NavSensor::triggerConfigChange(const QString key, const QVariant val)
     {
         if(val.toBool())
         {
-            QString nav_config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
+            QString nav_config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
             QStringList nav_config_str_list = nav_config_str.split(":");
 
             if(nav_config_str_list.size() != 3)
@@ -56,7 +63,7 @@ void NavSensor::triggerConfigChange(const QString key, const QVariant val)
         }
         else
         {
-            QString nav_config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
+            QString nav_config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
             QStringList nav_config_str_list = nav_config_str.split(":");
 
             if(nav_config_str_list.size() != 3)
@@ -112,12 +119,12 @@ void NavSensor::UpdateStatus()
 
     switch (m_stream->GetStreamStatus()) {
     case DeviceWrapper::NOT_AVAIL:
-        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 0); //offline
-        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 0); //offline
+        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 0); //offline
+        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 0); //offline
         break;
     case DeviceWrapper::NO_INPUT_DATA:
-        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 1); //no data
-        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 1); //no data
+        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 1); //no data
+        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 1); //no data
         break;
     default:
         break;
@@ -156,24 +163,24 @@ void NavSensor::triggerReceivedData(const QString data)
                         {
                             if(isGPSDataValid(msg_list.at(0),msg_list.at(1)))
                             {
-                                RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE,msg_list.at(0).toDouble());
-                                RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE,msg_list.at(1).toDouble());
-                                RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 3); //data valid
+                                m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE,msg_list.at(0).toDouble());
+                                m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE,msg_list.at(1).toDouble());
+                                m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 3); //data valid
                             }
-                            else RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
+                            else m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
 
                             if(isHDGDataValid(msg_list.at(2)))
                             {
-                                RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING,msg_list.at(2).toDouble());
-                                RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 3); //data valid
+                                m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING,msg_list.at(2).toDouble());
+                                m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 3); //data valid
                             }
-                            else RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
+                            else m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
                         }
                         else
                         {
                             qDebug()<<Q_FUNC_INFO<<"osd invalid";
-                            RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
-                            RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
+                            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
+                            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
                         }
 
                         m_append_data_osd.clear();
