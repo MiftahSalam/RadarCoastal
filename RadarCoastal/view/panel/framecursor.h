@@ -3,6 +3,8 @@
 
 #include <QFrame>
 
+#include <RadarEngine/radarconfig.h>
+
 namespace Ui {
 class FrameCursor;
 }
@@ -20,6 +22,8 @@ public slots:
 
 private:
     Ui::FrameCursor *ui;
+
+    RadarEngine::RadarConfig* m_instance_cfg;
 };
 
 #endif // FRAMECURSOR_H

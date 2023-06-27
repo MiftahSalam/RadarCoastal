@@ -2,14 +2,14 @@
 #include "ui_framecursor.h"
 #include "shared/utils.h"
 
-#include <RadarEngine/radarconfig.h>
-
 #include <QDebug>
 
 FrameCursor::FrameCursor(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameCursor)
 {
+    m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+
     ui->setupUi(this);
 //    ui->labelCursorLat->hide();
 //    ui->labelCursorLon->hide();
@@ -17,10 +17,9 @@ FrameCursor::FrameCursor(QWidget *parent) :
 void FrameCursor::trigger_cursorMove(const QPoint pos, const int vp_width, const int vp_height)
 {
 
-    RadarEngine::RadarConfig* instance = RadarEngine::RadarConfig::getInstance("");
-    double const curLat = instance->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
-    double const curLon = instance->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
-    double curRange = instance->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
+    double const curLat = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
+    double const curLon = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+    double curRange = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
     const quint8 unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
 
     switch (unit) {
@@ -40,16 +39,16 @@ void FrameCursor::trigger_cursorMove(const QPoint pos, const int vp_width, const
 //    qDebug()<<Q_FUNC_INFO<<"curRange"<<curRange<<"curLat"<<curLat<<"curLon"<<curLon<<"cursor"<<distance;
     switch (unit) {
     case 0:
-        ui->labelCursorRange->setText(QString::number(distance.x(),'f',2)+" Km");
+        ui->labelCursorRange->setText(QString::number(distance.x(),'f',Utils::TWO_PRECISION)+Utils::KmUnitStr);
         break;
     case 1:
-        ui->labelCursorRange->setText(QString::number(distance.x(),'f',2)+" NM");
+        ui->labelCursorRange->setText(QString::number(distance.x(),'f',Utils::TWO_PRECISION)+Utils::NMUnitStr);
         break;
     default:
         break;
     }
 
-    ui->labelCursorBrn->setText(QString::number(distance.y(),'f',2));
+    ui->labelCursorBrn->setText(QString::number(distance.y(),'f',Utils::TWO_PRECISION));
     ui->labelCursorLat->setText(gps_str.at(0));
     ui->labelCursorLon->setText(gps_str.at(1));
 }

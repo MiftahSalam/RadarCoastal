@@ -10,6 +10,8 @@ const QString Utils::MtrUnitStr = " m";
 const QString Utils::KmUnitStr = " Km";
 const QString Utils::NMUnitStr = " NM";
 
+const int Utils::TWO_PRECISION = 2;
+
 quint8 Utils::unit = 0;
 
 QPointF Utils::PixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
