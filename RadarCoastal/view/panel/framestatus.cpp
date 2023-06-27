@@ -9,13 +9,14 @@ FrameStatus::FrameStatus(QWidget *parent) :
     ui->setupUi(this);
     initStatus();
 
-    m_re = RadarEngine::RadarEngine::GetInstance();
-    alarmManager = AlarmManager::GetInstance();
+    m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    m_instance_re = RadarEngine::RadarEngine::GetInstance(this);
+    m_alarm_manager = AlarmManager::GetInstance();
 
-    alarmToggle = true;
+    m_alarm_toggle = true;
 
-    connect(RadarEngine::RadarConfig::getInstance(""), &RadarEngine::RadarConfig::configValueChange, this, &FrameStatus::trigger_statusChange);
-    connect(alarmManager, &AlarmManager::SignalAlarm, this, &FrameStatus::trigger_Alarm);
+    connect(m_instance_cfg, &RadarEngine::RadarConfig::configValueChange, this, &FrameStatus::trigger_statusChange);
+    connect(m_alarm_manager, &AlarmManager::SignalAlarm, this, &FrameStatus::trigger_Alarm);
 }
 
 void FrameStatus::trigger_Alarm(const QString id, const QString msg)
@@ -29,16 +30,16 @@ void FrameStatus::trigger_Alarm(const QString id, const QString msg)
         return;
     }
 
-    if(alarmToggle)
+    if(m_alarm_toggle)
     {
         ui->labelAlarmStatus->setStyleSheet("background-color: rgb(164,0,0);");
         ui->labelAlarmStatus->setText(id);
-        alarmToggle = false;
+        m_alarm_toggle = false;
     }
     else
     {
         ui->labelAlarmStatus->setStyleSheet("background-color: rgb(0, 5, 83);");
-        alarmToggle = true;
+        m_alarm_toggle = true;
     }
 }
 
@@ -46,7 +47,7 @@ void FrameStatus::updateRadarStatus(const RadarEngine::RadarState status)
 {
     /*tes
     RadarEngine::RadarState test_status = RadarEngine::RADAR_STANDBY;
-    RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_RADAR_WAKINGUP_TIME,30);
+    m_instance_cfg->setConfig(RadarEngine::VOLATILE_RADAR_WAKINGUP_TIME,30);
     */
 
     switch (status) {
@@ -56,7 +57,7 @@ void FrameStatus::updateRadarStatus(const RadarEngine::RadarState status)
         break;
     case RadarEngine::RADAR_WAKING_UP:
     {
-        quint8 tick = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_RADAR_WAKINGUP_TIME).toInt());
+        quint8 tick = static_cast<quint8>(m_instance_cfg->getConfig(RadarEngine::VOLATILE_RADAR_WAKINGUP_TIME).toInt());
         ui->labelRadarStatus->setText("Waking up\n"+Utils::TickToTime(tick));
         ui->labelRadarStatus->setStyleSheet("color: rgb(196, 160, 0);");
     }
@@ -121,7 +122,7 @@ void FrameStatus::on_alarmStatus_clicked(const QPoint &p)
 {
     Q_UNUSED(p)
     qDebug()<<Q_FUNC_INFO;
-    alarmManager->Confirm(ui->labelAlarmStatus->text());
+    m_alarm_manager->Confirm(ui->labelAlarmStatus->text());
 }
 
 void FrameStatus::initStatus()
@@ -133,9 +134,9 @@ void FrameStatus::initStatus()
     ui->labelAlarmStatus->setText("No Alarm");
     ui->labelAlarmStatus->setStyleSheet("background-color: rgb(78, 154, 6);");
 
-    alarmEvent = new PPIEvent(ui->labelAlarmStatus);
-    ui->labelAlarmStatus->installEventFilter(alarmEvent);
+    m_alarm_event = new PPIEvent(ui->labelAlarmStatus);
+    ui->labelAlarmStatus->installEventFilter(m_alarm_event);
 
-    connect(alarmEvent,&PPIEvent::send_leftButtonReleased,this,&FrameStatus::on_alarmStatus_clicked);
+    connect(m_alarm_event,&PPIEvent::send_leftButtonReleased,this,&FrameStatus::on_alarmStatus_clicked);
 }
 

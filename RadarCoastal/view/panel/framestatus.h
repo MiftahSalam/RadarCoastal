@@ -4,6 +4,7 @@
 #include <QFrame>
 
 #include <RadarEngine/radarengine.h>
+#include <RadarEngine/radarconfig.h>
 
 #include "view/ppi/ppievent.h"
 #include "usecase/alarm/alarmmanager.h"
@@ -27,10 +28,12 @@ private slots:
 
 private:
     Ui::FrameStatus *ui;
-    RadarEngine::RadarEngine* m_re;
-    PPIEvent *alarmEvent;
-    AlarmManager *alarmManager;
-    bool alarmToggle;
+
+    RadarEngine::RadarConfig* m_instance_cfg;
+    RadarEngine::RadarEngine* m_instance_re;
+    PPIEvent *m_alarm_event;
+    AlarmManager *m_alarm_manager;
+    bool m_alarm_toggle;
 
     void updateRadarStatus(const RadarEngine::RadarState status);
     void updateNavStatus(const int status);
