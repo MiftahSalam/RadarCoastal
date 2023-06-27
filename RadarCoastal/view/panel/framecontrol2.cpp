@@ -1,8 +1,6 @@
 #include "framecontrol2.h"
 #include "ui_framecontrol2.h"
 
-#include <radarconfig.h>
-
 #include <QIntValidator>
 
 FrameControl2::FrameControl2(QWidget *parent) :

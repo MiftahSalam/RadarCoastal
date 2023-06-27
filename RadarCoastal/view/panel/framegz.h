@@ -3,6 +3,8 @@
 
 #include <QFrame>
 
+#include <RadarEngine/radarconfig.h>
+
 namespace Ui {
 class FrameGZ;
 }
@@ -53,7 +55,11 @@ private slots:
     void on_lineEditNotifTHR2_textChanged(const QString &arg1);
 
 private:
+    void initConfig();
+
     Ui::FrameGZ *ui;
+
+    RadarEngine::RadarConfig* m_instance_cfg;
 };
 
 #endif // FRAMEGZ_H
