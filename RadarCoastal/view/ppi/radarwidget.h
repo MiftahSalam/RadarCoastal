@@ -69,6 +69,7 @@ private:
     QList<PPIObject*> drawObjects;
     FilterEvent *ppiEvent;
     RadarEngine::RadarEngine* m_re;
+    PPIArpa *m_ppi_arpa;
     QTimer *timer;
     QRect region;
 

@@ -32,7 +32,9 @@ RadarWidget::RadarWidget(QWidget *parent)
     timer  = new QTimer(this);
 
     m_re = RadarEngine::RadarEngine::GetInstance();
-    PPIArpaObject* arpa = new PPIArpaObject(this);
+    m_ppi_arpa = new PPIArpa(this, m_re, RadarEngine::RadarConfig::getInstance(""));
+
+    PPIArpaObject* arpa = new PPIArpaObject(this, m_ppi_arpa);
     PPIGZObject* gz = new PPIGZObject(this,"GZ 1");
     PPIGZObject* gz1 = new PPIGZObject(this,"GZ 2");
     PPICompassObject* compass = new PPICompassObject(this);
