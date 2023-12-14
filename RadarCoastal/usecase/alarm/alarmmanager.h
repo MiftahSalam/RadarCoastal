@@ -17,7 +17,9 @@ public:
     bool AddAlarm(const AlarmType type, const QString id);
     void Confirm(const QString id);
 
-    static AlarmManager* GetInstance();
+    static AlarmManager* GetInstance(RadarEngine::RadarEngine *re);
+
+    static RadarEngine::RadarEngine *m_re;
 
 signals:
     void SignalAlarm(const QString id, const QString message);
@@ -29,7 +31,7 @@ private slots:
     void TriggerTimerTimeOut();
 
 protected:
-    explicit AlarmManager(QObject *parent = nullptr);
+    explicit AlarmManager(QObject *parent = nullptr, RadarEngine::RadarEngine *re = nullptr);
 
 private:
     QMap<QString, Alarm*> m_list_alarms;

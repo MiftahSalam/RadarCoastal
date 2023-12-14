@@ -11,7 +11,7 @@ FrameStatus::FrameStatus(QWidget *parent) :
 
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     m_instance_re = RadarEngine::RadarEngine::GetInstance(this);
-    m_alarm_manager = AlarmManager::GetInstance();
+    m_alarm_manager = AlarmManager::GetInstance(m_instance_re);
 
     m_alarm_toggle = true;
 

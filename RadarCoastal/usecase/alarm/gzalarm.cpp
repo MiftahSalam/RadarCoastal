@@ -5,6 +5,12 @@
 GZAlarm::GZAlarm(QObject *parent, QString id, RadarEngine::RadarEngine *re): Alarm(parent, AlarmType::ALARM_GZ, id),m_id(id)
 {
     m_re = re;
+    if(m_re == nullptr)
+    {
+        qDebug()<<Q_FUNC_INFO<<"m_re is null";
+        exit(-1);
+    }
+
     if(id == "GZ 1")
     {
         m_shown_key = RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ;

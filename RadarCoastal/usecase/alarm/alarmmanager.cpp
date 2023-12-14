@@ -3,10 +3,12 @@
 #include <QDebug>
 
 AlarmManager* AlarmManager::m_alarm_manager{nullptr};
+RadarEngine::RadarEngine* AlarmManager::m_re{nullptr};
 
-AlarmManager::AlarmManager(QObject *parent)
+AlarmManager::AlarmManager(QObject *parent, RadarEngine::RadarEngine *re)
     : QObject{parent}
 {
+    m_re = re;
     AddAlarm(ALARM_GZ,"GZ 1");
     AddAlarm(ALARM_GZ,"GZ 2");
 
@@ -72,7 +74,7 @@ bool AlarmManager::AddAlarm(const AlarmType type, const QString id)
     switch (type) {
     case ALARM_GZ:
     {
-        GZAlarm* gzAlarm = new GZAlarm(this,id);
+        GZAlarm* gzAlarm = new GZAlarm(this,id, m_alarm_manager->m_re);
         baseAlarm = dynamic_cast<Alarm*>(gzAlarm);
     }
         break;
@@ -86,9 +88,11 @@ bool AlarmManager::AddAlarm(const AlarmType type, const QString id)
     return true;
 }
 
-AlarmManager* AlarmManager::GetInstance()
+AlarmManager* AlarmManager::GetInstance(RadarEngine::RadarEngine *re)
 {
-    if(!m_alarm_manager) m_alarm_manager = new AlarmManager();
+    if(!m_alarm_manager) {
+        m_alarm_manager = new AlarmManager(nullptr, re);
+    }
     return m_alarm_manager;
 }
 
