@@ -1,5 +1,7 @@
 #include "usecase/alarm/gzalarm.h"
 
+#include <RadarEngine/radarconfig.h>
+
 GZAlarm::GZAlarm(QObject *parent, QString id, RadarEngine::RadarEngine *re): Alarm(parent, AlarmType::ALARM_GZ, id),m_id(id)
 {
     m_re = re;

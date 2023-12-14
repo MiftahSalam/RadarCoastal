@@ -2,6 +2,7 @@
 #define PPIARPA_H
 
 #include <RadarEngine/radarengine.h>
+#include <RadarEngine/radarconfig.h>
 
 class PPIArpa : public QObject
 {
