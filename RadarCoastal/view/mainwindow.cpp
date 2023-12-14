@@ -30,8 +30,12 @@ MainWindow::MainWindow(QWidget *parent) :
     m_dialog_gz = new DialogGZ(this);
     m_dialog_bit = new DialogBIT(this);
 
-    connect(ui->frameControl1,SIGNAL(signal_req_shutdown()),
-            this,SLOT(TriggerShutdown()));
+    connect(ui->frameControl1,SIGNAL(signal_req_shutdown()),this,SLOT(TriggerShutdown()));
+
+    connect(ui->pushButtonConnections, &QAbstractButton::clicked, this, &MainWindow::OnPushButtonConnectionsClicked);
+    connect(ui->pushButtonBIT, &QAbstractButton::clicked, this, &MainWindow::OnPushButtonBITClicked);
+    connect(ui->pushButtonSetGZ, &QAbstractButton::clicked, this, &MainWindow::OnPushButtonSetGZClicked);
+
     connect(m_re,&RadarEngine::RadarEngine::SignalPlotRadarSpoke,m_ppi,&RadarWidget::trigger_DrawSpoke);
     connect(m_ppi,&RadarWidget::signal_cursorMove,ui->frameCursor,&FrameCursor::trigger_cursorMove);
 
