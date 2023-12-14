@@ -1,6 +1,5 @@
 #include "ppiarpaobject.h"
 #include "qmath.h"
-#include "shared/utils.h"
 
 PPIArpaObject::PPIArpaObject(QObject *parent,PPIArpa *arpa): PPIObject(parent)
 {

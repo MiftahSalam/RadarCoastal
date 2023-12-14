@@ -1,5 +1,4 @@
 #include "ppicompassobject.h"
-#include "qmath.h"
 
 PPICompassObject::PPICompassObject(QObject *parent): PPIObject(parent)
 {

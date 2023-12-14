@@ -8,7 +8,6 @@
 
 #include <unistd.h>
 
-
 FrameControl1::FrameControl1(QWidget *parent) :
     QFrame(parent), ui(new Ui::FrameControl1)
 {

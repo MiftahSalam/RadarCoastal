@@ -7,8 +7,6 @@
 #include <RadarEngine/radarengine.h>
 #include <RadarEngine/radarconfig.h>
 
-using namespace RadarEngine;
-
 namespace Ui {
 class FrameControl1;
 }
