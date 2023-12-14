@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_dialog_bit = new DialogBIT(this);
 
     connect(ui->frameControl1,SIGNAL(signal_req_shutdown()),
-            this,SLOT(trigger_shutdown()));
+            this,SLOT(TriggerShutdown()));
     connect(m_re,&RadarEngine::RadarEngine::SignalPlotRadarSpoke,m_ppi,&RadarWidget::trigger_DrawSpoke);
     connect(m_ppi,&RadarWidget::signal_cursorMove,ui->frameCursor,&FrameCursor::trigger_cursorMove);
 
