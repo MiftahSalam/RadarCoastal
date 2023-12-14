@@ -19,9 +19,9 @@ int main(int argc, char *argv[])
 
     QString appStyle;
     if(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_DISPLAY_PRESET_COLOR).toInt() == 0)
-        appStyle = loadStylesheetFile( ":/css/HMI_style.css" );
+        appStyle = loadStylesheetFile( ":/css/view/assets/css/HMI_style.css" );
     else if(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_DISPLAY_PRESET_COLOR).toInt() == 1)
-        appStyle = loadStylesheetFile( ":/css/HMI_style_night.css" );
+        appStyle = loadStylesheetFile( ":/css/view/assets/css/HMI_style_night.css" );
 
     a.setStyleSheet( appStyle );
 
