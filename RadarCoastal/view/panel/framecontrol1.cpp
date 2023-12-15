@@ -26,7 +26,7 @@ void FrameControl1::initConfig()
 {
     ui->checkBoxShowRing->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
     on_checkBoxShowRing_clicked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
-    handleRingRangeChange();
+//    handleRingRangeChange();
 }
 
 void FrameControl1::handleRingRangeChange()

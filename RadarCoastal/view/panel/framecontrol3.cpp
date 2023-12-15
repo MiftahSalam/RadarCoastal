@@ -20,8 +20,6 @@ FrameControl3::FrameControl3(QWidget *parent) :
     ui->comboBoxDisplayMode->hide();
 
     initConfig();
-
-    prev_unit_idx = ui->comboBoxDisplayMode->currentIndex();
 }
 
 void FrameControl3::initConfig()
@@ -30,7 +28,15 @@ void FrameControl3::initConfig()
     ui->checkBoxShowCompass->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_COMPASS).toBool());
     ui->checkBoxShowHM->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_HEADING_MARKER).toBool());
     ui->checkBoxShowRSweep->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP).toBool());
-    ui->comboBoxDisplayUnit->setCurrentIndex(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toInt());
+
+    int cur_idx = ui->comboBoxDisplayUnit->currentIndex();
+    int cfg_idx = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toInt();
+
+    prev_unit_idx = cfg_idx;
+
+    if(cur_idx == cfg_idx) on_comboBoxDisplayUnit_currentIndexChanged(cur_idx);
+    else ui->comboBoxDisplayUnit->setCurrentIndex(cfg_idx);
+
 }
 
 FrameControl3::~FrameControl3()
@@ -90,7 +96,6 @@ void FrameControl3::on_comboBoxDisplayMode_currentIndexChanged(int index)
     m_instance_cfg->setConfig(RadarEngine::VOLATILE_DISPLAY_PRESET_COLOR,index);
 }
 
-
 void FrameControl3::on_comboBoxDisplayUnit_currentIndexChanged(int index)
 {
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT,index);
@@ -98,6 +103,9 @@ void FrameControl3::on_comboBoxDisplayUnit_currentIndexChanged(int index)
 
     const int cur_range = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
     int cur_zoom_lvl = distanceList.indexOf(cur_range);
+
+    qDebug()<<Q_FUNC_INFO<<"distanceList"<<distanceList;
+    qDebug()<<Q_FUNC_INFO<<"distanceListNautical"<<distanceListNautical;
 
     switch (prev_unit_idx) {
     case 0:
