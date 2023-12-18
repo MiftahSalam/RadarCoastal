@@ -9,7 +9,10 @@ class PPIGrabber : public QObject
 {
     Q_OBJECT
 public:
-    explicit PPIGrabber(QObject *parent = nullptr);
+    PPIGrabber(PPIGrabber& other) = delete;
+    void operator=(const PPIGrabber&) = delete;
+
+    static PPIGrabber* GetInstance(QObject *parent = nullptr);
 
     void start();
     void stop();
@@ -18,13 +21,18 @@ public:
     bool pendingGrabAvailable() const;
     bool isStart() const;
 
+protected:
+    explicit PPIGrabber(QObject *parent = nullptr);
+
 signals:
+    void signalSendEcho(const QString echo, const int vp_width, const int vp_height);
 
 private slots:
     void trigger_radarConfigChange(QString key, QVariant val);
 
 private:
     RadarEngine::RadarConfig* m_instance_cfg;
+    static PPIGrabber* m_grabber;
 
     void stateChange(int state);
 

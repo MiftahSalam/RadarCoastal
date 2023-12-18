@@ -7,7 +7,17 @@
 //#include "qdir.h"
 #include "qimage.h"
 //#include "qapplication.h"
-#include "qpixmap.h"
+//#include "qpixmap.h"
+
+PPIGrabber* PPIGrabber::m_grabber{nullptr};
+
+PPIGrabber* PPIGrabber::GetInstance(QObject *parent)
+{
+    if(!m_grabber) {
+        m_grabber = new PPIGrabber(parent);
+    }
+    return m_grabber;
+}
 
 PPIGrabber::PPIGrabber(QObject *parent)
     : QObject{parent}, currentAngle(0), grabStart(false), grabPending(false)
@@ -31,6 +41,8 @@ void PPIGrabber::grab(QImage image)
 
         strBase64 = QString(ba.toBase64(QByteArray::Base64Encoding));
 //        qDebug()<<Q_FUNC_INFO<<"base64"<<strBase64;
+
+        emit signalSendEcho(strBase64, image.width(), image.height());
 
         /* test read and save from base64 image
         QByteArray ba64 = QByteArray::fromBase64(strBase64.toUtf8());

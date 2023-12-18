@@ -30,7 +30,7 @@ RadarWidget::RadarWidget(QWidget *parent)
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     m_re = RadarEngine::RadarEngine::GetInstance();
     m_ppi_arpa = new PPIArpa(this, m_re, m_instance_cfg);
-    m_ppi_grabber = new PPIGrabber(this);
+    echoSender = new EchoSender(this);
 
     PPIArpaObject* arpa = new PPIArpaObject(this, m_ppi_arpa);
     PPIGZObject* gz = new PPIGZObject(this,"GZ 1");
@@ -64,7 +64,7 @@ void RadarWidget::trigger_radarConfigChange(QString key, QVariant val)
         }
         else if(state != cur_state && state != RadarEngine::RADAR_TRANSMIT)
         {
-            m_ppi_grabber->stop();
+           echoSender->m_ppi_grabber->stop();
         }
         cur_state = state;
     }
@@ -148,9 +148,9 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     m_re->radarDraw->DrawRadarImage();
 
-    if(m_ppi_grabber->isStart() && m_ppi_grabber->pendingGrabAvailable())
+    if(echoSender->m_ppi_grabber->isStart() && echoSender->m_ppi_grabber->pendingGrabAvailable())
     {
-        m_ppi_grabber->grab(grabFrameBuffer(true));
+        echoSender->m_ppi_grabber->grab(grabFrameBuffer(true));
     }
 
     const bool show_sweep = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP).toBool();
@@ -204,10 +204,10 @@ void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data
 
     if(initGrab)
     {
-        m_ppi_grabber->start();
+        echoSender->m_ppi_grabber->start();
         initGrab = false;
     }
-    if(m_ppi_grabber->isStart()) m_ppi_grabber->update();
+    if(echoSender->m_ppi_grabber->isStart()) echoSender->m_ppi_grabber->update();
 
     m_re->radarDraw->ProcessRadarSpoke(angle,data,len);
     update();

@@ -1,0 +1,45 @@
+#ifndef ECHOSENDER_H
+#define ECHOSENDER_H
+
+#include "usecase/ppi/ppigrabber.h"
+#include <QObject>
+
+#include <RadarEngine/radarconfig.h>
+
+class EchoSender : public QObject
+{
+    Q_OBJECT
+public:
+    explicit EchoSender(QObject *parent = nullptr);
+
+    PPIGrabber *m_ppi_grabber;
+
+signals:
+
+private slots:
+    void triggerSendData(const QString echoStr, const int vp_width, const int vp_height);
+
+private:
+    RadarEngine::RadarConfig* m_instance_cfg;
+
+    struct BoundingBoxGps
+    {
+        BoundingBoxGps() {}
+
+        double topLeftLat;
+        double topLeftLon;
+        double bottomLeftLat;
+        double bottomLeftLon;
+        double topRightLat;
+        double topRightLon;
+        double bottomRightLat;
+        double bottomRightLon;
+    };
+
+    BoundingBoxGps calculateBoundingBox(const int vp_width, const int vp_height);
+    QJsonObject buildJsonPackage(const QString data, const quint64 ts, const BoundingBoxGps box, double curRange);
+    void saveJsonDataToFile(QByteArray data);
+    void initFile();
+};
+
+#endif // ECHOSENDER_H

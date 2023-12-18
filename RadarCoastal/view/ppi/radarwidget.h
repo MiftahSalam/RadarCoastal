@@ -18,6 +18,7 @@
 #include "ppigzobject.h"
 #include "ppicompassobject.h"
 #include "usecase/ppi/ppigrabber.h"
+#include "usecase/stream/echosender.h"
 
 class RadarWidget : public QGLWidget, protected QOpenGLFunctions
 {
@@ -72,8 +73,8 @@ private:
     FilterEvent *ppiEvent;
     RadarEngine::RadarEngine* m_re;
     RadarEngine::RadarConfig* m_instance_cfg;
+    EchoSender *echoSender;
     PPIArpa *m_ppi_arpa;
-    PPIGrabber *m_ppi_grabber;
     QTimer *timer;
     QRect region;
 

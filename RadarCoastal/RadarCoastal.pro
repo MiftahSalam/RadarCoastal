@@ -45,6 +45,7 @@ SOURCES += \
     usecase/alarm/gzalarm.cpp \
     usecase/ppi/arpa.cpp \
     usecase/ppi/ppigrabber.cpp \
+    usecase/stream/echosender.cpp \
     usecase/track/track.cpp \
     usecase/track/trackmodelview.cpp \
     view/dialog/dialogbit.cpp \
@@ -85,6 +86,7 @@ HEADERS += \
     usecase/alarm/gzalarm.h \
     usecase/ppi/arpa.h \
     usecase/ppi/ppigrabber.h \
+    usecase/stream/echosender.h \
     usecase/track/track.h \
     usecase/track/trackmodelview.h \
     view/dialog/dialogbit.h \
