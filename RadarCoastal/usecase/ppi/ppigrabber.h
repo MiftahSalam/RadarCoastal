@@ -1,7 +1,7 @@
 #ifndef PPIGRABBER_H
 #define PPIGRABBER_H
 
-#include "radarconfig.h"
+#include <RadarEngine/radarconfig.h>
 
 #include <QObject>
 

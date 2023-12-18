@@ -1,10 +1,13 @@
 #include "ppigrabber.h"
-#include "shared/global.h"
 
-#include <RadarEngine/shared/constants.h>
+#include <RadarEngine/constants.h>
+#include <RadarEngine/global.h>
 
+#include "qbuffer.h"
+//#include "qdir.h"
 #include "qimage.h"
-#include "qapplication.h"
+//#include "qapplication.h"
+#include "qpixmap.h"
 
 PPIGrabber::PPIGrabber(QObject *parent)
     : QObject{parent}, currentAngle(0), grabStart(false), grabPending(false)
@@ -18,7 +21,26 @@ void PPIGrabber::grab(QImage image)
 {
     if(grabStart)
     {
-        image.save(qApp->applicationDirPath()+"/grab.png");
+        QByteArray ba;
+        QBuffer buf(&ba);
+        QString strBase64;
+
+        buf.open(QIODevice::WriteOnly);
+
+        image.save(&buf, "png");
+
+        strBase64 = QString(ba.toBase64(QByteArray::Base64Encoding));
+//        qDebug()<<Q_FUNC_INFO<<"base64"<<strBase64;
+
+        /* test read and save from base64 image
+        QByteArray ba64 = QByteArray::fromBase64(strBase64.toUtf8());
+        QPixmap img;
+        img.loadFromData(ba64);
+        img.save(qApp->applicationDirPath()+QDir::separator()+"base64_grab.png", "png");
+        //        image.save(qApp->applicationDirPath()+"/grab.png");
+        grabStart = false; //test
+        */
+
         grabPending = false;
     }
     else qWarning()<<Q_FUNC_INFO<<"Grab not start";
