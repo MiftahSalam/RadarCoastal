@@ -1,7 +1,7 @@
 #include "frametrail.h"
 #include "ui_frametrail.h"
 
-#include <radarconfig.h>
+#include <RadarEngine/radarconfig.h>
 
 FrameTrail::FrameTrail(QWidget *parent) :
     QFrame(parent),

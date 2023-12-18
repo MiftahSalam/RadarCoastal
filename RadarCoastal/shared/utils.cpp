@@ -3,7 +3,7 @@
 #include <QLineF>
 #include <qmath.h>
 
-#include <RadarEngine/shared/global.h>
+#include <RadarEngine/global.h>
 #include <RadarEngine/radarconfig.h>
 
 const QString Utils::MtrUnitStr = " m";

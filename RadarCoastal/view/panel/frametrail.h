@@ -4,7 +4,7 @@
 #include <QFrame>
 #include <QMap>
 
-#include <radarengine.h>
+#include <RadarEngine/radarengine.h>
 
 namespace Ui {
 class FrameTrail;

@@ -2,8 +2,8 @@
 #include "framecontrol1.h"
 #include "ui_framecontrol1.h"
 
-#include <RadarEngine/shared/constants.h>
-#include <RadarEngine/shared/global.h>
+#include <RadarEngine/constants.h>
+#include <RadarEngine/global.h>
 #include <RadarEngine/radarconfig.h>
 
 #include <unistd.h>

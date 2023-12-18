@@ -21,10 +21,6 @@ RadarWidget::RadarWidget(QWidget *parent)
     setAutoFillBackground(false);
     setMinimumSize(200, 200);
 
-    QSurfaceFormat format;
-    format.setSamples(16);
-//    setFormat(format);
-
     ppiEvent = new FilterEvent(this);
     installEventFilter(ppiEvent);
     setMouseTracking(true);
@@ -55,8 +51,6 @@ RadarWidget::RadarWidget(QWidget *parent)
     initGrab = false;
 
     timer->start(100);
-
-    //    old_motion_mode = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
 }
 
 void RadarWidget::trigger_radarConfigChange(QString key, QVariant val)
@@ -138,13 +132,16 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     makeCurrent();
 
     const int preset_color = m_instance_cfg->getConfig(RadarEngine::VOLATILE_DISPLAY_PRESET_COLOR).toInt();
+    /*
     if(preset_color == 0)
         glClearColor(0.f, 0.0f, 0.0f, .1f);
     else if(preset_color == 1)
         glClearColor(1.f, 1.0f, 1.0f, .1f);
+    */
 
     QColor trans(Qt::transparent);
     glClearColor(trans.redF(), trans.greenF(), trans.blueF(), trans.alphaF());
+
     setupViewport(width(), height());
 
     glClear(GL_COLOR_BUFFER_BIT);

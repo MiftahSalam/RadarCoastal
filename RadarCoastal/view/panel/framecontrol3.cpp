@@ -2,7 +2,7 @@
 #include "ui_framecontrol3.h"
 #include "shared/utils.h"
 
-#include <RadarEngine/shared/global.h>
+#include <RadarEngine/global.h>
 
 #include <QMessageBox>
 #include <QFile>

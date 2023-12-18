@@ -10,7 +10,7 @@
 #include <QTimer>
 
 #include <RadarEngine/radarconfig.h>
-#include <RadarEngine/shared/global.h>
+#include <RadarEngine/global.h>
 #include <RadarEngine/radarengine.h>
 
 #include "infra/filterevent.h"

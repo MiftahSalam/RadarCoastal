@@ -137,12 +137,12 @@ unix: {
 } else:win32 {
     LIBS += -lOpenGL32
 
-    INCLUDEPATH += C:\Users\miftah\RadarEngineLib\include
-    DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include
+    INCLUDEPATH +=C:\Users\ms_tensai\RadarEngineLib\include\2023\v2
+    DEPENDPATH += C:\Users\ms_tensai\RadarEngineLib\lib\include\2023\v2
 }
 
-win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\ -lRadarEngine
-else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\ -lRadarEngined
+win32:CONFIG(release, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
 
 
 # Default rules for deployment.

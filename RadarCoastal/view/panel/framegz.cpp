@@ -1,6 +1,7 @@
 #include "framegz.h"
-#include "radarconfig.h"
 #include "ui_framegz.h"
+
+#include <RadarEngine/radarconfig.h>
 
 #include <QIntValidator>
 

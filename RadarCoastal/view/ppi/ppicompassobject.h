@@ -5,7 +5,7 @@
 
 #include "ppiobject.h"
 
-#include <radarengine.h>
+#include <RadarEngine/radarengine.h>
 
 class PPICompassObject : public PPIObject
 {

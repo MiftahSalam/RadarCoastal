@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include <radarengine.h>
+#include <RadarEngine/radarengine.h>
 #include "alarm.h"
 
 class GZAlarm : public Alarm

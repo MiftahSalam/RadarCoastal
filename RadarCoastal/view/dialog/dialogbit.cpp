@@ -1,7 +1,7 @@
 #include "dialogbit.h"
 #include "ui_dialogbit.h"
 
-#include <RadarEngine/shared/global.h>
+#include <RadarEngine/global.h>
 
 #include <QSettings>
 #include <QTcpSocket>

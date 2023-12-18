@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QPainter>
 
-#include <radarconfig.h>
+#include <RadarEngine/radarconfig.h>
 
 class PPIObject : public QObject
 {

@@ -1,6 +1,6 @@
 #include "view/mainwindow.h"
 
-#include <radarconfig.h>
+#include <RadarEngine/radarconfig.h>
 
 #include <QApplication>
 #include <QDir>
