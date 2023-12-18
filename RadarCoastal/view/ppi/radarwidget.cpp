@@ -16,14 +16,14 @@
 #endif
 
 RadarWidget::RadarWidget(QWidget *parent)
-    : QOpenGLWidget(parent)
+    : QGLWidget(parent)
 {
     setAutoFillBackground(false);
     setMinimumSize(200, 200);
 
     QSurfaceFormat format;
     format.setSamples(16);
-    setFormat(format);
+//    setFormat(format);
 
     ppiEvent = new FilterEvent(this);
     installEventFilter(ppiEvent);
@@ -34,6 +34,7 @@ RadarWidget::RadarWidget(QWidget *parent)
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     m_re = RadarEngine::RadarEngine::GetInstance();
     m_ppi_arpa = new PPIArpa(this, m_re, m_instance_cfg);
+    m_ppi_grabber = new PPIGrabber(this);
 
     PPIArpaObject* arpa = new PPIArpaObject(this, m_ppi_arpa);
     PPIGZObject* gz = new PPIGZObject(this,"GZ 1");
@@ -48,7 +49,11 @@ RadarWidget::RadarWidget(QWidget *parent)
 
     drawObjects<<arpa<<gz<<gz1<<compass;
 
-    cur_radar_angle = 0.;
+    cur_state = RadarEngine::RADAR_OFF;
+    cur_radar_angle_double = 0.;
+    cur_radar_angle = 0;
+    initGrab = false;
+
     timer->start(100);
 
     //    old_motion_mode = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
@@ -59,10 +64,15 @@ void RadarWidget::trigger_radarConfigChange(QString key, QVariant val)
     if(key == RadarEngine::VOLATILE_RADAR_STATUS)
     {
         RadarEngine::RadarState state = static_cast<RadarEngine::RadarState>(val.toInt());
-        if(state == RadarEngine::RADAR_TRANSMIT)
+        if(state != cur_state && state == RadarEngine::RADAR_TRANSMIT)
         {
-
+            initGrab = true;
         }
+        else if(state != cur_state && state != RadarEngine::RADAR_TRANSMIT)
+        {
+            m_ppi_grabber->stop();
+        }
+        cur_state = state;
     }
 }
 
@@ -128,24 +138,29 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     makeCurrent();
 
     const int preset_color = m_instance_cfg->getConfig(RadarEngine::VOLATILE_DISPLAY_PRESET_COLOR).toInt();
-
-    setupViewport(width(), height());
     if(preset_color == 0)
         glClearColor(0.f, 0.0f, 0.0f, .1f);
     else if(preset_color == 1)
         glClearColor(1.f, 1.0f, 1.0f, .1f);
 
+    QColor trans(Qt::transparent);
+    glClearColor(trans.redF(), trans.greenF(), trans.blueF(), trans.alphaF());
+    setupViewport(width(), height());
+
     glClear(GL_COLOR_BUFFER_BIT);
 
     m_re->radarDraw->DrawRadarImage();
 
-//    grabFramebuffer()
-            const bool show_sweep = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP).toBool();
+    if(m_ppi_grabber->isStart() && m_ppi_grabber->pendingGrabAvailable())
+    {
+        m_ppi_grabber->grab(grabFrameBuffer(true));
+    }
+
+    const bool show_sweep = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP).toBool();
     const RadarEngine::RadarState cur_state = static_cast<const RadarEngine::RadarState>(m_instance_cfg->getConfig(RadarEngine::VOLATILE_RADAR_STATUS).toInt());
-    if(show_sweep && cur_state == RadarEngine::RADAR_TRANSMIT) m_re->radarDraw->DrawRadarSweep(cur_radar_angle);
+    if(show_sweep && cur_state == RadarEngine::RADAR_TRANSMIT) m_re->radarDraw->DrawRadarSweep(cur_radar_angle_double);
 
     glShadeModel(GL_FLAT);
-    glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 
     QPainter painter(this);
@@ -186,8 +201,17 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
 void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data, size_t len)
 {
-    //    qDebug()<<Q_FUNC_INFO<<angle;
-    cur_radar_angle = SCALE_RAW_TO_DEGREES2048(angle);
+//    qDebug()<<Q_FUNC_INFO<<angle;
+    cur_radar_angle_double = SCALE_RAW_TO_DEGREES2048(angle);
+    cur_radar_angle = angle;
+
+    if(initGrab)
+    {
+        m_ppi_grabber->start();
+        initGrab = false;
+    }
+    if(m_ppi_grabber->isStart()) m_ppi_grabber->update();
+
     m_re->radarDraw->ProcessRadarSpoke(angle,data,len);
     update();
 }
