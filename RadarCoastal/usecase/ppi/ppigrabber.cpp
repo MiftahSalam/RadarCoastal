@@ -4,10 +4,10 @@
 #include <RadarEngine/global.h>
 
 #include "qbuffer.h"
-//#include "qdir.h"
+#include "qdir.h"
 #include "qimage.h"
-//#include "qapplication.h"
-//#include "qpixmap.h"
+#include "qapplication.h"
+#include "qpixmap.h"
 
 PPIGrabber* PPIGrabber::m_grabber{nullptr};
 
@@ -45,13 +45,14 @@ void PPIGrabber::grab(QImage image)
         emit signalSendEcho(strBase64, image.width(), image.height());
 
         /* test read and save from base64 image
+        */
         QByteArray ba64 = QByteArray::fromBase64(strBase64.toUtf8());
         QPixmap img;
         img.loadFromData(ba64);
         img.save(qApp->applicationDirPath()+QDir::separator()+"base64_grab.png", "png");
         //        image.save(qApp->applicationDirPath()+"/grab.png");
         grabStart = false; //test
-        */
+
 
         grabPending = false;
     }

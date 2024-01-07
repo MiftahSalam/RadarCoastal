@@ -14,10 +14,12 @@ EchoSender::EchoSender(QObject *parent)
 {
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     m_ppi_grabber = PPIGrabber::GetInstance(this);
+    m_re = RadarEngine::RadarEngine::GetInstance();
 
     initFile();
 
     connect(m_ppi_grabber,&PPIGrabber::signalSendEcho,this,&EchoSender::triggerSendData);
+    connect(m_re->m_radar_capture,&RadarEngine::RadarImageCapture::signalSendEcho,this,&EchoSender::triggerSendData);
 }
 
 void EchoSender::triggerSendData(const QString echoStr, const int vp_width, const int vp_height)
@@ -28,7 +30,7 @@ void EchoSender::triggerSendData(const QString echoStr, const int vp_width, cons
     QJsonDocument json(buildJsonPackage(echoStr, timestamp, box, curRange));
 
     saveJsonDataToFile(json.toJson());
-    /*
+    /**/
     qDebug()<<Q_FUNC_INFO<<"base64"<<echoStr;
     qDebug()<<Q_FUNC_INFO<<"vp_width"<<vp_width;
     qDebug()<<Q_FUNC_INFO<<"vp_height"<<vp_height;
@@ -40,7 +42,7 @@ void EchoSender::triggerSendData(const QString echoStr, const int vp_width, cons
     qDebug()<<Q_FUNC_INFO<<"box.topRightLon"<<box.topRightLon;
     qDebug()<<Q_FUNC_INFO<<"box.bottomRightLat"<<box.bottomRightLat;
     qDebug()<<Q_FUNC_INFO<<"box.bottomRightLon"<<box.bottomRightLon;
-    */
+
 }
 
 QJsonObject EchoSender::buildJsonPackage(const QString data, const quint64 ts, const BoundingBoxGps box, double curRange)
@@ -70,6 +72,8 @@ void EchoSender::saveJsonDataToFile(QByteArray data)
     {
         file.write(data);
         file.write(",");
+
+        qInfo()<<Q_FUNC_INFO<<"filename"<<filename;
     } else qWarning()<<Q_FUNC_INFO<<"cannot open file"<<filename;
 }
 
@@ -80,7 +84,8 @@ void EchoSender::initFile()
     if(QFile::exists(filename))
     {
         QFile::remove(filename);
-    } else qWarning()<<Q_FUNC_INFO<<"cannot open file"<<filename;
+        qInfo()<<Q_FUNC_INFO<<"remove existing filename"<<filename;
+    } else qWarning()<<Q_FUNC_INFO<<"cannot remove file"<<filename;
 
 }
 

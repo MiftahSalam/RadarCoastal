@@ -65,6 +65,7 @@ void RadarWidget::trigger_radarConfigChange(QString key, QVariant val)
         else if(state != cur_state && state != RadarEngine::RADAR_TRANSMIT)
         {
            echoSender->m_ppi_grabber->stop();
+//            echoSender->m_re->m_radar_capture->stop();
         }
         cur_state = state;
     }
@@ -148,6 +149,12 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     m_re->radarDraw->DrawRadarImage();
 
+    /*
+    if(echoSender->m_re->m_radar_capture->isStart() && echoSender->m_re->m_radar_capture->pendingGrabAvailable())
+    {
+        echoSender->m_re->m_radar_capture->capture(width(), height());
+    }
+    */
     if(echoSender->m_ppi_grabber->isStart() && echoSender->m_ppi_grabber->pendingGrabAvailable())
     {
         echoSender->m_ppi_grabber->grab(grabFrameBuffer(true));
@@ -204,9 +211,11 @@ void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data
 
     if(initGrab)
     {
+//        echoSender->m_re->m_radar_capture->start();
         echoSender->m_ppi_grabber->start();
         initGrab = false;
     }
+//    if(echoSender->m_re->m_radar_capture->isStart()) echoSender->m_re->m_radar_capture->update();
     if(echoSender->m_ppi_grabber->isStart()) echoSender->m_ppi_grabber->update();
 
     m_re->radarDraw->ProcessRadarSpoke(angle,data,len);

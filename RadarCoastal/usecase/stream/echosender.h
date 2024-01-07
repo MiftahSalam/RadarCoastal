@@ -5,6 +5,7 @@
 #include <QObject>
 
 #include <RadarEngine/radarconfig.h>
+#include <RadarEngine/radarengine.h>
 
 class EchoSender : public QObject
 {
@@ -13,6 +14,7 @@ public:
     explicit EchoSender(QObject *parent = nullptr);
 
     PPIGrabber *m_ppi_grabber;
+    RadarEngine::RadarEngine* m_re;
 
 signals:
 
