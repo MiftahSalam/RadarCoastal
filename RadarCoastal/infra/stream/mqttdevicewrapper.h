@@ -7,6 +7,8 @@
 #include "qmqtt.h"
 #include "devicewrapper.h"
 
+const QString MQTT_MESSAGE_SEPARATOR = "@";
+
 class MqttClient : public QMQTT::Client
 {
     Q_OBJECT

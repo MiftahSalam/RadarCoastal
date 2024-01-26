@@ -94,7 +94,7 @@ void MqttDeviceWrapper::receiveData(QMQTT::Message message)
 //    _currentData = payload;
     qWarning()<<Q_FUNC_INFO<<"payload"<<payload<<"topic"<<topic;
     m_last_data_time = QDateTime::currentSecsSinceEpoch();
-    emit ReadyRead(topic+":"+payload);
+    emit ReadyRead(topic+MQTT_MESSAGE_SEPARATOR+payload);
 }
 
 void MqttDeviceWrapper::ChangeConfig(const QString command)
@@ -136,9 +136,9 @@ void MqttDeviceWrapper::ChangeConfig(const QString command)
 void MqttDeviceWrapper::Write(const QString data)
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
-    QStringList format = data.split(":",QString::SkipEmptyParts);
+    QStringList format = data.split(MQTT_MESSAGE_SEPARATOR,QString::SkipEmptyParts);
 #else
-    QStringList format = data.split(":",QString::SkipEmptyParts);
+    QStringList format = data.split(MQTT_MESSAGE_SEPARATOR, Qt::SkipEmptyParts);
 #endif
     if(format.size() == 2)
     {
