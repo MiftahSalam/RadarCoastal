@@ -1,6 +1,6 @@
 #include "track.h"
 
-#define MAX_UPDATE_NUMBER 5
+#define MAX_UPDATE_NUMBER 2
 
 Track* Track::m_track{nullptr};
 
@@ -46,35 +46,89 @@ QStandardItemModel* Track::GetModelView() const
     return m_model;
 }
 
-void Track::updateTarget()
+void Track::updateManyTarget(const int updateCount)
 {
     qDebug()<<Q_FUNC_INFO;
     if(m_instance_re->radarArpa->targetNumber > 0)
     {
-        int num_limit = MAX_UPDATE_NUMBER;
+        int num_limit = updateCount;
+        QList<TrackModel*> modelList;
 
         while ((m_cur_arpa_id_count < m_instance_re->radarArpa->targetNumber) && num_limit > 0)
         {
             if(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]->targetId > 0)
             {
                 TrackModel trackModel = arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]);
-
-                if (m_track_repo->FindOne(trackModel.id) != nullptr) {
-                    m_track_repo->Update(trackModel);
-                    m_model_view->UpdateModel(trackModel);
-                } else {
-                    m_track_repo->Insert(trackModel);
-                    m_model_view->InsertModel(trackModel);
-                }
-                m_arpa_sender->SendData(trackModel);
+                updateModel(trackModel);
+                modelList.append(new TrackModel(trackModel));
             }
             m_cur_arpa_id_count++;
             num_limit--;
         }
+        if (modelList.size() > 0) m_arpa_sender->SendManyData(modelList);
+
         if(m_cur_arpa_id_count >= m_instance_re->radarArpa->targetNumber)
             m_cur_arpa_id_count = 0;
     }
+}
 
+void Track::updateAllTarget()
+{
+    qDebug()<<Q_FUNC_INFO;
+    if(m_instance_re->radarArpa->targetNumber > 0)
+    {
+        QList<TrackModel*> modelList;
+
+        while (m_cur_arpa_id_count < m_instance_re->radarArpa->targetNumber)
+        {
+            if(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]->targetId > 0)
+            {
+                TrackModel trackModel = arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]);
+                updateModel(trackModel);
+                modelList.append(new TrackModel(trackModel));
+            }
+            m_cur_arpa_id_count++;
+        }
+        if (modelList.size() > 0) m_arpa_sender->SendManyData(modelList);
+
+        if(m_cur_arpa_id_count >= m_instance_re->radarArpa->targetNumber)
+            m_cur_arpa_id_count = 0;
+    }
+}
+
+void Track::updateOneTarget()
+{
+    qDebug()<<Q_FUNC_INFO;
+    if(m_instance_re->radarArpa->targetNumber > 0)
+    {
+        int num_limit = 1;
+
+        while ((m_cur_arpa_id_count < m_instance_re->radarArpa->targetNumber) && num_limit > 0)
+        {
+            if(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]->targetId > 0)
+            {
+                TrackModel trackModel = arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]);
+                updateModel(trackModel);
+                m_arpa_sender->SendOneData(trackModel);
+            }
+            m_cur_arpa_id_count++;
+            num_limit--;
+        }
+
+        if(m_cur_arpa_id_count >= m_instance_re->radarArpa->targetNumber)
+            m_cur_arpa_id_count = 0;
+    }
+}
+
+void Track::updateModel(TrackModel trackModel)
+{
+    if (m_track_repo->FindOne(trackModel.id) != nullptr) {
+        m_track_repo->Update(trackModel);
+        m_model_view->UpdateModel(trackModel);
+    } else {
+        m_track_repo->Insert(trackModel);
+        m_model_view->InsertModel(trackModel);
+    }
 }
 
 TrackModel Track::arpaToTrackModel(const RadarEngine::ARPATarget *target)
@@ -154,7 +208,9 @@ TrackModel Track::arpaToTrackModel(const RadarEngine::ARPATarget *target)
 
 void Track::timerTimeout()
 {
-    updateTarget();
+//    updateManyTarget(MAX_UPDATE_NUMBER);
+//    updateOneTarget();
+    updateAllTarget();
 }
 
 void Track::trigger_LostTarget(int id)

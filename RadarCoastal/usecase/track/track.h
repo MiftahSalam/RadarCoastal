@@ -4,11 +4,12 @@
 #include <QTimer>
 #include <QStandardItemModel>
 
+#include <RadarEngine/radarengine.h>
+#include <RadarEngine/radarconfig.h>
+
 #include "domain/track/trackrepository.h"
 #include "usecase/stream/arpasender.h"
 #include "usecase/track/trackmodelview.h"
-#include <RadarEngine/radarengine.h>
-#include <RadarEngine/radarconfig.h>
 
 class Track: public QObject
 {
@@ -44,7 +45,10 @@ private:
     TrackModelView* m_model_view;
     int m_data_count_mqtt, m_update_count, m_cur_arpa_id_count;
 
-    void updateTarget();
+    void updateManyTarget(const int updateCount);
+    void updateOneTarget();
+    void updateAllTarget();
+    void updateModel(TrackModel trackModel);
     TrackModel arpaToTrackModel(const RadarEngine::ARPATarget* target);
 };
 

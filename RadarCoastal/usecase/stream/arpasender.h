@@ -3,11 +3,10 @@
 
 #include <QObject>
 
-#include <QObject>
+#include <RadarEngine/radarconfig.h>
 
 #include "domain/track/trackmodel.h"
 #include "infra/stream/stream.h"
-#include <RadarEngine/radarconfig.h>
 
 struct ArpaSenderModel
 {
@@ -33,13 +32,14 @@ public:
                       double spd,
                       double crs);
     ArpaSenderDecoder(TrackModel data);
+    ArpaSenderDecoder(QList<TrackModel*> data);
 
     virtual ~ArpaSenderDecoder(){}
 
     virtual QString decode() = 0;
 
 protected:
-    ArpaSenderModel m_data;
+    QList<ArpaSenderModel*> m_data;
 };
 
 class ArpaSenderDecoderJson: public ArpaSenderDecoder
@@ -54,6 +54,7 @@ public:
                           double spd,
                           double crs);
     ArpaSenderDecoderJson(TrackModel data);
+    ArpaSenderDecoderJson(QList<TrackModel*> data);
 
     // ArpaSenderDecoder interface
     QString decode() override;
@@ -71,6 +72,7 @@ public:
                           double spd,
                           double crs);
     ArpaSenderDecoderNMEA(TrackModel data);
+    ArpaSenderDecoderNMEA(QList<TrackModel*> data);
 
     // ArpaSenderDecoder interface
     QString decode() override;
@@ -82,8 +84,9 @@ class ArpaSender : public QObject
 public:
     explicit ArpaSender(QObject *parent = nullptr);
 
-    void SendData(TrackModel data);
-    void SendData(
+    void SendManyData(QList<TrackModel*> data);
+    void SendOneData(TrackModel data);
+    void SendOneData(
             int id,
             double lat,
             double lon,
