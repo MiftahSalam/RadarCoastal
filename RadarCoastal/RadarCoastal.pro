@@ -22,6 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
+CONFIG +=QMQTT_WEBSOCKETS
 
 #MODE += DEBUG_MODE
 
@@ -141,12 +142,16 @@ unix: {
 } else:win32 {
     LIBS += -lOpenGL32
 
-    INCLUDEPATH +=C:\Users\ms_tensai\RadarEngineLib\include\2023\v2
-    DEPENDPATH += C:\Users\ms_tensai\RadarEngineLib\lib\include\2023\v2
+    INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2023\v2
+    DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2023\v2
+#    INCLUDEPATH +=C:\Users\ms_tensai\RadarEngineLib\include\2023\v2
+#    DEPENDPATH += C:\Users\ms_tensai\RadarEngineLib\lib\include\2023\v2
 }
 
-win32:CONFIG(release, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
-else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
+win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2023\v2 -lRadarEngine
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2023\v2 -lRadarEngine
+#win32:CONFIG(release, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
+#else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
 
 
 # Default rules for deployment.
