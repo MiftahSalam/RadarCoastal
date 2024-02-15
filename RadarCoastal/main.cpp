@@ -9,7 +9,7 @@ QString loadStylesheetFile( const QString &path );
 
 int main(int argc, char *argv[])
 {
-    RadarEngine::RadarConfig *instance = RadarEngine::RadarConfig::getInstance(QDir::homePath()+QDir::separator()+"pjs"+QDir::separator()+".radar.conf");
+    RadarEngine::RadarConfig *instance = RadarEngine::RadarConfig::getInstance(QDir::homePath()+QDir::separator()+".hypernet"+QDir::separator()+".radar.conf");
     if(!instance) qFatal("Cannot provide config service");
 
     if(instance->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_USE_OPENGL_SOFTWARE).toBool())
