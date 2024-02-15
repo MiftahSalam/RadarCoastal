@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl network
+QT       += core gui opengl network websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,6 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
+CONFIG +=QMQTT_WEBSOCKETS
 
 #MODE += DEBUG_MODE
 
@@ -40,12 +41,12 @@ SOURCES += \
 #    infra/withradarengine.cpp \
     domain/track/trackmodel.cpp \
     infra/database/track/memory/trackrepository_mem.cpp \
+    infra/stream/wsdevicewrapper.cpp \
     usecase/alarm/alarm.cpp \
     usecase/alarm/alarmmanager.cpp \
     usecase/alarm/gzalarm.cpp \
     usecase/ppi/arpa.cpp \
     usecase/ppi/ppigrabber.cpp \
-    usecase/stream/echosender.cpp \
     usecase/track/track.cpp \
     usecase/track/trackmodelview.cpp \
     view/dialog/dialogbit.cpp \
@@ -59,6 +60,7 @@ SOURCES += \
     view/panel/framecontrol2.cpp \
     view/panel/frameosd.cpp \
     usecase/stream/arpasender.cpp \
+    usecase/stream/echosender.cpp \
     usecase/stream/navsensor.cpp \
     infra/stream/stream.cpp \
     infra/stream/mqttdevicewrapper.cpp \
@@ -81,12 +83,12 @@ HEADERS += \
     domain/track/trackmodel.h \
     domain/track/trackrepository.h \
     infra/database/track/memory/trackrepository_mem.h \
+    infra/stream/wsdevicewrapper.h \
     usecase/alarm/alarm.h \
     usecase/alarm/alarmmanager.h \
     usecase/alarm/gzalarm.h \
     usecase/ppi/arpa.h \
     usecase/ppi/ppigrabber.h \
-    usecase/stream/echosender.h \
     usecase/track/track.h \
     usecase/track/trackmodelview.h \
     view/dialog/dialogbit.h \
@@ -99,6 +101,7 @@ HEADERS += \
     view/panel/framecontrol2.h \
     view/panel/frameosd.h \
     usecase/stream/arpasender.h \
+    usecase/stream/echosender.h \
     usecase/stream/navsensor.h \
     infra/stream/stream.h \
     infra/stream/mqttdevicewrapper.h \
@@ -139,12 +142,16 @@ unix: {
 } else:win32 {
     LIBS += -lOpenGL32
 
-    INCLUDEPATH +=C:\Users\ms_tensai\RadarEngineLib\include\2023\v2
-    DEPENDPATH += C:\Users\ms_tensai\RadarEngineLib\lib\include\2023\v2
+    INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2023\v2
+    DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2023\v2
+#    INCLUDEPATH +=C:\Users\ms_tensai\RadarEngineLib\include\2023\v2
+#    DEPENDPATH += C:\Users\ms_tensai\RadarEngineLib\lib\include\2023\v2
 }
 
-win32:CONFIG(release, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
-else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
+win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2023\v2 -lRadarEngine
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2023\v2 -lRadarEngine
+#win32:CONFIG(release, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
+#else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
 
 
 # Default rules for deployment.

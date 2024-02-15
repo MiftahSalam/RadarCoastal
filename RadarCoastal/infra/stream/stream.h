@@ -4,13 +4,15 @@
 #include <QObject>
 
 #include "mqttdevicewrapper.h"
+#include "wsdevicewrapper.h"
 
 class Stream : public QObject
 {
     Q_OBJECT
 public:    
     enum StreamType {
-        MQTT
+        MQTT,
+        WS
     };
     enum StreamMode {
         STREAM_IN,
