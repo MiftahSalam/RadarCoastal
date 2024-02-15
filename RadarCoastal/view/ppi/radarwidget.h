@@ -18,7 +18,6 @@
 #include "ppigzobject.h"
 #include "ppicompassobject.h"
 #include "usecase/ppi/ppigrabber.h"
-#include "usecase/stream/echosender.h"
 
 class RadarWidget : public QGLWidget, protected QOpenGLFunctions
 {
@@ -58,7 +57,6 @@ public slots:
     //    void trigger_ReqDelTrack(bool r1,int id);
     void trigger_cursorMove(const QPoint pos);
     void trigger_cursorLeftRelease(const QPoint pos);
-    void trigger_radarConfigChange(QString key, QVariant val);
 
 private:
     void drawRings(QPainter* painter, const int& side);
@@ -73,12 +71,10 @@ private:
     FilterEvent *ppiEvent;
     RadarEngine::RadarEngine* m_re;
     RadarEngine::RadarConfig* m_instance_cfg;
-    EchoSender *echoSender;
     PPIArpa *m_ppi_arpa;
     QTimer *timer;
     QRect region;
 
-    RadarEngine::RadarState cur_state;
     double cur_radar_angle_double;
     int cur_radar_angle;
     bool initGrab;
