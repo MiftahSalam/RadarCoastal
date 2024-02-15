@@ -6,6 +6,13 @@ WSDeviceWrapper::WSDeviceWrapper(QObject *parent, QString config): DeviceWrapper
     server = nullptr;
 }
 
+WSDeviceWrapper::~WSDeviceWrapper()
+{
+    for (auto client : m_clients) {
+        client->abort();
+    }
+}
+
 void WSDeviceWrapper::onNewConnection()
 {
     QWebSocket *pSocket = server->nextPendingConnection();

@@ -11,6 +11,7 @@ class WSDeviceWrapper: public DeviceWrapper
 {
 public:
     WSDeviceWrapper(QObject *parent, QString config);
+    ~WSDeviceWrapper();
 
     // DeviceWrapper interface
 public:
