@@ -1,5 +1,10 @@
 #include "navsensor.h"
 
+#include <RadarEngine/constants.h>
+
+#include <QJsonObject>
+#include <QJsonDocument>
+
 NavSensor::NavSensor(QObject *parent) : QObject(parent)
 {
     qDebug()<<Q_FUNC_INFO;
@@ -11,11 +16,18 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
 void NavSensor::initConfig()
 {
     QString nav_config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
+    QString config_ws_str = "ws;Out;127.0.0.1:8884"; //todo use config
     QStringList nav_config_str_list = nav_config_str.split(":");
+    QStringList config_ws_str_list = config_ws_str.split(";");
 
     if(nav_config_str_list.size() != 3)
     {
         qDebug()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
+        exit(1);
+    }
+    if(config_ws_str_list.size() != 3)
+    {
+        qDebug()<<Q_FUNC_INFO<<"invalid config ws"<<config_ws_str;
         exit(1);
     }
 
@@ -31,9 +43,12 @@ void NavSensor::initConfig()
 
     m_append_data_osd = "";
     m_no_osd_count = 11;
+    m_site_data_count = 0;
 
-    m_stream = new Stream(this,nav_config_str_list.join(":"));
-    connect(m_stream,&Stream::SignalReceiveData,this,&NavSensor::triggerReceivedData);
+    m_stream_mqtt = new Stream(this,nav_config_str_list.join(":"));
+    m_stream_ws = new Stream(this,config_ws_str); //temporary
+
+    connect(m_stream_mqtt,&Stream::SignalReceiveData,this,&NavSensor::triggerReceivedData);
     connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,
             this,&NavSensor::triggerConfigChange);
 }
@@ -43,7 +58,7 @@ void NavSensor::triggerConfigChange(const QString key, const QVariant val)
 //    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
     if(key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG)
     {
-        m_stream->SetConfig(val.toString());
+        m_stream_mqtt->SetConfig(val.toString());
     }
     else if(key == RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO)
     {
@@ -59,7 +74,7 @@ void NavSensor::triggerConfigChange(const QString key, const QVariant val)
             }
 
             m_topic = nav_config_str_list.last();
-            m_stream->SetConfig(nav_config_str);
+            m_stream_mqtt->SetConfig(nav_config_str);
         }
         else
         {
@@ -76,15 +91,41 @@ void NavSensor::triggerConfigChange(const QString key, const QVariant val)
             m_topic = "gps_man";
             nav_config_str_list.append(m_topic);
 
-            m_stream->SetConfig(nav_config_str_list.join(":"));
+            m_stream_mqtt->SetConfig(nav_config_str_list.join(":"));
         }
+    }
+    else if(key == "RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG") //todo use config
+    {
+        m_stream_ws->SetConfig(val.toString());
     }
 }
 
 void NavSensor::SendData(QString lat, QString lon, QString hdt)
 {
     QString m_data = m_topic+":"+"?"+lat+"#"+lon+"#"+hdt+"!";
-    m_stream->SendData(m_data);
+    m_stream_mqtt->SendData(m_data);
+}
+
+void NavSensor::SendSiteData(bool manual, QString lat, QString lon, QString hdt)
+{
+    m_site_data_count++;
+    if(m_site_data_count > 10)
+    {
+        m_site_data_count = 0;
+
+        QJsonObject obj;
+
+        obj["mode"] = manual ? "manual" : "auto";
+        obj["latitude"] = lat;
+        obj["longitude"] = lon;
+        obj["heading"] = hdt;
+        obj["radar_min_range"] = distanceList.last();
+        obj["radar_max_range"] = distanceList.first();
+
+        QJsonDocument doc(obj);
+
+        m_stream_ws->SendData(doc.toJson(QJsonDocument::Compact));
+    }
 }
 
 bool NavSensor::isGPSDataValid(const QString lat_str, const QString lon_str)
@@ -117,7 +158,7 @@ void NavSensor::UpdateStatus()
     if(m_no_osd_count > 110) m_no_osd_count = 11;
     if(m_no_osd_count < 11) return;
 
-    switch (m_stream->GetStreamStatus()) {
+    switch (m_stream_mqtt->GetStreamStatus()) {
     case DeviceWrapper::NOT_AVAIL:
         m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 0); //offline
         m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 0); //offline
@@ -197,5 +238,6 @@ void NavSensor::triggerReceivedData(const QString data)
 
 void NavSensor::Reconnect()
 {
-    m_stream->Reconnect();
+    m_stream_mqtt->Reconnect();
+    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
 }
