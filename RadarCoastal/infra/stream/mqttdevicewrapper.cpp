@@ -91,7 +91,7 @@ void MqttDeviceWrapper::receiveData(QMQTT::Message message)
 {
     QString payload = QString::fromUtf8(message.payload());
     QString topic = message.topic();
-//    _currentData = payload;
+    //    _currentData = payload;
     qWarning()<<Q_FUNC_INFO<<"payload"<<payload<<"topic"<<topic;
     m_last_data_time = QDateTime::currentSecsSinceEpoch();
     emit ReadyRead(topic+MQTT_MESSAGE_SEPARATOR+payload);
@@ -135,11 +135,12 @@ void MqttDeviceWrapper::ChangeConfig(const QString command)
 
 void MqttDeviceWrapper::Write(const QString data)
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
-    QStringList format = data.split(MQTT_MESSAGE_SEPARATOR,QString::SkipEmptyParts);
-#else
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
     QStringList format = data.split(MQTT_MESSAGE_SEPARATOR, Qt::SkipEmptyParts);
+#else
+    QStringList format = data.split(MQTT_MESSAGE_SEPARATOR, QString::SkipEmptyParts);
 #endif
+
     if(format.size() == 2)
     {
         QMQTT::Message message(m_idCounter,format.at(0),format.at(1).toUtf8());
@@ -164,8 +165,8 @@ void Publisher::PublishData(QMQTT::Message message)
 }
 
 MqttClient::MqttClient(QObject *parent,
-                                        const QHostAddress& host,
-                                        const quint16 port, QString topic) :
+                       const QHostAddress& host,
+                       const quint16 port, QString topic) :
     QMQTT::Client(host,port,parent), m_host(host), m_port(port)
 {    
     connect(this,&MqttClient::connected,this,&MqttClient::onConnected);
