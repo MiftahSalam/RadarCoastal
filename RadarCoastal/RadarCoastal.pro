@@ -46,7 +46,6 @@ SOURCES += \
     usecase/alarm/gzalarm.cpp \
     usecase/ppi/arpa.cpp \
     usecase/ppi/ppigrabber.cpp \
-    usecase/stream/echosender.cpp \
     usecase/track/track.cpp \
     usecase/track/trackmodelview.cpp \
     view/dialog/dialogbit.cpp \
@@ -60,6 +59,7 @@ SOURCES += \
     view/panel/framecontrol2.cpp \
     view/panel/frameosd.cpp \
     usecase/stream/arpasender.cpp \
+    usecase/stream/echosender.cpp \
     usecase/stream/navsensor.cpp \
     infra/stream/stream.cpp \
     infra/stream/mqttdevicewrapper.cpp \
@@ -88,7 +88,6 @@ HEADERS += \
     usecase/alarm/gzalarm.h \
     usecase/ppi/arpa.h \
     usecase/ppi/ppigrabber.h \
-    usecase/stream/echosender.h \
     usecase/track/track.h \
     usecase/track/trackmodelview.h \
     view/dialog/dialogbit.h \
@@ -101,6 +100,7 @@ HEADERS += \
     view/panel/framecontrol2.h \
     view/panel/frameosd.h \
     usecase/stream/arpasender.h \
+    usecase/stream/echosender.h \
     usecase/stream/navsensor.h \
     infra/stream/stream.h \
     infra/stream/mqttdevicewrapper.h \
