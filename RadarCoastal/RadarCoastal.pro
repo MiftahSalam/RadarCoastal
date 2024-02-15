@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl network
+QT       += core gui opengl network websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -40,6 +40,7 @@ SOURCES += \
 #    infra/withradarengine.cpp \
     domain/track/trackmodel.cpp \
     infra/database/track/memory/trackrepository_mem.cpp \
+    infra/stream/wsdevicewrapper.cpp \
     usecase/alarm/alarm.cpp \
     usecase/alarm/alarmmanager.cpp \
     usecase/alarm/gzalarm.cpp \
@@ -81,6 +82,7 @@ HEADERS += \
     domain/track/trackmodel.h \
     domain/track/trackrepository.h \
     infra/database/track/memory/trackrepository_mem.h \
+    infra/stream/wsdevicewrapper.h \
     usecase/alarm/alarm.h \
     usecase/alarm/alarmmanager.h \
     usecase/alarm/gzalarm.h \
