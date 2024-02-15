@@ -10,6 +10,10 @@ Stream::Stream(QObject *parent, QString config) :
     switch (m_config.type) {
     case MQTT:
         m_streamDevice = MqttDeviceWrapper::GetInstance(m_config.config);
+        break;
+    case WS:
+        m_streamDevice = new WSDeviceWrapper(this, m_config.config);
+        break;
     }
 
     if(m_streamDevice) connect(m_streamDevice,&DeviceWrapper::ReadyRead,this,&Stream::SignalReceiveData);
@@ -24,6 +28,10 @@ void Stream::SetConfig(const QString& config)
         switch (m_config.type) {
         case MQTT:
             m_streamDevice = MqttDeviceWrapper::GetInstance(m_config.config);
+            break;
+        case WS:
+            m_streamDevice = new WSDeviceWrapper(this, m_config.config);
+            break;
         }
 
         if(m_streamDevice) connect(m_streamDevice,&DeviceWrapper::ReadyRead,this,&Stream::SignalReceiveData);
@@ -52,6 +60,7 @@ void Stream::generateConfig(const QString config)
     if(config_list.size() == 3)
     {
         if(config_list.at(0).contains("mqtt",Qt::CaseInsensitive)) m_config.type = MQTT;
+        else if(config_list.at(0).contains("ws",Qt::CaseInsensitive)) m_config.type = WS;
         else
         {
             qDebug()<<Q_FUNC_INFO<<"unknown stream type config"<<config;
