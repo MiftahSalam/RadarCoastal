@@ -38,6 +38,8 @@ void WSDeviceWrapper::Write(const QString data)
 
 DeviceWrapper::DeviceStatus WSDeviceWrapper::GetStatus()
 {
+    if(!server) return DeviceWrapper::NOT_AVAIL;
+
     if(server->isListening())
     {
         qint64 now = QDateTime::currentSecsSinceEpoch();
