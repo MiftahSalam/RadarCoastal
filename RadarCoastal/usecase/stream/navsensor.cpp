@@ -128,7 +128,7 @@ void NavSensor::SendData(QString lat, QString lon, QString hdt)
     m_stream_mqtt->SendData(m_data);
 }
 
-void NavSensor::SendSiteData(bool manual, QString lat, QString lon, QString hdt)
+void NavSensor::SendSiteData(bool gps_manual, bool hdt_manual)
 {
     m_site_data_count++;
     if(m_site_data_count >= max_site_data_count)
@@ -136,13 +136,25 @@ void NavSensor::SendSiteData(bool manual, QString lat, QString lon, QString hdt)
         m_site_data_count = 0;
 
         QJsonObject obj;
+        QJsonObject objPos;
+        QJsonObject objHdt;
+        QJsonObject objStatic;
 
-        obj["mode"] = manual ? "manual" : "auto";
-        obj["latitude"] = lat;
-        obj["longitude"] = lon;
-        obj["heading"] = hdt;
-        obj["radar_min_range"] = distanceList.last();
-        obj["radar_max_range"] = distanceList.first();
+        objStatic["radar_min_range"] = distanceList.last();
+        objStatic["radar_max_range"] = distanceList.first();
+
+        objPos["mode"] = gps_manual ? "manual" : "auto";
+        objPos["status"] = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt();
+        objPos["latitude"] = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
+        objPos["longitude"] = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+
+        objHdt["mode"] = hdt_manual ? "manual" : "auto";
+        objHdt["status"] = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt();
+        objHdt["heading"] = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+
+        obj["position"] = objPos;
+        obj["heading"] = objHdt;
+        obj["static"] = objStatic;
 
         QJsonDocument doc(obj);
 

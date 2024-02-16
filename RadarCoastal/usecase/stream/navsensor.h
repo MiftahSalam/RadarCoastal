@@ -14,7 +14,7 @@ public:
     void Reconnect();
     void UpdateStatus();
     void SendData(QString lat, QString lon, QString hdt);
-    void SendSiteData(bool manual, QString lat, QString lon, QString hdt);
+    void SendSiteData(bool manual, bool hdt_manual);
 
 signals:
 

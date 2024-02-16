@@ -181,7 +181,7 @@ void FrameOSD::on_timeout()
     if(!ui->checkBoxGPS->isChecked())
         sensor->SendData(ui->lineEditLat->text(),ui->lineEditLon->text(),ui->lineEditHDG->text());
 
-    sensor->SendSiteData(!ui->checkBoxGPS->isChecked(), ui->lineEditLat->text(),ui->lineEditLon->text(),ui->lineEditHDG->text());
+    sensor->SendSiteData(!ui->checkBoxGPS->isChecked(), !ui->checkBoxHDG->isChecked());
 }
 
 void FrameOSD::on_pushButtonApply_clicked()
