@@ -10,24 +10,25 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
     qDebug()<<Q_FUNC_INFO;
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
 
-    initConfig();
+    initConfigMqtt();
+    initConfigWS();
+
+    m_append_data_osd = "";
+    m_no_osd_count = 11;
+    m_site_data_count = 0;
+
+    connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,
+            this,&NavSensor::triggerConfigChange);
 }
 
-void NavSensor::initConfig()
+void NavSensor::initConfigMqtt()
 {
     QString nav_config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
-    QString config_ws_str = "ws;Out;127.0.0.1:8884"; //todo use config
     QStringList nav_config_str_list = nav_config_str.split(":");
-    QStringList config_ws_str_list = config_ws_str.split(";");
 
     if(nav_config_str_list.size() != 3)
     {
-        qDebug()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
-        exit(1);
-    }
-    if(config_ws_str_list.size() != 3)
-    {
-        qDebug()<<Q_FUNC_INFO<<"invalid config ws"<<config_ws_str;
+        qDebug()<<Q_FUNC_INFO<<"invalid config mqtt"<<nav_config_str;
         exit(1);
     }
 
@@ -41,16 +42,37 @@ void NavSensor::initConfig()
     else
         m_topic = nav_config_str_list.last();
 
-    m_append_data_osd = "";
-    m_no_osd_count = 11;
-    m_site_data_count = 0;
-
     m_stream_mqtt = new Stream(this,nav_config_str_list.join(":"));
-    m_stream_ws = new Stream(this,config_ws_str); //temporary
 
     connect(m_stream_mqtt,&Stream::SignalReceiveData,this,&NavSensor::triggerReceivedData);
-    connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,
-            this,&NavSensor::triggerConfigChange);
+}
+
+void NavSensor::initConfigWS()
+{
+    QString config_ws_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_WS).toString();
+    QStringList config_ws_str_list = config_ws_str.split(";");
+
+    if(config_ws_str_list.size() != 3)
+    {
+        qDebug()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
+        exit(1);
+    }
+
+    QStringList config_ws_str_list$ = config_ws_str.split("$");
+    if(config_ws_str_list$.size() != 2)
+    {
+        qDebug()<<Q_FUNC_INFO<<"invalid config ws site period"<<config_ws_str;
+        exit(1);
+    }
+
+    bool ok;
+    max_site_data_count = config_ws_str_list$.at(1).toInt(&ok);
+    if (!ok) {
+        max_site_data_count = 10;
+        qWarning()<<Q_FUNC_INFO<<"invalid max_site_data_count"<<config_ws_str_list$.at(1)<<". will use default 10";
+    }
+
+    m_stream_ws = new Stream(this,config_ws_str);
 }
 
 void NavSensor::triggerConfigChange(const QString key, const QVariant val)
@@ -109,7 +131,7 @@ void NavSensor::SendData(QString lat, QString lon, QString hdt)
 void NavSensor::SendSiteData(bool manual, QString lat, QString lon, QString hdt)
 {
     m_site_data_count++;
-    if(m_site_data_count > 10)
+    if(m_site_data_count >= max_site_data_count)
     {
         m_site_data_count = 0;
 
