@@ -86,10 +86,18 @@ void WSDeviceWrapper::ChangeConfig(const QString command)
 }
 
 bool WSDeviceWrapper::InitConfig(const QString config)
-{
-    m_config = config;
-    url = config;
-    qDebug()<<Q_FUNC_INFO<<"config"<<m_config;
+{    
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    QStringList cfg_split = config.split("$", Qt::SkipEmptyParts);
+#else
+    QStringList cfg_split = config.split("$", QString::SkipEmptyParts);
+#endif
+    if(cfg_split.size() == 2)
+    {
+        m_config = config;
+        url = cfg_split.at(0);
+
+        qDebug()<<Q_FUNC_INFO<<"cfg_split"<<cfg_split;
 
 #if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
         QStringList url_split = url.split(":", Qt::SkipEmptyParts);
@@ -110,4 +118,7 @@ bool WSDeviceWrapper::InitConfig(const QString config)
             }
         }
         else qFatal("invalid url config %s", url.toUtf8().constData());
+    }
+    else qFatal("invalid config %s", config.toUtf8().constData());
+
 }
