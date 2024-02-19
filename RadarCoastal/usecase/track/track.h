@@ -45,6 +45,7 @@ private:
     TrackModelView* m_model_view;
     int m_data_count_mqtt, m_update_count, m_cur_arpa_id_count;
 
+    void initCfg();
     void updateManyTarget(const int updateCount);
     void updateOneTarget();
     void updateAllTarget();
