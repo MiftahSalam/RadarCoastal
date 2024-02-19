@@ -208,9 +208,8 @@ ArpaSender::ArpaSender(QObject *parent)
 
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
 
-    void initConfigMqtt();
-    void initConfigWS();
-
+    initConfigMqtt();
+    initConfigWS();
 }
 
 void ArpaSender::sendMqtt(ArpaSenderDecoder *decoder)
@@ -231,13 +230,13 @@ void ArpaSender::sendWS(ArpaSenderDecoder *decoder)
     {
         QJsonArray array(decoderDoc.array());
         BaseResponseJson<QJsonArray> resp(0, "ok", &array);
-        doc = QJsonDocument(resp.build().array());
+        doc = QJsonDocument(resp.build());
     }
     else if(decoderDoc.isObject())
     {
         QJsonObject obj(decoderDoc.object());
         BaseResponseJson<QJsonObject> resp(0, "ok", &obj);
-        doc = QJsonDocument(resp.build().object());
+        doc = QJsonDocument(resp.build());
     }
 
     if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
