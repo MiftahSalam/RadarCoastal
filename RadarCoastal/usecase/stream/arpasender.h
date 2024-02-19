@@ -40,6 +40,7 @@ public:
 
 protected:
     QList<ArpaSenderModel*> m_data;
+    bool isArray;
 };
 
 class ArpaSenderDecoderJson: public ArpaSenderDecoder
@@ -58,6 +59,7 @@ public:
 
     // ArpaSenderDecoder interface
     QString decode() override;
+    QJsonDocument decodeJsonDoc();
 };
 
 class ArpaSenderDecoderNMEA: public ArpaSenderDecoder
