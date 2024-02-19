@@ -7,6 +7,7 @@
 #include <RadarEngine/radarconfig.h>
 
 #include "usecase/stream/navsensor.h"
+#include "usecase/stream/sitedatasender.h"
 
 namespace Ui {
 class FrameOSD;
@@ -30,6 +31,7 @@ private:
 
     QTimer *timer;
     NavSensor* sensor;
+    SiteDataSender* siteData;
     RadarEngine::RadarConfig* m_instance_cfg;
 
     quint8 no_hdg_count,no_gps_count;

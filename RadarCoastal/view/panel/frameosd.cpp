@@ -17,6 +17,7 @@ FrameOSD::FrameOSD(QWidget *parent) :
     ui->lineEditTemp->hide();
 
     sensor = new NavSensor(this);
+    siteData = new SiteDataSender(this);
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,this,&FrameOSD::on_timeout);
 
@@ -181,7 +182,8 @@ void FrameOSD::on_timeout()
     if(!ui->checkBoxGPS->isChecked())
         sensor->SendData(ui->lineEditLat->text(),ui->lineEditLon->text(),ui->lineEditHDG->text());
 
-    sensor->SendSiteData(!ui->checkBoxGPS->isChecked(), !ui->checkBoxHDG->isChecked());
+    siteData->SendSiteData();
+    siteData->Reconnect();
 }
 
 void FrameOSD::on_pushButtonApply_clicked()
