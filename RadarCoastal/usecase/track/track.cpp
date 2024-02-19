@@ -18,6 +18,8 @@ Track::Track(QObject *parent)
     m_update_count = 0;
     m_cur_arpa_id_count = 0;
 
+    initCfg();
+
     connect(m_instance_re->radarArpa,&RadarEngine::RadarArpa::Signal_LostTarget,
             this,&Track::trigger_LostTarget);
     connect(m_timer,&QTimer::timeout,this,&Track::timerTimeout);
@@ -208,9 +210,9 @@ TrackModel Track::arpaToTrackModel(const RadarEngine::ARPATarget *target)
 
 void Track::timerTimeout()
 {
-//    updateManyTarget(MAX_UPDATE_NUMBER);
+    updateManyTarget(m_update_count);
 //    updateOneTarget();
-    updateAllTarget();
+//    updateAllTarget();
 }
 
 void Track::trigger_LostTarget(int id)
@@ -219,6 +221,25 @@ void Track::trigger_LostTarget(int id)
 
     m_track_repo->Remove(id);
     m_model_view->Remove(id);
+}
+
+void Track::initCfg()
+{
+    QString config_ws_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_WS).toString();
+    QStringList config_ws_str_list$ = config_ws_str.split("$");
+    if(config_ws_str_list$.size() != 2)
+    {
+        qDebug()<<Q_FUNC_INFO<<"invalid config ws arpa max size"<<config_ws_str;
+        exit(1);
+    }
+
+    bool ok;
+    m_update_count = config_ws_str_list$.at(1).toInt(&ok);
+    if (!ok) {
+        m_update_count = 5;
+        qWarning()<<Q_FUNC_INFO<<"invalid max_arpa_data_count"<<config_ws_str_list$.at(1)<<". will use default 5";
+    }
+
 }
 
 Track* Track::GetInstance()

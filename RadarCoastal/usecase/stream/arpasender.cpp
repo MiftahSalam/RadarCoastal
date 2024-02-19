@@ -1,4 +1,6 @@
 #include "arpasender.h"
+#include "baseresponsejson.h"
+
 #include "qjsonarray.h"
 #include "qjsondocument.h"
 #include "qjsonobject.h"
@@ -203,20 +205,42 @@ ArpaSender::ArpaSender(QObject *parent)
     : QObject{parent}
 {
     qDebug()<<Q_FUNC_INFO;
-    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG).toString();
-    QStringList config_str_list = config_str.split(":");
 
-    if(config_str_list.size() != 3)
+    m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+
+    initConfigMqtt();
+    initConfigWS();
+}
+
+void ArpaSender::sendMqtt(ArpaSenderDecoder *decoder)
+{
+    QString mq_data = m_topic+MQTT_MESSAGE_SEPARATOR+decoder->decode();
+
+    if(m_stream_mqtt->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt->Reconnect();
+    else m_stream_mqtt->SendData(mq_data);
+}
+
+void ArpaSender::sendWS(ArpaSenderDecoder *decoder)
+{
+    ArpaSenderDecoderJson *decoderJson = dynamic_cast<ArpaSenderDecoderJson*>(decoder);
+    QJsonDocument doc;
+    auto decoderDoc = decoderJson->decodeJsonDoc();
+
+    if(decoderDoc.isArray())
     {
-        qDebug()<<Q_FUNC_INFO<<"invalid config"<<config_str;
-        exit(1);
+        QJsonArray array(decoderDoc.array());
+        BaseResponseJson<QJsonArray> resp(0, "ok", &array);
+        doc = QJsonDocument(resp.build());
+    }
+    else if(decoderDoc.isObject())
+    {
+        QJsonObject obj(decoderDoc.object());
+        BaseResponseJson<QJsonObject> resp(0, "ok", &obj);
+        doc = QJsonDocument(resp.build());
     }
 
-    m_topic = config_str_list.last();
-    m_stream = new Stream(this,config_str);
-    connect(RadarEngine::RadarConfig::getInstance(""),&RadarEngine::RadarConfig::configValueChange,
-            this,&ArpaSender::triggerConfigChange);
-
+    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
+    m_stream_ws->SendData(doc.toJson(QJsonDocument::Compact));
 }
 
 void ArpaSender::SendManyData(QList<TrackModel *> data)
@@ -229,10 +253,8 @@ void ArpaSender::SendManyData(QList<TrackModel *> data)
     }
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder*>(new ArpaSenderDecoderJson(data));
-    QString mq_data = m_topic+MQTT_MESSAGE_SEPARATOR+decoder->decode();
-
-    if(m_stream->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream->Reconnect();
-    else m_stream->SendData(mq_data);
+    sendMqtt(decoder);
+    sendWS(decoder);
 
     delete decoder;
 }
@@ -245,10 +267,8 @@ void ArpaSender::SendOneData(TrackModel data)
     data.lon = gpsCorrection.x();
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder*>(new ArpaSenderDecoderJson(data));
-    QString mq_data = m_topic+MQTT_MESSAGE_SEPARATOR+decoder->decode();
-
-    if(m_stream->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream->Reconnect();
-    else m_stream->SendData(mq_data);
+    sendMqtt(decoder);
+    sendWS(decoder);
 
     delete decoder;
 }
@@ -277,12 +297,41 @@ void ArpaSender::SendOneData(int id,
                                                                       brn,
                                                                       spd,
                                                                       crs));
-    QString mq_data = m_topic+MQTT_MESSAGE_SEPARATOR+decoder->decode();
-
-    if(m_stream->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream->Reconnect();
-    else m_stream->SendData(mq_data);
+    sendMqtt(decoder);
+    sendWS(decoder);
 
     delete decoder;
+}
+
+void ArpaSender::initConfigWS()
+{
+    QString config_ws_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_WS).toString();
+    QStringList config_ws_str_list = config_ws_str.split(";");
+
+    if(config_ws_str_list.size() != 3)
+    {
+        qDebug()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
+        exit(1);
+    }
+
+    m_stream_ws = new Stream(this,config_ws_str);
+}
+
+void ArpaSender::initConfigMqtt()
+{
+    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG).toString();
+    QStringList config_str_list = config_str.split(":");
+
+    if(config_str_list.size() != 3)
+    {
+        qDebug()<<Q_FUNC_INFO<<"invalid config mqtt"<<config_str;
+        exit(1);
+    }
+
+    m_topic = config_str_list.last();
+    m_stream_mqtt = new Stream(this,config_str);
+    connect(RadarEngine::RadarConfig::getInstance(""),&RadarEngine::RadarConfig::configValueChange,
+            this,&ArpaSender::triggerConfigChange);
 }
 
 void ArpaSender::triggerConfigChange(const QString key, const QVariant val)
@@ -290,6 +339,6 @@ void ArpaSender::triggerConfigChange(const QString key, const QVariant val)
     //    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
     if(key == RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG)
     {
-        m_stream->SetConfig(val.toString());
+        m_stream_mqtt->SetConfig(val.toString());
     }
 }

@@ -104,11 +104,16 @@ private slots:
     void triggerConfigChange(const QString key, const QVariant val);
 
 private:
-    Stream *m_stream;
+    RadarEngine::RadarConfig* m_instance_cfg;
+    Stream *m_stream_mqtt;
+    Stream *m_stream_ws;
+
     QString m_topic;
 
-    Stream::StreamConfig generateStreamConfig(const QString config);
-
+    void initConfigWS();
+    void initConfigMqtt();
+    void sendMqtt(ArpaSenderDecoder* decoder);
+    void sendWS(ArpaSenderDecoder* data);
 };
 
 #endif // ARPASENDER_H
