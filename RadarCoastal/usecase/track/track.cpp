@@ -128,6 +128,8 @@ void Track::updateModel(TrackModel trackModel)
         m_track_repo->Update(trackModel);
         m_model_view->UpdateModel(trackModel);
     } else {
+        trackModel.timestamp = QDateTime::currentMSecsSinceEpoch();
+
         m_track_repo->Insert(trackModel);
         m_model_view->InsertModel(trackModel);
     }

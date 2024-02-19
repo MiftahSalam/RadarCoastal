@@ -8,6 +8,7 @@ public:
     TrackModel(){}
     TrackModel(const TrackModel& track);
 
+    long long timestamp;
     int id;
     double lat;
     double lon;
