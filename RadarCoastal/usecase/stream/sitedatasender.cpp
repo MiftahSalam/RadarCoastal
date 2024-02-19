@@ -86,9 +86,9 @@ void SiteDataSender::SendSiteData()
         obj["heading"] = objHdt;
         obj["radar"] = objRadar;
 
-        BaseResponseJson<QJsonObject> resp(0, "ok");
+        BaseResponseJson<QJsonObject> resp(0, "ok", &obj);
 
-        QJsonDocument doc(resp.build().toObject());
+        QJsonDocument doc(resp.build());
 
         m_stream_ws->SendData(doc.toJson(QJsonDocument::Compact));
     }
