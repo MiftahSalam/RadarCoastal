@@ -315,6 +315,12 @@ void ArpaSender::SendOneData(long long ts,
     delete decoder;
 }
 
+void ArpaSender::Reconnect()
+{
+    if(m_stream_mqtt->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt->Reconnect();
+    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
+}
+
 void ArpaSender::initConfigWS()
 {
     QString config_ws_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_WS).toString();

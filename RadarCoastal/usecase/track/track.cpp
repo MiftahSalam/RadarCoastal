@@ -212,6 +212,7 @@ TrackModel Track::arpaToTrackModel(const RadarEngine::ARPATarget *target)
 
 void Track::timerTimeout()
 {
+    m_arpa_sender->Reconnect();
     updateManyTarget(m_update_count);
 //    updateOneTarget();
 //    updateAllTarget();

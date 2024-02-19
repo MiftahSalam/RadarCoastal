@@ -103,6 +103,8 @@ public:
             double spd,
             double crs
             );
+    void Reconnect();
+
 signals:
 
 private slots:
