@@ -128,6 +128,8 @@ void Track::updateModel(TrackModel trackModel)
         m_track_repo->Update(trackModel);
         m_model_view->UpdateModel(trackModel);
     } else {
+        trackModel.timestamp = QDateTime::currentMSecsSinceEpoch();
+
         m_track_repo->Insert(trackModel);
         m_model_view->InsertModel(trackModel);
     }
@@ -210,6 +212,7 @@ TrackModel Track::arpaToTrackModel(const RadarEngine::ARPATarget *target)
 
 void Track::timerTimeout()
 {
+    m_arpa_sender->Reconnect();
     updateManyTarget(m_update_count);
 //    updateOneTarget();
 //    updateAllTarget();

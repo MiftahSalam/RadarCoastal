@@ -6,7 +6,8 @@
 #include "qjsonobject.h"
 #include "shared/utils.h"
 
-ArpaSenderDecoder::ArpaSenderDecoder(int id,
+ArpaSenderDecoder::ArpaSenderDecoder(long long ts,
+                                     int id,
                                      double lat,
                                      double lon,
                                      double alt,
@@ -18,6 +19,7 @@ ArpaSenderDecoder::ArpaSenderDecoder(int id,
     isArray = false;
 
     ArpaSenderModel *data = new ArpaSenderModel();
+    data->timestamp = ts;
     data->id = id;
     data->lat = lat;
     data->lon = lon;
@@ -35,6 +37,7 @@ ArpaSenderDecoder::ArpaSenderDecoder(TrackModel data)
     isArray = false;
 
     ArpaSenderModel *model = new ArpaSenderModel();
+    model->timestamp = data.timestamp;
     model->id = data.id;
     model->lat = data.lat;
     model->lon = data.lon;
@@ -58,6 +61,7 @@ ArpaSenderDecoder::ArpaSenderDecoder(QList<TrackModel*> data)
 
     foreach (auto m, data) {
         ArpaSenderModel *model = new ArpaSenderModel();
+        model->timestamp = m->timestamp;
         model->id = m->id;
         model->lat = m->lat;
         model->lon = m->lon;
@@ -72,6 +76,7 @@ ArpaSenderDecoder::ArpaSenderDecoder(QList<TrackModel*> data)
 }
 
 ArpaSenderDecoderJson::ArpaSenderDecoderJson(
+        long long ts,
         int id,
         double lat,
         double lon,
@@ -79,7 +84,7 @@ ArpaSenderDecoderJson::ArpaSenderDecoderJson(
         double rng,
         double brn,
         double spd,
-        double crs) : ArpaSenderDecoder(id, lat, lon, alt, rng, brn, spd, crs)
+        double crs) : ArpaSenderDecoder(ts, id, lat, lon, alt, rng, brn, spd, crs)
 {}
 
 ArpaSenderDecoderJson::ArpaSenderDecoderJson(TrackModel data): ArpaSenderDecoder(data)
@@ -104,14 +109,15 @@ QJsonDocument ArpaSenderDecoderJson::decodeJsonDoc()
 
         foreach (auto m, m_data) {
             QJsonObject obj;
-            obj["id"] = m->id;
-            obj["lat"] = m->lat;
-            obj["lon"] = m->lon;
-            obj["alt"] = m->alt;
-            obj["rng"] = m->rng;
-            obj["brn"] = m->brn;
-            obj["spd"] = m->spd;
-            obj["crs"] = m->crs;
+
+            obj["timestamp"] = m->timestamp;
+            obj["track_id"] = m->id;
+            obj["latitude"] = m->lat;
+            obj["longitude"] = m->lon;
+            obj["range"] = m->rng;
+            obj["bearing"] = m->brn;
+            obj["speed"] = m->spd;
+            obj["course"] = m->crs;
 
             array.append(obj);
         }
@@ -124,14 +130,16 @@ QJsonDocument ArpaSenderDecoderJson::decodeJsonDoc()
 
             foreach (auto m, m_data) {
                 QJsonObject obj;
-                obj["id"] = m->id;
-                obj["lat"] = m->lat;
-                obj["lon"] = m->lon;
+
+                obj["timestamp"] = m->timestamp;
+                obj["track_id"] = m->id;
+                obj["latitude"] = m->lat;
+                obj["longitude"] = m->lon;
                 obj["alt"] = m->alt;
-                obj["rng"] = m->rng;
-                obj["brn"] = m->brn;
-                obj["spd"] = m->spd;
-                obj["crs"] = m->crs;
+                obj["range"] = m->rng;
+                obj["bearing"] = m->brn;
+                obj["speed"] = m->spd;
+                obj["course"] = m->crs;
 
                 array.append(obj);
             }
@@ -142,14 +150,15 @@ QJsonDocument ArpaSenderDecoderJson::decodeJsonDoc()
         {
             QJsonObject obj;
 
-            obj["id"] = m_data[0]->id;
-            obj["lat"] = m_data[0]->lat;
-            obj["lon"] = m_data[0]->lon;
+            obj["timestamp"] = m_data[0]->timestamp;
+            obj["track_id"] = m_data[0]->id;
+            obj["latitude"] = m_data[0]->lat;
+            obj["longitude"] = m_data[0]->lon;
             obj["alt"] = m_data[0]->alt;
-            obj["rng"] = m_data[0]->rng;
-            obj["brn"] = m_data[0]->brn;
-            obj["spd"] = m_data[0]->spd;
-            obj["crs"] = m_data[0]->crs;
+            obj["range"] = m_data[0]->rng;
+            obj["bearing"] = m_data[0]->brn;
+            obj["speed"] = m_data[0]->spd;
+            obj["course"] = m_data[0]->crs;
 
             doc = QJsonDocument(obj);
         }
@@ -159,6 +168,7 @@ QJsonDocument ArpaSenderDecoderJson::decodeJsonDoc()
 }
 
 ArpaSenderDecoderNMEA::ArpaSenderDecoderNMEA(
+        long long ts,
         int id,
         double lat,
         double lon,
@@ -166,7 +176,7 @@ ArpaSenderDecoderNMEA::ArpaSenderDecoderNMEA(
         double rng,
         double brn,
         double spd,
-        double crs) : ArpaSenderDecoder(id, lat, lon, alt, rng, brn, spd, crs)
+        double crs) : ArpaSenderDecoder(ts, id, lat, lon, alt, rng, brn, spd, crs)
 {}
 
 ArpaSenderDecoderNMEA::ArpaSenderDecoderNMEA(TrackModel data): ArpaSenderDecoder(data)
@@ -273,14 +283,15 @@ void ArpaSender::SendOneData(TrackModel data)
     delete decoder;
 }
 
-void ArpaSender::SendOneData(int id,
-                          double lat,
-                          double lon,
-                          double alt,
-                          double rng,
-                          double brn,
-                          double spd,
-                          double crs
+void ArpaSender::SendOneData(long long ts,
+                             int id,
+                            double lat,
+                            double lon,
+                            double alt,
+                            double rng,
+                            double brn,
+                            double spd,
+                            double crs
                           )
 {
     QPointF gpsCorrection = Utils::GpsAbsolute(lat,lon);
@@ -289,6 +300,7 @@ void ArpaSender::SendOneData(int id,
     lon = gpsCorrection.x();
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder*>(new ArpaSenderDecoderJson(
+                                                                      ts,
                                                                       id,
                                                                       lat,
                                                                       lon,
@@ -301,6 +313,12 @@ void ArpaSender::SendOneData(int id,
     sendWS(decoder);
 
     delete decoder;
+}
+
+void ArpaSender::Reconnect()
+{
+    if(m_stream_mqtt->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt->Reconnect();
+    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
 }
 
 void ArpaSender::initConfigWS()

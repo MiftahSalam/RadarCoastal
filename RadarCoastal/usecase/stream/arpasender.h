@@ -10,6 +10,7 @@
 
 struct ArpaSenderModel
 {
+    long long timestamp;
     int id;
     double lat;
     double lon;
@@ -23,7 +24,8 @@ struct ArpaSenderModel
 class ArpaSenderDecoder
 {
 public:
-    ArpaSenderDecoder(int id,
+    ArpaSenderDecoder(long long ts,
+                      int id,
                       double lat,
                       double lon,
                       double alt,
@@ -46,7 +48,8 @@ protected:
 class ArpaSenderDecoderJson: public ArpaSenderDecoder
 {
 public:
-    ArpaSenderDecoderJson(int id,
+    ArpaSenderDecoderJson(long long ts,
+                          int id,
                           double lat,
                           double lon,
                           double alt,
@@ -65,7 +68,8 @@ public:
 class ArpaSenderDecoderNMEA: public ArpaSenderDecoder
 {
 public:
-    ArpaSenderDecoderNMEA(int id,
+    ArpaSenderDecoderNMEA(long long ts,
+                          int id,
                           double lat,
                           double lon,
                           double alt,
@@ -89,6 +93,7 @@ public:
     void SendManyData(QList<TrackModel*> data);
     void SendOneData(TrackModel data);
     void SendOneData(
+            long long ts,
             int id,
             double lat,
             double lon,
@@ -98,6 +103,8 @@ public:
             double spd,
             double crs
             );
+    void Reconnect();
+
 signals:
 
 private slots:
