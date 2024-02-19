@@ -1,4 +1,6 @@
 #include "arpasender.h"
+#include "baseresponsejson.h"
+
 #include "qjsonarray.h"
 #include "qjsondocument.h"
 #include "qjsonobject.h"
@@ -227,15 +229,23 @@ void ArpaSender::SendManyData(QList<TrackModel *> data)
     else m_stream_mqtt->SendData(mq_data);
 
     ArpaSenderDecoderJson *decoderJson = dynamic_cast<ArpaSenderDecoderJson*>(decoder);
+    QJsonDocument doc;
     auto decoderDoc = decoderJson->decodeJsonDoc();
-    if(decoderDoc->isArray())
-    {
-        BaseResponseJson json(0, "ok", )
-    }
-    else if(decoderDoc->isObject())
-    {
 
+    if(decoderDoc.isArray())
+    {
+        QJsonArray array(decoderDoc.array());
+        BaseResponseJson<QJsonArray> resp(0, "ok", &array);
+        doc = QJsonDocument(resp.build().toArray());
     }
+    else if(decoderDoc.isObject())
+    {
+        QJsonObject obj(decoderDoc.object());
+        BaseResponseJson<QJsonObject> resp(0, "ok", &obj);
+        doc = QJsonDocument(resp.build().toObject());
+    }
+
+    m_stream_ws->SendData(doc.toJson(QJsonDocument::Compact));
 
     delete decoder;
 }
