@@ -11,11 +11,9 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
 
     initConfigMqtt();
-    initConfigWS();
 
     m_append_data_osd = "";
     m_no_osd_count = 11;
-    m_site_data_count = 0;
 
     connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,
             this,&NavSensor::triggerConfigChange);
@@ -45,34 +43,6 @@ void NavSensor::initConfigMqtt()
     m_stream_mqtt = new Stream(this,nav_config_str_list.join(":"));
 
     connect(m_stream_mqtt,&Stream::SignalReceiveData,this,&NavSensor::triggerReceivedData);
-}
-
-void NavSensor::initConfigWS()
-{
-    QString config_ws_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_WS).toString();
-    QStringList config_ws_str_list = config_ws_str.split(";");
-
-    if(config_ws_str_list.size() != 3)
-    {
-        qDebug()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
-        exit(1);
-    }
-
-    QStringList config_ws_str_list$ = config_ws_str.split("$");
-    if(config_ws_str_list$.size() != 2)
-    {
-        qDebug()<<Q_FUNC_INFO<<"invalid config ws site period"<<config_ws_str;
-        exit(1);
-    }
-
-    bool ok;
-    max_site_data_count = config_ws_str_list$.at(1).toInt(&ok);
-    if (!ok) {
-        max_site_data_count = 10;
-        qWarning()<<Q_FUNC_INFO<<"invalid max_site_data_count"<<config_ws_str_list$.at(1)<<". will use default 10";
-    }
-
-    m_stream_ws = new Stream(this,config_ws_str);
 }
 
 void NavSensor::triggerConfigChange(const QString key, const QVariant val)
@@ -116,50 +86,12 @@ void NavSensor::triggerConfigChange(const QString key, const QVariant val)
             m_stream_mqtt->SetConfig(nav_config_str_list.join(":"));
         }
     }
-    else if(key == "RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG") //todo use config
-    {
-        m_stream_ws->SetConfig(val.toString());
-    }
 }
 
 void NavSensor::SendData(QString lat, QString lon, QString hdt)
 {
     QString m_data = m_topic+":"+"?"+lat+"#"+lon+"#"+hdt+"!";
     m_stream_mqtt->SendData(m_data);
-}
-
-void NavSensor::SendSiteData(bool gps_manual, bool hdt_manual)
-{
-    m_site_data_count++;
-    if(m_site_data_count >= max_site_data_count)
-    {
-        m_site_data_count = 0;
-
-        QJsonObject obj;
-        QJsonObject objPos;
-        QJsonObject objHdt;
-        QJsonObject objStatic;
-
-        objStatic["radar_min_range"] = distanceList.last();
-        objStatic["radar_max_range"] = distanceList.first();
-
-        objPos["mode"] = gps_manual ? "manual" : "auto";
-        objPos["status"] = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt();
-        objPos["latitude"] = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
-        objPos["longitude"] = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
-
-        objHdt["mode"] = hdt_manual ? "manual" : "auto";
-        objHdt["status"] = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt();
-        objHdt["heading"] = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
-
-        obj["position"] = objPos;
-        obj["heading"] = objHdt;
-        obj["static"] = objStatic;
-
-        QJsonDocument doc(obj);
-
-        m_stream_ws->SendData(doc.toJson(QJsonDocument::Compact));
-    }
 }
 
 bool NavSensor::isGPSDataValid(const QString lat_str, const QString lon_str)
@@ -273,5 +205,4 @@ void NavSensor::triggerReceivedData(const QString data)
 void NavSensor::Reconnect()
 {
     m_stream_mqtt->Reconnect();
-    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
 }
