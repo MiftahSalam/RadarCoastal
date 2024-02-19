@@ -112,7 +112,8 @@ private:
 
     void initConfigWS();
     void initConfigMqtt();
-
+    void sendMqtt(ArpaSenderDecoder* decoder);
+    void sendWS(ArpaSenderDecoder* data);
 };
 
 #endif // ARPASENDER_H

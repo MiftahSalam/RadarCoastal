@@ -213,6 +213,37 @@ ArpaSender::ArpaSender(QObject *parent)
 
 }
 
+void ArpaSender::sendMqtt(ArpaSenderDecoder *decoder)
+{
+    QString mq_data = m_topic+MQTT_MESSAGE_SEPARATOR+decoder->decode();
+
+    if(m_stream_mqtt->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt->Reconnect();
+    else m_stream_mqtt->SendData(mq_data);
+}
+
+void ArpaSender::sendWS(ArpaSenderDecoder *decoder)
+{
+    ArpaSenderDecoderJson *decoderJson = dynamic_cast<ArpaSenderDecoderJson*>(decoder);
+    QJsonDocument doc;
+    auto decoderDoc = decoderJson->decodeJsonDoc();
+
+    if(decoderDoc.isArray())
+    {
+        QJsonArray array(decoderDoc.array());
+        BaseResponseJson<QJsonArray> resp(0, "ok", &array);
+        doc = QJsonDocument(resp.build().array());
+    }
+    else if(decoderDoc.isObject())
+    {
+        QJsonObject obj(decoderDoc.object());
+        BaseResponseJson<QJsonObject> resp(0, "ok", &obj);
+        doc = QJsonDocument(resp.build().object());
+    }
+
+    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
+    m_stream_ws->SendData(doc.toJson(QJsonDocument::Compact));
+}
+
 void ArpaSender::SendManyData(QList<TrackModel *> data)
 {
     foreach (auto m, data) {
@@ -223,29 +254,8 @@ void ArpaSender::SendManyData(QList<TrackModel *> data)
     }
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder*>(new ArpaSenderDecoderJson(data));
-    QString mq_data = m_topic+MQTT_MESSAGE_SEPARATOR+decoder->decode();
-
-    if(m_stream_mqtt->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt->Reconnect();
-    else m_stream_mqtt->SendData(mq_data);
-
-    ArpaSenderDecoderJson *decoderJson = dynamic_cast<ArpaSenderDecoderJson*>(decoder);
-    QJsonDocument doc;
-    auto decoderDoc = decoderJson->decodeJsonDoc();
-
-    if(decoderDoc.isArray())
-    {
-        QJsonArray array(decoderDoc.array());
-        BaseResponseJson<QJsonArray> resp(0, "ok", &array);
-        doc = QJsonDocument(resp.build().toArray());
-    }
-    else if(decoderDoc.isObject())
-    {
-        QJsonObject obj(decoderDoc.object());
-        BaseResponseJson<QJsonObject> resp(0, "ok", &obj);
-        doc = QJsonDocument(resp.build().toObject());
-    }
-
-    m_stream_ws->SendData(doc.toJson(QJsonDocument::Compact));
+    sendMqtt(decoder);
+    sendWS(decoder);
 
     delete decoder;
 }
@@ -258,10 +268,8 @@ void ArpaSender::SendOneData(TrackModel data)
     data.lon = gpsCorrection.x();
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder*>(new ArpaSenderDecoderJson(data));
-    QString mq_data = m_topic+MQTT_MESSAGE_SEPARATOR+decoder->decode();
-
-    if(m_stream_mqtt->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt->Reconnect();
-    else m_stream_mqtt->SendData(mq_data);
+    sendMqtt(decoder);
+    sendWS(decoder);
 
     delete decoder;
 }
@@ -290,10 +298,8 @@ void ArpaSender::SendOneData(int id,
                                                                       brn,
                                                                       spd,
                                                                       crs));
-    QString mq_data = m_topic+MQTT_MESSAGE_SEPARATOR+decoder->decode();
-
-    if(m_stream_mqtt->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt->Reconnect();
-    else m_stream_mqtt->SendData(mq_data);
+    sendMqtt(decoder);
+    sendWS(decoder);
 
     delete decoder;
 }
