@@ -14,7 +14,7 @@ public:
         m_message = status;
         m_data = data;
     }
-    QJsonObject build() const
+    QJsonValue build() const
     {
         QJsonObject obj;
 
@@ -23,7 +23,7 @@ public:
         if (m_data) obj["data"] = *m_data;
         else obj["data"] = QJsonValue::Null;
 
-        return obj;
+        return QJsonObject(obj);
     }
 
 protected:
