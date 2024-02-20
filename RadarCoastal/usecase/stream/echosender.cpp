@@ -1,10 +1,10 @@
-#include "qapplication.h"
-#include "qdatetime.h"
-#include "qjsondocument.h"
-#include "qjsonobject.h"
-#include "qpoint.h"
-#include "qfile"
-#include "qdir"
+#include <QApplication>
+#include <QDateTime>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QPoint>
+#include <QFile>
+#include <QDir>
 
 #include "echosender.h"
 #include "shared/utils.h"
