@@ -13,6 +13,8 @@ ArpaSenderDecoder::ArpaSenderDecoder(int id,
                                      double spd,
                                      double crs)
 {
+    isArray = false;
+
     ArpaSenderModel *data = new ArpaSenderModel();
     data->id = id;
     data->lat = lat;
@@ -28,6 +30,8 @@ ArpaSenderDecoder::ArpaSenderDecoder(int id,
 
 ArpaSenderDecoder::ArpaSenderDecoder(TrackModel data)
 {
+    isArray = false;
+
     ArpaSenderModel *model = new ArpaSenderModel();
     model->id = data.id;
     model->lat = data.lat;
@@ -47,6 +51,8 @@ ArpaSenderDecoder::ArpaSenderDecoder(QList<TrackModel*> data)
         qWarning()<<Q_FUNC_INFO<<"invalid parameter input. input must at least 1 size. "<<data;
         return;
     }
+
+    isArray = true;
 
     foreach (auto m, data) {
         ArpaSenderModel *model = new ArpaSenderModel();
@@ -82,6 +88,13 @@ ArpaSenderDecoderJson::ArpaSenderDecoderJson(QList<TrackModel*> data): ArpaSende
 
 QString ArpaSenderDecoderJson::decode()
 {
+    QJsonDocument doc = decodeJsonDoc();
+
+    return QString(doc.toJson(QJsonDocument::Compact));
+}
+
+QJsonDocument ArpaSenderDecoderJson::decodeJsonDoc()
+{
     QJsonDocument doc;
 
     if (m_data.size() > 1) {
@@ -103,21 +116,44 @@ QString ArpaSenderDecoderJson::decode()
 
         doc = QJsonDocument(array);
     } else {
-        QJsonObject obj;
+        if(isArray)
+        {
+            QJsonArray array;
 
-        obj["id"] = m_data[0]->id;
-        obj["lat"] = m_data[0]->lat;
-        obj["lon"] = m_data[0]->lon;
-        obj["alt"] = m_data[0]->alt;
-        obj["rng"] = m_data[0]->rng;
-        obj["brn"] = m_data[0]->brn;
-        obj["spd"] = m_data[0]->spd;
-        obj["crs"] = m_data[0]->crs;
+            foreach (auto m, m_data) {
+                QJsonObject obj;
+                obj["id"] = m->id;
+                obj["lat"] = m->lat;
+                obj["lon"] = m->lon;
+                obj["alt"] = m->alt;
+                obj["rng"] = m->rng;
+                obj["brn"] = m->brn;
+                obj["spd"] = m->spd;
+                obj["crs"] = m->crs;
 
-        doc = QJsonDocument(obj);
+                array.append(obj);
+            }
+
+            doc = QJsonDocument(array);
+        }
+        else
+        {
+            QJsonObject obj;
+
+            obj["id"] = m_data[0]->id;
+            obj["lat"] = m_data[0]->lat;
+            obj["lon"] = m_data[0]->lon;
+            obj["alt"] = m_data[0]->alt;
+            obj["rng"] = m_data[0]->rng;
+            obj["brn"] = m_data[0]->brn;
+            obj["spd"] = m_data[0]->spd;
+            obj["crs"] = m_data[0]->crs;
+
+            doc = QJsonDocument(obj);
+        }
     }
 
-    return QString(doc.toJson(QJsonDocument::Compact));
+    return doc;
 }
 
 ArpaSenderDecoderNMEA::ArpaSenderDecoderNMEA(
