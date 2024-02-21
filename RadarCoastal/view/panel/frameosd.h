@@ -38,6 +38,7 @@ private:
     void initConfig();
     void updateGPSData();
     void updateHDGData();
+    void updateModeControl();
     void updateGPSColor(const int status);
     void updateHDGColor(const int status);
 

@@ -33,6 +33,10 @@ void NavSensor::initConfig()
     m_no_osd_count = 11;
 
     m_stream = new Stream(this,nav_config_str_list.join(":"));
+
+    m_stream->ChangeConfig("subsciber:topic-add:gps_man");
+    m_stream->ChangeConfig("subsciber:topic-add:gps");
+
     connect(m_stream,&Stream::SignalReceiveData,this,&NavSensor::triggerReceivedData);
     connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,
             this,&NavSensor::triggerConfigChange);
@@ -40,11 +44,12 @@ void NavSensor::initConfig()
 
 void NavSensor::triggerConfigChange(const QString key, const QVariant val)
 {
-//    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
+    //    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
     if(key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG)
     {
         m_stream->SetConfig(val.toString());
     }
+#ifndef DISPLAY_ONLY_MODE
     else if(key == RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO)
     {
         if(val.toBool())
@@ -79,6 +84,7 @@ void NavSensor::triggerConfigChange(const QString key, const QVariant val)
             m_stream->SetConfig(nav_config_str_list.join(":"));
         }
     }
+#endif
 }
 
 void NavSensor::SendData(QString lat, QString lon, QString hdt)
@@ -135,65 +141,89 @@ void NavSensor::triggerReceivedData(const QString data)
 {
     qDebug()<<Q_FUNC_INFO<<data;
     QString msg = data;
-    if(msg.contains("gps:") )
+    if(msg.contains("gps"))
+    {
+        m_no_osd_count = 0;
+
+        if(msg.contains("_man"))
         {
-            m_no_osd_count = 0;
+            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO, false);
+            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO, false);
+        }
+        else
+        {
+            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO, true);
+            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO, true);
+        }
 
-            qDebug()<<Q_FUNC_INFO<<"osd"<<msg.remove("gps");
-            m_append_data_osd.append(msg);
+        msg.remove("gps");
+        msg.remove("_man");
 
-            int index_hdr = m_append_data_osd.indexOf("?");
-            if(index_hdr >= 0)
+        qDebug()<<Q_FUNC_INFO<<"osd"<<msg;
+
+        m_append_data_osd.append(msg);
+
+        int index_hdr = m_append_data_osd.indexOf("?");
+        if(index_hdr >= 0)
+        {
+            int index_end = m_append_data_osd.indexOf("!");
+            if(index_end >= 0)
             {
-                int index_end = m_append_data_osd.indexOf("!");
-                if(index_end >= 0)
+                if(index_end > index_hdr)
                 {
-                    if(index_end > index_hdr)
-                    {
-                        //?-6.939176#107.632770#31!
-                        m_append_data_osd = m_append_data_osd.mid(index_hdr,index_end-index_hdr);
-                        qDebug()<<Q_FUNC_INFO<<"filter"<<m_append_data_osd.remove("!").remove("?").remove("\r").remove("\n");
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
-                        QStringList msg_list = m_append_data_osd.split("#",QString::SkipEmptyParts);
+                    //?-6.939176#107.632770#31!
+                    m_append_data_osd = m_append_data_osd.mid(index_hdr,index_end-index_hdr);
+                    qDebug()<<Q_FUNC_INFO<<"filter"<<m_append_data_osd.remove("!").remove("?").remove("\r").remove("\n");
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+                    QStringList msg_list = m_append_data_osd.split("#",Qt::SkipEmptyParts);
 #else
-                        QStringList msg_list = m_append_data_osd.split("#",QString::SkipEmptyParts);
+                    QStringList msg_list = m_append_data_osd.split("#",QString::SkipEmptyParts);
 #endif
-
-                        if(msg_list.size() == 3)
+                    if(msg_list.size() == 3)
+                    {
+                        if(isGPSDataValid(msg_list.at(0),msg_list.at(1)))
                         {
-                            if(isGPSDataValid(msg_list.at(0),msg_list.at(1)))
-                            {
-                                m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE,msg_list.at(0).toDouble());
-                                m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE,msg_list.at(1).toDouble());
-                                m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 3); //data valid
-                            }
-                            else m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
-
-                            if(isHDGDataValid(msg_list.at(2)))
-                            {
-                                m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING,msg_list.at(2).toDouble());
-                                m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 3); //data valid
-                            }
-                            else m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
+                            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE,msg_list.at(0).toDouble());
+                            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE,msg_list.at(1).toDouble());
+                            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 3); //data valid
                         }
                         else
                         {
-                            qDebug()<<Q_FUNC_INFO<<"osd invalid";
-                            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
+                            qDebug()<<Q_FUNC_INFO<<"gps invalid";
                             m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
                         }
 
-                        m_append_data_osd.clear();
+                        if(isHDGDataValid(msg_list.at(2)))
+                        {
+                            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING,msg_list.at(2).toDouble());
+                            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 3); //data valid
+                        }
+                        else
+                        {
+                            qDebug()<<Q_FUNC_INFO<<"hdt invalid";
+                            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
+                        }
                     }
                     else
                     {
-                        m_append_data_osd.remove(0,index_hdr);
+                        qDebug()<<Q_FUNC_INFO<<"osd invalid";
+                        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
+                        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
                     }
+
+                    m_append_data_osd.clear();
                 }
-                qDebug()<<Q_FUNC_INFO<<index_end;
-            }
-            qDebug()<<Q_FUNC_INFO<<index_hdr;
-        }}
+                else
+                {
+                    m_append_data_osd.remove(0,index_hdr);
+                }
+            } else qDebug()<<Q_FUNC_INFO<<"invalid nav data format end";
+            qDebug()<<Q_FUNC_INFO<<"index_end"<<index_end;
+        } else qDebug()<<Q_FUNC_INFO<<"invalid nav data format start";
+        qDebug()<<Q_FUNC_INFO<<"index_hdr"<<index_hdr;
+    } else qDebug()<<Q_FUNC_INFO<<"not nav data format";
+
+}
 
 void NavSensor::Reconnect()
 {

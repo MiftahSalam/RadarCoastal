@@ -16,6 +16,10 @@ FrameOSD::FrameOSD(QWidget *parent) :
     ui->lineEditHum->hide();
     ui->lineEditTemp->hide();
 
+#ifdef DISPLAY_ONLY_MODE
+    setEnabled(false);
+#endif
+
     sensor = new NavSensor(this);
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,this,&FrameOSD::on_timeout);
@@ -85,10 +89,12 @@ FrameOSD::~FrameOSD()
 
 void FrameOSD::updateGPSData()
 {
+#ifndef DISPLAY_ONLY_MODE
     const bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
 
     if(gps_auto)
     {
+#endif
         quint8 gps_col_normal_buf = static_cast<quint8>(m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt());
         const double lat = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
         const double lon = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
@@ -101,15 +107,20 @@ void FrameOSD::updateGPSData()
             gps_col_normal = gps_col_normal_buf;
             updateGPSColor(gps_col_normal);
         }
+#ifndef DISPLAY_ONLY_MODE
     }
+#endif
+
 }
 
 void FrameOSD::updateHDGData()
 {
+#ifndef DISPLAY_ONLY_MODE
     const bool hdg_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
 
     if(hdg_auto)
     {
+#endif
         quint8 hdg_col_normal_buf = static_cast<quint8>(m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt());
         const double hdg = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
 
@@ -120,7 +131,18 @@ void FrameOSD::updateHDGData()
             hdg_col_normal = hdg_col_normal_buf;
             updateHDGColor(hdg_col_normal);
         }
+#ifndef DISPLAY_ONLY_MODE
     }
+#endif
+}
+
+void FrameOSD::updateModeControl()
+{
+    const bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
+    const bool hdg_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
+
+    ui->checkBoxGPS->setChecked(gps_auto);
+    ui->checkBoxHDG->setChecked(hdg_auto);
 }
 
 void FrameOSD::updateHDGColor(const int status)
@@ -176,10 +198,13 @@ void FrameOSD::on_timeout()
 
     updateGPSData();
     updateHDGData();
+    updateModeControl();
     sensor->Reconnect();
     sensor->UpdateStatus();
+#ifndef DISPLAY_ONLY_MODE
     if(!ui->checkBoxGPS->isChecked())
         sensor->SendData(ui->lineEditLat->text(),ui->lineEditLon->text(),ui->lineEditHDG->text());
+#endif
 }
 
 void FrameOSD::on_pushButtonApply_clicked()
