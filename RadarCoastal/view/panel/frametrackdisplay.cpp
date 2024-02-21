@@ -1,6 +1,5 @@
 #include "frametrackdisplay.h"
 #include "ui_frametrackdisplay.h"
-#include "shared/utils.h"
 
 #include <QDebug>
 #include <QDateTime>
@@ -16,6 +15,10 @@ FrameTrackDisplay::FrameTrackDisplay(QWidget *parent) :
     ui(new Ui::FrameTrackDisplay)
 {
     ui->setupUi(this);
+#ifdef DISPLAY_ONLY_MODE
+    ui->pushButtonDelAll->hide();
+    ui->pushButtonDelSel->hide();
+#endif
 
     track = Track::GetInstance();
 

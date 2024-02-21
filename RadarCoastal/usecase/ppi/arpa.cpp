@@ -20,6 +20,9 @@ PPIArpa::PPIArpa(QObject *parent, RadarEngine::RadarEngine *re, RadarEngine::Rad
 
 void PPIArpa::createMARPA(const QPoint& pos, const int vp_width, const int vp_height)
 {
+#ifdef DISPLAY_ONLY_MODE
+    return;
+#endif
     qDebug()<<Q_FUNC_INFO<<pos;
 
     if(!m_config_instance->getConfig(RadarEngine::NON_VOLATILE_ARPA_CONTROL_CREATE_ARPA_BY_CLICK).toBool()) return;

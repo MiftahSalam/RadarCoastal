@@ -22,6 +22,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->retranslateUi(this);
     ui->pushButtonTilting->hide();
+#ifdef DISPLAY_ONLY_MODE
+    ui->frameSettings->setEnabled(false);
+#endif
 
     setWindowTitle("Coastal Radar");
 

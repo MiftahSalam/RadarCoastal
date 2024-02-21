@@ -9,6 +9,10 @@ FrameControl2::FrameControl2(QWidget *parent) :
 {
     ui->setupUi(this);
 
+#ifdef DISPLAY_ONLY_MODE
+    setEnabled(false);
+#endif
+
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     m_instance_re = RadarEngine::RadarEngine::GetInstance(this);
 
