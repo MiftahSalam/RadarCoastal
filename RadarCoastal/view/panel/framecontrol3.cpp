@@ -19,6 +19,9 @@ FrameControl3::FrameControl3(QWidget *parent) :
 //    ui->comboBoxMotion->hide();
     ui->comboBoxDisplayMode->hide();
 
+#ifdef DISPLAY_ONLY_MODE
+    ui->comboBoxDisplayUnit->setEnabled(false);
+#endif
     initConfig();
 }
 
