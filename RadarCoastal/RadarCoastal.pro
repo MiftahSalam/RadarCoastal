@@ -24,6 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 #MODE += DEBUG_MODE
+DEFINES += DISPLAY_ONLY_MODE
 
 equals(MODE,"DEBUG_MODE") {
     TARGET = RadarCoastal-console
@@ -129,10 +130,10 @@ FORMS += \
     view/panel/frametrail.ui
 
 unix: {
-    LIBS += -L/usr/lib/RadarEngine -lRadarEngine
+    LIBS += -L/usr/lib/RadarEngine/pjs-2024 -lRadarEngine
 
-    INCLUDEPATH += /usr/include/RadarEngine
-    DEPENDPATH += /usr/include/RadarEngine
+    INCLUDEPATH += /usr/include/RadarEngine/pjs-2024
+    DEPENDPATH += /usr/include/RadarEngine/pjs-2024
 
 } else:win32 {
     LIBS += -lOpenGL32
