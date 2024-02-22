@@ -67,6 +67,7 @@ void MainWindow::setupPPILayout()
 
 void MainWindow::TriggerShutdown()
 {
+#ifndef DISPLAY_ONLY_MODE
     if(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_RADAR_STATUS).toInt() == RadarEngine::RADAR_TRANSMIT)
     {
         QMessageBox::information(this,"Warning","Radar is in Transmit Mode.\n"
@@ -75,6 +76,7 @@ void MainWindow::TriggerShutdown()
     }
 
     m_re->TriggerStopRadar();
+#endif
     sleep(1);
     close();
 }
