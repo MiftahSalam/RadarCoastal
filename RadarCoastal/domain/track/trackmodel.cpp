@@ -2,6 +2,7 @@
 
 TrackModel::TrackModel(const TrackModel &track)
 {
+    this->timestamp = track.timestamp;
     this->id = track.id;
     this->rng = track.rng;
     this->brn = track.brn;

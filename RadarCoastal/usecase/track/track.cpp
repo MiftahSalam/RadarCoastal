@@ -8,9 +8,13 @@ Track::Track(QObject *parent)
     : QObject{parent}
 {
     m_track_repo = TrackRepository::Create();
-    m_instance_re = RadarEngine::RadarEngine::GetInstance();
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+#ifdef DISPLAY_ONLY_MODE
+    m_arpa_receiver = new ArpaReceiver(this);
+#else
+    m_instance_re = RadarEngine::RadarEngine::GetInstance();
     m_arpa_sender = new ArpaSender(this);
+#endif
     m_model = new QStandardItemModel(this);
     m_model_view = new TrackModelView(m_model);
     m_timer = new QTimer(this);
@@ -18,9 +22,13 @@ Track::Track(QObject *parent)
     m_update_count = 0;
     m_cur_arpa_id_count = 0;
 
+    connect(m_timer,&QTimer::timeout,this,&Track::timerTimeout);
+#ifdef DISPLAY_ONLY_MODE
+    connect(m_arpa_receiver, &ArpaReceiver::signalNewTrack, this, &Track::triggerOnNewTrack);
+#else
     connect(m_instance_re->radarArpa,&RadarEngine::RadarArpa::Signal_LostTarget,
             this,&Track::trigger_LostTarget);
-    connect(m_timer,&QTimer::timeout,this,&Track::timerTimeout);
+#endif
 
     m_model->setColumnCount(8);
 
@@ -28,6 +36,80 @@ Track::Track(QObject *parent)
 
 }
 
+#ifdef DISPLAY_ONLY_MODE
+void Track::triggerOnNewTrack(QList<TrackModel*> tracks)
+{
+    if (tracks.size() <= 0) {
+        qWarning()<<Q_FUNC_INFO<<"new tracks is empty";
+        return;
+    }
+
+    for (auto track : tracks) {
+        updateModel(*track);
+    }
+}
+
+void Track::updateAllTrack()
+{
+    auto now = QDateTime::currentMSecsSinceEpoch();
+    auto targets = m_track_repo->FindAll();
+    for (auto target : targets) {
+        qDebug()<<Q_FUNC_INFO<<"target id"<<target->id;
+        qDebug()<<Q_FUNC_INFO<<"now"<<now;
+        qDebug()<<Q_FUNC_INFO<<"timestamp"<<target->timestamp;
+        qDebug()<<Q_FUNC_INFO<<"timeout"<<now - target->timestamp;
+
+        if(now - target->timestamp > 10000) {
+            if(m_track_repo->FindOne(target->id))
+            {
+                m_track_repo->Remove(target->id);
+                m_model_view->Remove(target->id);
+                qInfo()<<Q_FUNC_INFO<<"delete stale target"<<target->id;
+            }
+            else qWarning()<<Q_FUNC_INFO<<"failed to delete stale target"<<target->id<<". cannot find target";
+        }
+    }
+}
+
+#endif
+
+void Track::timerTimeout()
+{
+//    updateManyTarget(MAX_UPDATE_NUMBER);
+//    updateOneTarget();
+//    updateAllTarget();
+#ifdef DISPLAY_ONLY_MODE
+    updateAllTrack();
+#endif
+}
+
+void Track::updateModel(TrackModel trackModel)
+{
+    if (m_track_repo->FindOne(trackModel.id) != nullptr) {
+        m_track_repo->Update(trackModel);
+        m_model_view->UpdateModel(trackModel);
+    } else {
+        m_track_repo->Insert(trackModel);
+        m_model_view->InsertModel(trackModel);
+    }
+}
+
+Track* Track::GetInstance()
+{
+    if(!m_track) m_track = new Track();
+    return m_track;
+}
+
+Track::~Track()
+{
+}
+
+QStandardItemModel* Track::GetModelView() const
+{
+    return m_model;
+}
+
+#ifndef DISPLAY_ONLY_MODE
 void Track::RemoveTrack(QString id_str)
 {
     int id = id_str.toInt();
@@ -39,11 +121,6 @@ void Track::RemoveTrack(QString id_str)
 void Track::RemoveAllTrack()
 {
     m_instance_re->radarArpa->DeleteAllTargets();
-}
-
-QStandardItemModel* Track::GetModelView() const
-{
-    return m_model;
 }
 
 void Track::updateManyTarget(const int updateCount)
@@ -117,17 +194,6 @@ void Track::updateOneTarget()
 
         if(m_cur_arpa_id_count >= m_instance_re->radarArpa->targetNumber)
             m_cur_arpa_id_count = 0;
-    }
-}
-
-void Track::updateModel(TrackModel trackModel)
-{
-    if (m_track_repo->FindOne(trackModel.id) != nullptr) {
-        m_track_repo->Update(trackModel);
-        m_model_view->UpdateModel(trackModel);
-    } else {
-        m_track_repo->Insert(trackModel);
-        m_model_view->InsertModel(trackModel);
     }
 }
 
@@ -206,13 +272,6 @@ TrackModel Track::arpaToTrackModel(const RadarEngine::ARPATarget *target)
 
 }
 
-void Track::timerTimeout()
-{
-//    updateManyTarget(MAX_UPDATE_NUMBER);
-//    updateOneTarget();
-    updateAllTarget();
-}
-
 void Track::trigger_LostTarget(int id)
 {
     qDebug()<<Q_FUNC_INFO<<id;
@@ -220,13 +279,4 @@ void Track::trigger_LostTarget(int id)
     m_track_repo->Remove(id);
     m_model_view->Remove(id);
 }
-
-Track* Track::GetInstance()
-{
-    if(!m_track) m_track = new Track();
-    return m_track;
-}
-
-Track::~Track()
-{
-}
+#endif

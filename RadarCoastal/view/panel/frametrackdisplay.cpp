@@ -51,7 +51,7 @@ FrameTrackDisplay::~FrameTrackDisplay()
 {
     delete ui;
 }
-
+#ifndef DISPLAY_ONLY_MODE
 void FrameTrackDisplay::on_pushButtonDelSel_clicked()
 {
     int row_count = ui->tableViewTrack->model()->rowCount();
@@ -69,3 +69,4 @@ void FrameTrackDisplay::on_pushButtonDelAll_clicked()
     int row_count =  ui->tableViewTrack->model()->rowCount();
     if(row_count>0) track->RemoveAllTrack();
 }
+#endif

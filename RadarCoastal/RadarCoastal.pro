@@ -129,6 +129,14 @@ FORMS += \
     view/panel/framecursor.ui \
     view/panel/frametrail.ui
 
+contains(DEFINES, DISPLAY_ONLY_MODE) {
+    HEADERS += \
+        usecase/stream/arpareceiver.h
+
+    SOURCES += \
+        usecase/stream/arpareceiver.cpp
+}
+
 unix: {
     LIBS += -L/usr/lib/RadarEngine/pjs-2024 -lRadarEngine
 
