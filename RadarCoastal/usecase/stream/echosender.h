@@ -16,6 +16,8 @@ public:
     RadarEngine::RadarImageCapture *m_ppi_grabber;
     RadarEngine::RadarEngine* m_re;
 
+    void sendDataAsync(const RadarEngine::CaptureResult echo);
+
 signals:
 
 private slots:

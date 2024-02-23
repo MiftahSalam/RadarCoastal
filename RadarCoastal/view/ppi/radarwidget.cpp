@@ -1,6 +1,7 @@
 #include <QtGui>
 #include <QtOpenGL>
 #include <QtGlobal>
+#include <QtConcurrent/QtConcurrent>
 #include <stdlib.h>
 #include <math.h>
 
@@ -155,7 +156,13 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     if(echoSender->m_re->m_radar_capture->isStart() && echoSender->m_re->m_radar_capture->pendingGrabAvailable())
     {
-        echoSender->m_re->m_radar_capture->capture(width(), height());
+        QFutureWatcher<RadarEngine::CaptureResult> watcher;
+        connect(&watcher, &QFutureWatcher<RadarEngine::CaptureResult>::finished, this, &RadarWidget::trigger_captureFinish);
+
+        QFuture<RadarEngine::CaptureResult> future = QtConcurrent::run(m_re->m_radar_capture, &RadarEngine::RadarImageCapture::capture, width(), height());
+        watcher.setFuture(future);
+
+//        echoSender->m_re->m_radar_capture->capture(width(), height());
     }
     /*
     if(echoSender->m_ppi_grabber->isStart() && echoSender->m_ppi_grabber->pendingGrabAvailable())
@@ -204,6 +211,14 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     */
     if(show_rings) drawRings(&painter,side);
 
+}
+
+void RadarWidget::trigger_captureFinish()
+{
+    QFutureWatcher<RadarEngine::CaptureResult>* watcher;
+        watcher = reinterpret_cast<QFutureWatcher<RadarEngine::CaptureResult>*>(sender());
+        RadarEngine::CaptureResult result = watcher->result();
+        echoSender->sendDataAsync(result);
 }
 
 void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data, size_t len)

@@ -45,6 +45,15 @@ void EchoSender::triggerSendData(const QString echoStr, const int vp_width, cons
 
 }
 
+void EchoSender::sendDataAsync(const RadarEngine::CaptureResult echo)
+{
+    if (echo.echo.isEmpty()) {
+        qWarning()<<Q_FUNC_INFO<<"capture result isEmpty";
+        return;
+    }
+    triggerSendData(echo.echo, echo.width, echo.height);
+}
+
 QJsonObject EchoSender::buildJsonPackage(const QString data, const quint64 ts, const BoundingBoxGps box, double curRange)
 {
     QJsonObject obj;

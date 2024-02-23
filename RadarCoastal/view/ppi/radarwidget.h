@@ -57,6 +57,7 @@ public slots:
     void trigger_cursorMove(const QPoint pos);
     void trigger_cursorLeftRelease(const QPoint pos);
     void trigger_radarConfigChange(QString key, QVariant val);
+    void trigger_captureFinish();
 
 private:
     void drawRings(QPainter* painter, const int& side);
