@@ -90,10 +90,11 @@ QPointF Utils::GPSToPix(const double lon, const double lat, const int vp_width, 
     line.setAngle(angle);
     line.setLength(r_radar);
 
+    /*
     qDebug()<<Q_FUNC_INFO<<"line"<<line.length()<<angle<<line;
     qDebug()<<Q_FUNC_INFO<<"pol"<<r_radar<<angle_radar;
     qDebug()<<Q_FUNC_INFO<<"pos"<<lat<<lon<<vp_range;
-
+    */
 
     QPointF pos_to_convert;
     //    double dif_lat = (lat - currentOwnShipLat) * currentRange;

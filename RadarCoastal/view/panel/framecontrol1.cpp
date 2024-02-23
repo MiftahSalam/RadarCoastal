@@ -13,6 +13,12 @@ FrameControl1::FrameControl1(QWidget *parent) :
 {
     ui->setupUi(this);
 
+#ifdef DISPLAY_ONLY_MODE
+    ui->pushButtonTxStnb->setEnabled(false);
+    ui->pushButtonZoomOut->setEnabled(false);
+    ui->pushButtonZoomIn->setEnabled(false);
+#endif
+
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     m_instance_re = RadarEngine::RadarEngine::GetInstance(this);
 
@@ -26,6 +32,9 @@ void FrameControl1::initConfig()
 {
     ui->checkBoxShowRing->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
     on_checkBoxShowRing_clicked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
+#ifdef DISPLAY_ONLY_MODE
+    handleRingRangeChange();
+#endif
 //    handleRingRangeChange();
 }
 
@@ -92,14 +101,18 @@ void FrameControl1::stateChange(int state)
 {
     if(static_cast<RadarEngine::RadarState>(state) == RadarEngine::RADAR_STANDBY)
     {
+#ifndef DISPLAY_ONLY_MODE
         ui->pushButtonTxStnb->setEnabled(true);
+#endif
         ui->pushButtonTxStnb->setText("Transmit");
     }
     else if((static_cast<RadarEngine::RadarState>(state) == RadarEngine::RADAR_TRANSMIT &&
             static_cast<RadarEngine::RadarState>(state) == RadarEngine::RADAR_NO_SPOKE) ||
             static_cast<RadarEngine::RadarState>(state) == RadarEngine::RADAR_TRANSMIT)
     {
+#ifndef DISPLAY_ONLY_MODE
         ui->pushButtonTxStnb->setEnabled(true);
+#endif
         ui->pushButtonTxStnb->setText("Standby");
 
         //comment for radar offline mode
@@ -111,7 +124,9 @@ void FrameControl1::stateChange(int state)
     }
     else
     {
+#ifndef DISPLAY_ONLY_MODE
         ui->pushButtonTxStnb->setEnabled(false);
+#endif
         ui->pushButtonTxStnb->setText("Tx/Stby");
     }
 }

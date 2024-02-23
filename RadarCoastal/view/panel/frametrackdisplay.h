@@ -21,11 +21,11 @@ public:
 
 private slots:
     void timerTimeout();
-
+#ifndef DISPLAY_ONLY_MODE
     void on_pushButtonDelSel_clicked();
 
     void on_pushButtonDelAll_clicked();
-
+#endif
 private:
     Ui::FrameTrackDisplay *ui;
 

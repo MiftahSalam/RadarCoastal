@@ -19,6 +19,9 @@ FrameControl3::FrameControl3(QWidget *parent) :
 //    ui->comboBoxMotion->hide();
     ui->comboBoxDisplayMode->hide();
 
+#ifdef DISPLAY_ONLY_MODE
+    ui->comboBoxDisplayUnit->setEnabled(false);
+#endif
     initConfig();
 }
 
@@ -120,6 +123,7 @@ void FrameControl3::on_comboBoxDisplayUnit_currentIndexChanged(int index)
 
     if(cur_zoom_lvl < 0) cur_zoom_lvl = 0;
 
+#ifndef DISPLAY_ONLY_MODE
     switch (index) {
     case 0:
         m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE, distanceList.at(cur_zoom_lvl));
@@ -130,6 +134,7 @@ void FrameControl3::on_comboBoxDisplayUnit_currentIndexChanged(int index)
     default:
         break;
     }
+#endif
 
     prev_unit_idx = index;
 }

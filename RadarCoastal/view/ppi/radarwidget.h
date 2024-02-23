@@ -71,7 +71,11 @@ private:
     FilterEvent *ppiEvent;
     RadarEngine::RadarEngine* m_re;
     RadarEngine::RadarConfig* m_instance_cfg;
+#ifndef DISPLAY_ONLY_MODE
     PPIArpa *m_ppi_arpa;
+#else
+
+#endif
     QTimer *timer;
     QRect region;
 
