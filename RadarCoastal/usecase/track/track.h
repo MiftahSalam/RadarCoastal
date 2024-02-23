@@ -25,6 +25,7 @@ public:
     ~Track() override;
 
     QStandardItemModel *GetModelView() const;
+    TrackRepository* GetRepo() const;
 #ifndef DISPLAY_ONLY_MODE
     void RemoveTrack(QString id);
     void RemoveAllTrack();

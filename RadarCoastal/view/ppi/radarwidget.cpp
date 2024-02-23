@@ -29,16 +29,19 @@ RadarWidget::RadarWidget(QWidget *parent)
 
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     m_re = RadarEngine::RadarEngine::GetInstance();
+#ifndef DISPLAY_ONLY_MODE
     m_ppi_arpa = new PPIArpa(this, m_re, m_instance_cfg);
-
+    connect(this,&RadarWidget::signal_cursorLeftRelease,arpa->m_ppi_arpa,&PPIArpa::createMARPA);
     PPIArpaObject* arpa = new PPIArpaObject(this, m_ppi_arpa);
+#else
+    PPIArpaObject* arpa = new PPIArpaObject(this);
+#endif
     PPIGZObject* gz = new PPIGZObject(this,"GZ 1");
     PPIGZObject* gz1 = new PPIGZObject(this,"GZ 2");
     PPICompassObject* compass = new PPICompassObject(this);
 
     connect(ppiEvent,&FilterEvent::send_leftButtonReleased,this,&RadarWidget::trigger_cursorLeftRelease);
     connect(ppiEvent,&FilterEvent::move_mouse,this,&RadarWidget::trigger_cursorMove);
-    connect(this,&RadarWidget::signal_cursorLeftRelease,arpa->m_ppi_arpa,&PPIArpa::createMARPA);
     connect(timer, SIGNAL(timeout()), this, SLOT(timeOut()));
 
     drawObjects<<arpa<<gz<<gz1<<compass;

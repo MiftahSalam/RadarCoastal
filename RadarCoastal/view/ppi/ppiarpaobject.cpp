@@ -1,17 +1,29 @@
 #include "ppiarpaobject.h"
 #include "qmath.h"
+#include "shared/utils.h"
 
+#ifndef DISPLAY_ONLY_MODE
 PPIArpaObject::PPIArpaObject(QObject *parent,PPIArpa *arpa): PPIObject(parent)
 {
     m_ppi_arpa = arpa;
 }
+#else
+PPIArpaObject::PPIArpaObject(QObject *parent): PPIObject(parent)
+{
+    m_track = Track::GetInstance();
+}
+#endif
 
 void PPIArpaObject::Draw(QPainter* painter, const int &side)
 {
+#ifndef DISPLAY_ONLY_MODE
     if(m_ppi_arpa->m_re->radarArpa->targetNumber > 0)
     {
         m_ppi_arpa->m_re->radarArpa->RefreshArpaTargets();
-
+#else
+    if(m_track->GetRepo()->FindAll().size() > 0)
+    {
+#endif
         const int preset_color = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_DISPLAY_PRESET_COLOR).toInt();
 
         QPen curPen = painter->pen();
@@ -39,6 +51,7 @@ void PPIArpaObject::Draw(QPainter* painter, const int &side)
         pen.setWidth(2);
         painter->setPen(pen);
 
+#ifndef DISPLAY_ONLY_MODE
         for(int i = 0;i<m_ppi_arpa->m_re->radarArpa->targetNumber;i++)
         {
             int a_min = MOD_ROTATION2048(m_ppi_arpa->m_re->radarArpa->targets[i]->minAngleFuture.angle); //337
@@ -73,7 +86,35 @@ void PPIArpaObject::Draw(QPainter* painter, const int &side)
         {
 //            qDebug()<<Q_FUNC_INFO<<"target"<<i<<m_re->radarArpa->m_target[i]->m_position.lat<<m_re->radarArpa->m_target[i]->m_position.lon<<m_re->radarArpa->m_target[i]->m_speed_kn;
         }
+#else
+        const double range = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
+        const double own_lat = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
+        const double own_lon = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+        foreach (auto track, m_track->GetRepo()->FindAll())
+        {
+            auto pixPos = Utils::GPSToPix(track->lon, track->lat, side, side, range, own_lat, own_lon).toPoint();
 
+            x2 = pixPos.x();
+            y2 = pixPos.y();
+
+            pen.setWidth(2);
+            painter->setPen(pen);
+            painter->drawRect(x2-10, y2-10, 20, 20);
+
+            target_text = QString::number(track->id);
+            rect = metric.boundingRect(0,0,side, int(side*0.125),
+                                       Qt::AlignCenter | Qt::TextWordWrap, target_text);
+            txtX = x2 + 10;
+            txtY = y2 + 10;
+
+            pen.setWidth(1);
+            painter->setPen(pen);
+            painter->drawText(txtX,txtY,rect.width(), rect.height(), Qt::AlignCenter | Qt::TextWordWrap, target_text);
+
+//            qDebug()<<Q_FUNC_INFO<<"target"<<track->id<<track->lat<<track->lon<<track->spd;
+//            qDebug()<<Q_FUNC_INFO<<"position:"<<x2<<y2;
+        }
+#endif
         painter->setPen(curPen);
     }
 }

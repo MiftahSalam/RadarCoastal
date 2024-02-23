@@ -109,6 +109,11 @@ QStandardItemModel* Track::GetModelView() const
     return m_model;
 }
 
+TrackRepository *Track::GetRepo() const
+{
+    return m_track_repo;
+}
+
 #ifndef DISPLAY_ONLY_MODE
 void Track::RemoveTrack(QString id_str)
 {
