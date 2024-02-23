@@ -137,10 +137,10 @@ FORMS += \
     view/panel/frametrail.ui
 
 unix: {
-    LIBS += -L/usr/lib/RadarEngine -lRadarEngine
+    LIBS += -L/usr/lib/hypernet-2024/RadarEngine -lRadarEngine
 
-    INCLUDEPATH += /usr/include/RadarEngine
-    DEPENDPATH += /usr/include/RadarEngine
+    INCLUDEPATH += /usr/include/hypernet-2024
+    DEPENDPATH += /usr/include/hypernet-2024
 
 } else:win32 {
     LIBS += -lOpenGL32
