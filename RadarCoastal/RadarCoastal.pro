@@ -24,7 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 #MODE += DEBUG_MODE
-DEFINES += DISPLAY_ONLY_MODE
+#DEFINES += DISPLAY_ONLY_MODE
 
 equals(MODE,"DEBUG_MODE") {
     TARGET = RadarCoastal-console
@@ -146,12 +146,12 @@ unix: {
 } else:win32 {
     LIBS += -lOpenGL32
 
-    INCLUDEPATH +=C:\Users\ms_tensai\RadarEngineLib\include\2023\v2
-    DEPENDPATH += C:\Users\ms_tensai\RadarEngineLib\lib\include\2023\v2
+    INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2024\pjs\v2
+    DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\pjs\v2
 }
 
-win32:CONFIG(release, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
-else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2023\v2 -lRadarEngine
+win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\pjs -lRadarEngine
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\pjs -lRadarEngine
 
 
 # Default rules for deployment.
