@@ -9,6 +9,9 @@
 #endif
 
 #include "shared/utils.h"
+#include "view/ppi/ppiarpaobject.h"
+#include "view/ppi/ppigzobject.h"
+#include "view/ppi/ppicompassobject.h"
 #include "radarwidget.h"
 
 #ifndef GL_MULTISAMPLE
@@ -149,17 +152,17 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     m_re->radarDraw->DrawRadarImage();
 
-    /*
+
     if(echoSender->m_re->m_radar_capture->isStart() && echoSender->m_re->m_radar_capture->pendingGrabAvailable())
     {
         echoSender->m_re->m_radar_capture->capture(width(), height());
     }
-    */
+    /*
     if(echoSender->m_ppi_grabber->isStart() && echoSender->m_ppi_grabber->pendingGrabAvailable())
     {
         echoSender->m_ppi_grabber->grab(grabFrameBuffer(true));
     }
-
+    */
     const bool show_sweep = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP).toBool();
     const RadarEngine::RadarState cur_state = static_cast<const RadarEngine::RadarState>(m_instance_cfg->getConfig(RadarEngine::VOLATILE_RADAR_STATUS).toInt());
     if(show_sweep && cur_state == RadarEngine::RADAR_TRANSMIT) m_re->radarDraw->DrawRadarSweep(cur_radar_angle_double);

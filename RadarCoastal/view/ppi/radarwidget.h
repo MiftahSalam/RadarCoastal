@@ -14,11 +14,9 @@
 #include <RadarEngine/radarengine.h>
 
 #include "infra/filterevent.h"
-#include "ppiarpaobject.h"
-#include "ppigzobject.h"
-#include "ppicompassobject.h"
-#include "usecase/ppi/ppigrabber.h"
+#include "usecase/ppi/arpa.h"
 #include "usecase/stream/echosender.h"
+#include "view/ppi/ppiobject.h"
 
 class RadarWidget : public QGLWidget, protected QOpenGLFunctions
 {

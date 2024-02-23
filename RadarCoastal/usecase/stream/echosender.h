@@ -1,11 +1,11 @@
 #ifndef ECHOSENDER_H
 #define ECHOSENDER_H
 
-#include "usecase/ppi/ppigrabber.h"
 #include <QObject>
 
 #include <RadarEngine/radarconfig.h>
 #include <RadarEngine/radarengine.h>
+#include <RadarEngine/radarimagecapture.h>
 
 class EchoSender : public QObject
 {
@@ -13,7 +13,7 @@ class EchoSender : public QObject
 public:
     explicit EchoSender(QObject *parent = nullptr);
 
-    PPIGrabber *m_ppi_grabber;
+    RadarEngine::RadarImageCapture *m_ppi_grabber;
     RadarEngine::RadarEngine* m_re;
 
 signals:
