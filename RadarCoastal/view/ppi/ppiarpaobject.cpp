@@ -90,12 +90,22 @@ void PPIArpaObject::Draw(QPainter* painter, const int &side)
         const double range = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
         const double own_lat = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
         const double own_lon = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
+        const double hdt = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+        const bool hup = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toDouble();
         foreach (auto track, m_track->GetRepo()->FindAll())
         {
-            auto pixPos = Utils::GPSToPix(track->lon, track->lat, side, side, range, own_lat, own_lon).toPoint();
+            auto pixPos = Utils::GPSToPix(track->lon, track->lat, 2*side, 2*side, range, own_lat, own_lon).toPoint();
+
+            if(hup)
+            {
+                QTransform transform;
+                transform.rotate(hdt);
+                pixPos = transform.map(pixPos);
+            }
 
             x2 = pixPos.x();
-            y2 = pixPos.y();
+            y2 = -pixPos.y();
+
 
             pen.setWidth(2);
             painter->setPen(pen);
