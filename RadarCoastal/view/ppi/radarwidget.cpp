@@ -156,10 +156,12 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     if(echoSender->m_re->m_radar_capture->isStart() && echoSender->m_re->m_radar_capture->pendingGrabAvailable())
     {
+        auto pixel = echoSender->m_re->m_radar_capture->readPixel(width(), height());
+
         QFutureWatcher<RadarEngine::CaptureResult> watcher;
         connect(&watcher, &QFutureWatcher<RadarEngine::CaptureResult>::finished, this, &RadarWidget::trigger_captureFinish);
 
-        QFuture<RadarEngine::CaptureResult> future = QtConcurrent::run(m_re->m_radar_capture, &RadarEngine::RadarImageCapture::capture, width(), height());
+        QFuture<RadarEngine::CaptureResult> future = QtConcurrent::run(m_re->m_radar_capture, &RadarEngine::RadarImageCapture::capture, pixel, width(), height());
         watcher.setFuture(future);
 
 //        echoSender->m_re->m_radar_capture->capture(width(), height());
