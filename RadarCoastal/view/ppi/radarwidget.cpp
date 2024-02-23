@@ -31,8 +31,8 @@ RadarWidget::RadarWidget(QWidget *parent)
     m_re = RadarEngine::RadarEngine::GetInstance();
 #ifndef DISPLAY_ONLY_MODE
     m_ppi_arpa = new PPIArpa(this, m_re, m_instance_cfg);
-    connect(this,&RadarWidget::signal_cursorLeftRelease,arpa->m_ppi_arpa,&PPIArpa::createMARPA);
     PPIArpaObject* arpa = new PPIArpaObject(this, m_ppi_arpa);
+    connect(this,&RadarWidget::signal_cursorLeftRelease,arpa->m_ppi_arpa,&PPIArpa::createMARPA);
 #else
     PPIArpaObject* arpa = new PPIArpaObject(this);
 #endif
