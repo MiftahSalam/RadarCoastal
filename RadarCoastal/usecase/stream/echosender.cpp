@@ -17,7 +17,9 @@ EchoSender::EchoSender(QObject *parent)
     m_re = RadarEngine::RadarEngine::GetInstance();
     m_ppi_grabber = m_re->m_radar_capture;
 
+#ifdef SAVE_CAPTURE
     initFile();
+#endif
 
     connect(m_re->m_radar_capture,&RadarEngine::RadarImageCapture::signalSendEcho,this,&EchoSender::triggerSendData);
 }
@@ -29,9 +31,12 @@ void EchoSender::triggerSendData(const QString echoStr, const int vp_width, cons
     auto timestamp = QDateTime::currentMSecsSinceEpoch();
     QJsonDocument json(buildJsonPackage(echoStr, timestamp, box, curRange));
 
+#ifdef SAVE_CAPTURE
     saveJsonDataToFile(json.toJson());
-    /**/
+#endif
+    /*
     qDebug()<<Q_FUNC_INFO<<"base64"<<echoStr;
+    */
     qDebug()<<Q_FUNC_INFO<<"vp_width"<<vp_width;
     qDebug()<<Q_FUNC_INFO<<"vp_height"<<vp_height;
     qDebug()<<Q_FUNC_INFO<<"box.topLeftLat"<<box.topLeftLat;
