@@ -17,11 +17,32 @@ EchoSender::EchoSender(QObject *parent)
     m_re = RadarEngine::RadarEngine::GetInstance();
     m_ppi_grabber = m_re->m_radar_capture;
 
+    initConfigWS();
+
 #ifdef SAVE_CAPTURE
     initFile();
 #endif
 
     connect(m_re->m_radar_capture,&RadarEngine::RadarImageCapture::signalSendEcho,this,&EchoSender::triggerSendData);
+}
+
+void EchoSender::initConfigWS()
+{
+    QString config_ws_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ECHO_NET_CONFIG_WS).toString();
+    QStringList config_ws_str_list = config_ws_str.split(";");
+
+    if(config_ws_str_list.size() != 3)
+    {
+        qDebug()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
+        exit(1);
+    }
+
+    m_stream_ws = new Stream(this,config_ws_str);
+}
+
+void EchoSender::Reconnect()
+{
+    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
 }
 
 void EchoSender::triggerSendData(const QString echoStr, const int vp_width, const int vp_height)
@@ -31,6 +52,8 @@ void EchoSender::triggerSendData(const QString echoStr, const int vp_width, cons
     auto timestamp = QDateTime::currentMSecsSinceEpoch();
     QJsonDocument json(buildJsonPackage(echoStr, timestamp, box, curRange));
 
+    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::INPUT_AVAIL)
+        m_stream_ws->SendData(json.toJson(QJsonDocument::Compact));
 #ifdef SAVE_CAPTURE
     saveJsonDataToFile(json.toJson());
 #endif

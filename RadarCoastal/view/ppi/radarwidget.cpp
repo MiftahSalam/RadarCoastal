@@ -87,6 +87,8 @@ void RadarWidget::trigger_cursorLeftRelease(const QPoint pos)
 
 void RadarWidget::timeOut()
 {
+    echoSender->Reconnect();
+
     update();
 }
 
@@ -157,6 +159,9 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     if(echoSender->m_re->m_radar_capture->isStart() && echoSender->m_re->m_radar_capture->pendingGrabAvailable())
     {
+        qDebug()<<Q_FUNC_INFO<<"gl format rgba"<<format().rgba();
+        qDebug()<<Q_FUNC_INFO<<"gl format alpha"<<format().alpha();
+
         auto echo = grabFrameBuffer(true);
         //        auto echo = echoSender->m_re->m_radar_capture->readPixel(width(), height());
 

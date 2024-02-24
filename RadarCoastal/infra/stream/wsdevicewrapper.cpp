@@ -49,10 +49,7 @@ DeviceWrapper::DeviceStatus WSDeviceWrapper::GetStatus()
 
     if(server->isListening())
     {
-        qint64 now = QDateTime::currentSecsSinceEpoch();
-
-        if((now-m_last_data_time) > 10) m_currentStatus = DeviceWrapper::NO_INPUT_DATA;
-        else m_currentStatus = DeviceWrapper::INPUT_AVAIL;
+        m_currentStatus = DeviceWrapper::INPUT_AVAIL;
     }
     else m_currentStatus = DeviceWrapper::NOT_AVAIL;
 
@@ -119,6 +116,6 @@ bool WSDeviceWrapper::InitConfig(const QString config)
         }
         else qFatal("invalid url config %s", url.toUtf8().constData());
     }
-    else qFatal("invalid config %s", config.toUtf8().constData());
+    else qFatal("invalid ws config %s", config.toUtf8().constData());
 
 }
