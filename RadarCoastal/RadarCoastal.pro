@@ -144,19 +144,12 @@ unix: {
 
 } else:win32 {
     LIBS += -lOpenGL32
-#    LIBS += -LC:/Qt/Qt5.12.12/5.12.12/mingw73_32/lib/ -lQt5Qmqttd
-
-#    INCLUDEPATH += C:/Qt/Qt5.12.12/5.12.12/mingw73_32/include
-#    DEPENDPATH += C:/Qt/Qt5.12.12/5.12.12/mingw73_32/include
 
     INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2024\hypernet\v2
     DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\hypernet\v2
 #    INCLUDEPATH +=C:\Users\ms_tensai\RadarEngineLib\include\2024\hypernet\v2
 #    DEPENDPATH += C:\Users\ms_tensai\RadarEngineLib\lib\include\2024\hypernet\v2
 }
-
-#win32:!win32-g++: PRE_TARGETDEPS += C:/Qt/Qt5.12.12/5.12.12/mingw73_32/lib/Qt5Qmqttd.lib
-#else:win32-g++: PRE_TARGETDEPS += C:/Qt/Qt5.12.12/5.12.12/mingw73_32/lib/libQt5Qmqttd.a
 
 win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\hypernet\v2 -lRadarEngine
 else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\hypernet\v2 -lRadarEngine
