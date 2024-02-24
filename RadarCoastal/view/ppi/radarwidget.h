@@ -8,17 +8,16 @@
 #include <QOpenGLTexture>
 #include <QOpenGLFunctions>
 #include <QTimer>
+#include <QFutureWatcher>
 
 #include <RadarEngine/radarconfig.h>
 #include <RadarEngine/global.h>
 #include <RadarEngine/radarengine.h>
 
 #include "infra/filterevent.h"
-#include "ppiarpaobject.h"
-#include "ppigzobject.h"
-#include "ppicompassobject.h"
-#include "usecase/ppi/ppigrabber.h"
+#include "usecase/ppi/arpa.h"
 #include "usecase/stream/echosender.h"
+#include "view/ppi/ppiobject.h"
 
 class RadarWidget : public QGLWidget, protected QOpenGLFunctions
 {
@@ -59,6 +58,7 @@ public slots:
     void trigger_cursorMove(const QPoint pos);
     void trigger_cursorLeftRelease(const QPoint pos);
     void trigger_radarConfigChange(QString key, QVariant val);
+    void trigger_captureFinish();
 
 private:
     void drawRings(QPainter* painter, const int& side);
@@ -74,6 +74,7 @@ private:
     RadarEngine::RadarEngine* m_re;
     RadarEngine::RadarConfig* m_instance_cfg;
     EchoSender *echoSender;
+    QFutureWatcher<RadarEngine::CaptureResult> watcherCapture;
     PPIArpa *m_ppi_arpa;
     QTimer *timer;
     QRect region;

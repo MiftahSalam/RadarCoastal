@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl network websockets
+QT       += core gui opengl network websockets qmqtt
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,7 +22,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
-CONFIG +=QMQTT_WEBSOCKETS
+#CONFIG += QMQTT_WEBSOCKETS
+DEFINES += SAVE_CAPTURE
 
 #MODE += DEBUG_MODE
 
@@ -34,7 +35,7 @@ else {
     TARGET = RadarCoastal
 }
 
-include(infra/qmqtt/qmqtt.pri)
+#include(infra/qmqtt/qmqtt.pri)
 
 SOURCES += \
 #    infra/withconfig.cpp \
@@ -46,7 +47,6 @@ SOURCES += \
     usecase/alarm/alarmmanager.cpp \
     usecase/alarm/gzalarm.cpp \
     usecase/ppi/arpa.cpp \
-    usecase/ppi/ppigrabber.cpp \
     usecase/stream/sitedatasender.cpp \
     usecase/track/track.cpp \
     usecase/track/trackmodelview.cpp \
@@ -89,7 +89,6 @@ HEADERS += \
     usecase/alarm/alarmmanager.h \
     usecase/alarm/gzalarm.h \
     usecase/ppi/arpa.h \
-    usecase/ppi/ppigrabber.h \
     usecase/stream/baseresponsejson.h \
     usecase/stream/sitedatasender.h \
     usecase/track/track.h \

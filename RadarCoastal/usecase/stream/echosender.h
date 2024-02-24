@@ -1,11 +1,12 @@
 #ifndef ECHOSENDER_H
 #define ECHOSENDER_H
 
-#include "usecase/ppi/ppigrabber.h"
+#include "infra/stream/stream.h"
 #include <QObject>
 
 #include <RadarEngine/radarconfig.h>
 #include <RadarEngine/radarengine.h>
+#include <RadarEngine/radarimagecapture.h>
 
 class EchoSender : public QObject
 {
@@ -13,8 +14,11 @@ class EchoSender : public QObject
 public:
     explicit EchoSender(QObject *parent = nullptr);
 
-    PPIGrabber *m_ppi_grabber;
+    RadarEngine::RadarImageCapture *m_ppi_grabber;
     RadarEngine::RadarEngine* m_re;
+
+    void sendDataAsync(const RadarEngine::CaptureResult echo);
+    void Reconnect();
 
 signals:
 
@@ -23,6 +27,7 @@ private slots:
 
 private:
     RadarEngine::RadarConfig* m_instance_cfg;
+    Stream *m_stream_ws;
 
     struct BoundingBoxGps
     {
@@ -42,6 +47,7 @@ private:
     QJsonObject buildJsonPackage(const QString data, const quint64 ts, const BoundingBoxGps box, double curRange);
     void saveJsonDataToFile(QByteArray data);
     void initFile();
+    void initConfigWS();
 };
 
 #endif // ECHOSENDER_H
