@@ -8,6 +8,7 @@
 #include <QOpenGLTexture>
 #include <QOpenGLFunctions>
 #include <QTimer>
+#include <QFutureWatcher>
 
 #include <RadarEngine/radarconfig.h>
 #include <RadarEngine/global.h>
@@ -73,6 +74,7 @@ private:
     RadarEngine::RadarEngine* m_re;
     RadarEngine::RadarConfig* m_instance_cfg;
     EchoSender *echoSender;
+    QFutureWatcher<RadarEngine::CaptureResult> watcherCapture;
     PPIArpa *m_ppi_arpa;
     QTimer *timer;
     QRect region;

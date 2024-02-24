@@ -41,6 +41,7 @@ RadarWidget::RadarWidget(QWidget *parent)
     PPIGZObject* gz1 = new PPIGZObject(this,"GZ 2");
     PPICompassObject* compass = new PPICompassObject(this);
 
+    connect(&watcherCapture, &QFutureWatcher<RadarEngine::CaptureResult>::finished, this, &RadarWidget::trigger_captureFinish);
     connect(ppiEvent,&FilterEvent::send_leftButtonReleased,this,&RadarWidget::trigger_cursorLeftRelease);
     connect(ppiEvent,&FilterEvent::move_mouse,this,&RadarWidget::trigger_cursorMove);
     connect(this,&RadarWidget::signal_cursorLeftRelease,arpa->m_ppi_arpa,&PPIArpa::createMARPA);
@@ -68,8 +69,8 @@ void RadarWidget::trigger_radarConfigChange(QString key, QVariant val)
         }
         else if(state != cur_state && state != RadarEngine::RADAR_TRANSMIT)
         {
-           echoSender->m_ppi_grabber->stop();
-//            echoSender->m_re->m_radar_capture->stop();
+            echoSender->m_ppi_grabber->stop();
+            //            echoSender->m_re->m_radar_capture->stop();
         }
         cur_state = state;
     }
@@ -157,14 +158,11 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     if(echoSender->m_re->m_radar_capture->isStart() && echoSender->m_re->m_radar_capture->pendingGrabAvailable())
     {
         auto echo = grabFrameBuffer(true);
-//        auto echo = echoSender->m_re->m_radar_capture->readPixel(width(), height());
+        //        auto echo = echoSender->m_re->m_radar_capture->readPixel(width(), height());
 
-        QFutureWatcher<RadarEngine::CaptureResult> watcher;
-        connect(&watcher, &QFutureWatcher<RadarEngine::CaptureResult>::finished, this, &RadarWidget::trigger_captureFinish);
-
-//        QFuture<RadarEngine::CaptureResult> future = QtConcurrent::run(m_re->m_radar_capture, &RadarEngine::RadarImageCapture::capture, echo, width(), height());
+        //        QFuture<RadarEngine::CaptureResult> future = QtConcurrent::run(m_re->m_radar_capture, &RadarEngine::RadarImageCapture::capture, echo, width(), height());
         QFuture<RadarEngine::CaptureResult> future = QtConcurrent::run(m_re->m_radar_capture, &RadarEngine::RadarImageCapture::capture, echo);
-        watcher.setFuture(future);
+        watcherCapture.setFuture(future);
     }
     /*
     if(echoSender->m_ppi_grabber->isStart() && echoSender->m_ppi_grabber->pendingGrabAvailable())
@@ -218,24 +216,24 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 void RadarWidget::trigger_captureFinish()
 {
     QFutureWatcher<RadarEngine::CaptureResult>* watcher;
-        watcher = reinterpret_cast<QFutureWatcher<RadarEngine::CaptureResult>*>(sender());
-        RadarEngine::CaptureResult result = watcher->result();
-        echoSender->sendDataAsync(result);
+    watcher = reinterpret_cast<QFutureWatcher<RadarEngine::CaptureResult>*>(sender());
+    RadarEngine::CaptureResult result = watcher->result();
+    echoSender->sendDataAsync(result);
 }
 
 void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data, size_t len)
 {
-//    qDebug()<<Q_FUNC_INFO<<angle;
+    //    qDebug()<<Q_FUNC_INFO<<angle;
     cur_radar_angle_double = SCALE_RAW_TO_DEGREES2048(angle);
     cur_radar_angle = angle;
 
     if(initGrab)
     {
-//        echoSender->m_re->m_radar_capture->start();
+        //        echoSender->m_re->m_radar_capture->start();
         echoSender->m_ppi_grabber->start();
         initGrab = false;
     }
-//    if(echoSender->m_re->m_radar_capture->isStart()) echoSender->m_re->m_radar_capture->update();
+    //    if(echoSender->m_re->m_radar_capture->isStart()) echoSender->m_re->m_radar_capture->update();
     if(echoSender->m_ppi_grabber->isStart()) echoSender->m_ppi_grabber->update();
 
     m_re->radarDraw->ProcessRadarSpoke(angle,data,len);
