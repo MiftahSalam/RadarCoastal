@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl network websockets
+QT       += core gui opengl network websockets qmqtt
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,7 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
-CONFIG +=QMQTT_WEBSOCKETS
+#CONFIG += QMQTT_WEBSOCKETS
 
 #MODE += DEBUG_MODE
 
@@ -34,7 +34,7 @@ else {
     TARGET = RadarCoastal
 }
 
-include(infra/qmqtt/qmqtt.pri)
+#include(infra/qmqtt/qmqtt.pri)
 
 SOURCES += \
 #    infra/withconfig.cpp \
