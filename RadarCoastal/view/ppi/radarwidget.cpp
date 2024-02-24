@@ -25,6 +25,10 @@ RadarWidget::RadarWidget(QWidget *parent)
     setAutoFillBackground(false);
     setMinimumSize(200, 200);
 
+    auto format = QGLFormat::defaultFormat();
+    format.setAlpha(true);
+    setFormat(format);
+
     ppiEvent = new FilterEvent(this);
     installEventFilter(ppiEvent);
     setMouseTracking(true);
