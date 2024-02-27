@@ -49,7 +49,7 @@ private:
     void updateManyTarget(const int updateCount);
     void updateOneTarget();
     void updateAllTarget();
-    void updateModel(TrackModel trackModel);
+    void updateModel(TrackModel *trackModel);
     TrackModel arpaToTrackModel(const RadarEngine::ARPATarget* target);
 };
 

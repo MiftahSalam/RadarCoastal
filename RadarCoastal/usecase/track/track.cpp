@@ -60,12 +60,15 @@ void Track::updateManyTarget(const int updateCount)
         {
             if(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]->targetId > 0)
             {
-                TrackModel trackModel = arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]);
+                TrackModel* trackModel = new TrackModel(arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]));
                 updateModel(trackModel);
-                modelList.append(new TrackModel(trackModel));
+                modelList.append(trackModel);
             }
             m_cur_arpa_id_count++;
             num_limit--;
+        }
+        for (auto trk : modelList) {
+            qDebug()<<Q_FUNC_INFO<<"id"<<trk->id<<"ts"<<trk->timestamp;
         }
         if (modelList.size() > 0) m_arpa_sender->SendManyData(modelList);
 
@@ -85,9 +88,9 @@ void Track::updateAllTarget()
         {
             if(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]->targetId > 0)
             {
-                TrackModel trackModel = arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]);
+                TrackModel* trackModel = new TrackModel(arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]));
                 updateModel(trackModel);
-                modelList.append(new TrackModel(trackModel));
+                modelList.append(trackModel);
             }
             m_cur_arpa_id_count++;
         }
@@ -109,9 +112,9 @@ void Track::updateOneTarget()
         {
             if(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]->targetId > 0)
             {
-                TrackModel trackModel = arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]);
+                TrackModel* trackModel = new TrackModel(arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]));
                 updateModel(trackModel);
-                m_arpa_sender->SendOneData(trackModel);
+                m_arpa_sender->SendOneData(*trackModel);
             }
             m_cur_arpa_id_count++;
             num_limit--;
@@ -122,16 +125,16 @@ void Track::updateOneTarget()
     }
 }
 
-void Track::updateModel(TrackModel trackModel)
+void Track::updateModel(TrackModel* trackModel)
 {
-    if (m_track_repo->FindOne(trackModel.id) != nullptr) {
-        m_track_repo->Update(trackModel);
-        m_model_view->UpdateModel(trackModel);
+    if (m_track_repo->FindOne(trackModel->id) != nullptr) {
+        m_track_repo->Update(*trackModel);
+        m_model_view->UpdateModel(*trackModel);
     } else {
-        trackModel.timestamp = QDateTime::currentMSecsSinceEpoch();
+        trackModel->timestamp = QDateTime::currentMSecsSinceEpoch();
 
-        m_track_repo->Insert(trackModel);
-        m_model_view->InsertModel(trackModel);
+        m_track_repo->Insert(*trackModel);
+        m_model_view->InsertModel(*trackModel);
     }
 }
 
