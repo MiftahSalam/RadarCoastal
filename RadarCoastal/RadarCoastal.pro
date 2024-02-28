@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl network
+QT       += core gui opengl network qmqtt
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -34,7 +34,7 @@ else {
     TARGET = RadarCoastal
 }
 
-include(infra/qmqtt/qmqtt.pri)
+#include(infra/qmqtt/qmqtt.pri)
 
 SOURCES += \
 #    infra/withconfig.cpp \
@@ -138,10 +138,10 @@ contains(DEFINES, DISPLAY_ONLY_MODE) {
 }
 
 unix: {
-    LIBS += -L/usr/lib/RadarEngine/pjs-2024 -lRadarEngine
+    LIBS += -L/usr/lib/pjs-2024/RadarEngine -lRadarEngine
 
-    INCLUDEPATH += /usr/include/RadarEngine/pjs-2024
-    DEPENDPATH += /usr/include/RadarEngine/pjs-2024
+    INCLUDEPATH += /usr/include/pjs-2024
+    DEPENDPATH += /usr/include/pjs-2024
 
 } else:win32 {
     LIBS += -lOpenGL32
@@ -149,6 +149,9 @@ unix: {
     INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2024\pjs\v2
     DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\pjs\v2
 }
+
+#win32:!win32-g++: PRE_TARGETDEPS += C:/Qt/Qt5.12.12/5.12.12/mingw73_32/lib/Qt5Qmqttd.lib
+#else:win32-g++: PRE_TARGETDEPS += C:/Qt/Qt5.12.12/5.12.12/mingw73_32/lib/libQt5Qmqttd.a
 
 win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\pjs -lRadarEngine
 else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\pjs -lRadarEngine
