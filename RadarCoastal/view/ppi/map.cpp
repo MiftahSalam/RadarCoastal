@@ -28,7 +28,11 @@ const char vShader [] =
 Map::Map(QObject *parent)
     : QObject{parent}
 {
+    loading = true;
+
     m_radar_config = RadarEngine::RadarConfig::getInstance("");
+    connect(m_radar_config,&RadarEngine::RadarConfig::configValueChange,
+            this,&Map::triggerConfigChange);
 
     mc = new QMapControl(QSizeF(400,400));
     mc->enablePersistentCache();
@@ -39,30 +43,50 @@ Map::Map(QObject *parent)
 
     mc->addLayer(mapLayer);
 
-    PointWorldCoord center(
-                m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble(),
-                m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble()
-                );
+    center.setLatitude(m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble());
+    center.setLongitude(m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble());
+    currentRange = m_radar_config->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
+
     mc->setMapFocusPoint(center);
     mc->setViewportSize(QSizeF(400,400));
     mc->setZoom(7);
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Map::onTimeout);
-    timer->start(3000);
+    timer->start(1000);
 }
 
 void Map::resize(const QSize &size)
 {
     mc->setViewportSize(size);
     mc->resize(size);
-    m_current_grab = mc->grab().toImage();
+}
+
+void Map::drawInfo(QPainter* painter)
+{
+    QPen pen = painter->pen();
+    QFont font = painter->font();
+
+    if(loading)
+    {
+        int mode = 0; //temp map mode
+        if(mode == 0)
+            pen.setColor(Qt::yellow);
+        else if(mode == 1)
+            pen.setColor(Qt::black);
+
+        font.setPixelSize(20);
+        font.setBold(true);
+
+        painter->setPen(pen);
+        painter->setFont(font);
+
+        painter->drawText(-50,-20,"Loading Map");
+    }
 }
 
 void Map::drawTexture()
 {
-    m_text->load(m_current_grab);
-
     vbo.create();
     vbo.bind();
     vbo.allocate(vertData.constData(), vertData.count() * sizeof(GLfloat));
@@ -85,10 +109,97 @@ void Map::drawTexture()
 
 void Map::onTimeout()
 {
-    m_current_grab = mc->grab().toImage();
+//    m_current_grab = mc->grab().toImage();
     /* test read and save from base64 image
     QPixmap img = QPixmap::fromImage(m_current_grab);
     img.save(qApp->applicationDirPath()+QDir::separator()+"map_grab.png", "png");
+    */
+//    m_text->load(m_current_grab);
+    updateMapView();
+}
+
+void Map::triggerConfigChange(const QString key, const QVariant val)
+{
+    if(key == RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE)
+    {
+        int range = val.toInt();
+        if(range < currentRange) mc->zoomIn(); //temp
+        else if(range > currentRange) mc->zoomOut(); //temp
+
+        currentRange = range;
+        loading = true;
+    } else if(key == RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE ||
+                  key == RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE )
+    {
+        updateMapCenterView();
+    }
+}
+
+void Map::updateMapCenterView()
+{
+    PointWorldCoord currentPosCenter(
+                m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble(),
+                m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble()
+                );
+    qreal lat_diff = fabs(currentPosCenter.latitude() - center.latitude());
+    qreal lon_diff = fabs(currentPosCenter.longitude() - center.longitude());
+
+    qDebug()<<Q_FUNC_INFO<<"lat diff"<<lon_diff<<"lon diff"<<lon_diff;
+
+    if((lat_diff> 0.000001) || (lon_diff > 0.000001))
+    {
+        qDebug()<<Q_FUNC_INFO<<"map update center view";
+
+        center.setLatitude(m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble());
+        center.setLongitude(m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble());
+
+        mc->setMapFocusPoint(center);
+        loading = true;
+    }
+}
+
+void Map::updateMapView()
+{
+    qDebug()<<Q_FUNC_INFO<<mc->getMapQueueSize();
+
+    if((mc->getMapQueueSize() != 0) || loading)
+    {
+        if(mc->getMapQueueSize() > 0)
+        {
+            loading = true;
+            qDebug()<<Q_FUNC_INFO<<"map loading...";
+        }
+
+        if(mc->getMapQueueSize() == 0)
+        {
+            loading = false;
+            m_current_grab = mc->grab().toImage();
+            m_text->load(m_current_grab);
+
+            qDebug()<<Q_FUNC_INFO<<"map display change";
+        }
+    }
+
+    /*
+    if((mc->getMapQueueSize() != curLoadingMapSize) || loading)
+    {
+        if(mc->getMapQueueSize() != 0)
+        {
+            loading = true;
+            qDebug()<<Q_FUNC_INFO<<"map loading...";
+        }
+
+        if(mc->getMapQueueSize() == 0 && curLoadingMapSize)
+        {
+            loading = false;
+            m_current_grab = mc->grab().toImage();
+            curLoadingMapSize = mc->getMapQueueSize();
+
+            m_text->load(m_current_grab);
+
+            qDebug()<<Q_FUNC_INFO<<"map display change";
+        }
+    }
     */
 }
 
@@ -175,7 +286,7 @@ void GLTextureCube::load(const QImage &img)
 
     image = image.convertToFormat(QImage::Format_ARGB32);
 
-//    qDebug() << "Image size:" << image.width() << "x" << image.height();
+    //    qDebug() << "Image size:" << image.width() << "x" << image.height();
 
     glTexImage2D(GL_TEXTURE_2D, 0, 4, image.width(), image.height(), 0,
                  GL_BGRA, GL_UNSIGNED_BYTE, image.bits());

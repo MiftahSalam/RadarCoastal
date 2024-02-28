@@ -175,6 +175,7 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     */
     if(show_rings) drawRings(&painter,side);
 
+    map->drawInfo(&painter);
 }
 
 void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data, size_t len)
