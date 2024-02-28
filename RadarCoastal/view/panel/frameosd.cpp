@@ -198,12 +198,13 @@ void FrameOSD::on_timeout()
 
     updateGPSData();
     updateHDGData();
-    updateModeControl();
     sensor->Reconnect();
     sensor->UpdateStatus();
 #ifndef DISPLAY_ONLY_MODE
     if(!ui->checkBoxGPS->isChecked())
         sensor->SendData(ui->lineEditLat->text(),ui->lineEditLon->text(),ui->lineEditHDG->text());
+#else
+    updateModeControl();
 #endif
 }
 

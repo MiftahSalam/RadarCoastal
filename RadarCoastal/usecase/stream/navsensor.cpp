@@ -145,6 +145,7 @@ void NavSensor::triggerReceivedData(const QString data)
     {
         m_no_osd_count = 0;
 
+#ifdef DISPLAY_ONLY_MODE
         if(msg.contains("_man"))
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO, false);
@@ -155,7 +156,11 @@ void NavSensor::triggerReceivedData(const QString data)
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO, true);
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO, true);
         }
-
+#else
+        if (msg.contains("_man")) {
+            return;
+        }
+#endif
         msg.remove("gps");
         msg.remove("_man");
 
