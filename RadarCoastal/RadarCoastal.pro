@@ -65,6 +65,7 @@ SOURCES += \
     infra/stream/devicewrapper.cpp \
     infra/filterevent.cpp \
     view/panel/frametrackdisplay.cpp \
+    view/ppi/map.cpp \
     view/ppi/ppiarpaobject.cpp \
     view/ppi/ppicompassobject.cpp \
     view/ppi/ppigzobject.cpp \
@@ -104,6 +105,7 @@ HEADERS += \
     infra/stream/devicewrapper.h \
     infra/filterevent.h \
     view/panel/frametrackdisplay.h \
+    view/ppi/map.h \
     view/ppi/ppiarpaobject.h \
     view/ppi/ppicompassobject.h \
     view/ppi/ppigzobject.h \
@@ -142,6 +144,12 @@ unix: {
 
     INCLUDEPATH += /usr/include/pjs-2024
     DEPENDPATH += /usr/include/pjs-2024
+
+    CONFIG(debug, debug|release) {
+        LIBS += -L/usr/maplib/debug/lib -lqmapcontrold
+        INCLUDEPATH += /usr/maplib/debug/include
+        DEPENDPATH += /usr/maplib/debug/include
+    }
 
 } else:win32 {
     LIBS += -lOpenGL32

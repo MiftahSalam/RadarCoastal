@@ -2,10 +2,9 @@
 #define GLWIDGET_H
 
 //#include <QOpenGLWidget>
-#include <QOpenGLBuffer>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLShader>
-#include <QOpenGLTexture>
+#include <QGLBuffer>
+#include <QGLShaderProgram>
+#include <QGLShader>
 #include <QOpenGLFunctions>
 #include <QTimer>
 
@@ -18,6 +17,7 @@
 #include "ppigzobject.h"
 #include "ppicompassobject.h"
 #include "usecase/ppi/ppigrabber.h"
+#include "view/ppi/map.h"
 
 class RadarWidget : public QGLWidget, protected QOpenGLFunctions
 {
@@ -66,7 +66,9 @@ private:
     void saveGLState();
     void restoreGLState();
     void setupViewport(int width, int height);
+    void drawTexture();
 
+    Map *map;
     QList<PPIObject*> drawObjects;
     FilterEvent *ppiEvent;
     RadarEngine::RadarEngine* m_re;
@@ -78,6 +80,12 @@ private:
 #endif
     QTimer *timer;
     QRect region;
+    QGLBuffer vbo;
+    QGLShader *m_vertexShader;
+    QGLShader *m_fragmentShaders;
+    QGLShaderProgram *m_environmentProgram;
+    GLTextureCube *m_text;
+    QVector<GLfloat> vertData;
 
     double cur_radar_angle_double;
     int cur_radar_angle;
