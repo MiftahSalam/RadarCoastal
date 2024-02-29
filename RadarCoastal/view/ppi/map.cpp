@@ -2,6 +2,7 @@
 
 #include <QMapControl/LayerMapAdapter.h>
 #include <QMapControl/MapAdapterGoogle.h>
+#include <QMapControl/MapAdapterBing.h>
 
 #include <QApplication>
 
@@ -25,10 +26,52 @@ const char vShader [] =
         "}\n"
         ;
 
+QList<double> scalebar_distances = QList<double>()
+                << 5000000.0
+                << 2000000.0
+                << 1000000.0
+                << 1000000.0
+                << 1000000.0
+                << 100000.0
+                << 100000.0
+                << 50000.0
+                << 50000.0
+                << 10000.0
+                << 10000.0
+                << 10000.0
+                << 1000.0
+                << 1000.0
+                << 500.0
+                << 200.0
+                << 100.0
+                << 50.0
+                << 25.0;
+
+/*
+ * radar 40.000 -> map 50000(zoom 8), scale 0.8, scale px 1.04829
+ * radar 30.000 -> map 10000(zoom 9), scale 3, scale px 0.56
+ * radar 20.000 -> map 10000(zoom 10), scale 3, scale px 1.67727
+ * radar 10.000 -> map 10000(zoom 11), scale 1, scale px 6.88562
+ * radar 5.000 -> map 1000(zoom 12), scale 5, scale px 2.90726
+ * radar 2.000 -> map 1000(zoom 13), scale 2, scale px 17.4436
+ * radar 1.500 -> map 500(zoom 14), scale 3, scale px 26.1653,
+ * radar 1.000 -> map 200(zoom 15), scale 5, scale px 41.8645,
+ * radar 500 -> map 100(zoom 16), scale 5, scale px 42.8693
+*/
+QMap<int, int> radarZoomMap;
+
 Map::Map(QObject *parent)
     : QObject{parent}
 {
-    loading = true;
+    radarZoomMap.insert(40000, 8);
+    radarZoomMap.insert(30000, 9);
+    radarZoomMap.insert(20000, 10);
+    radarZoomMap.insert(10000, 12);
+    radarZoomMap.insert(5000, 14); //541m vs 510m
+    radarZoomMap.insert(2000, 15); //1024m vs 800m
+    radarZoomMap.insert(1500, 15); //1024m vs 600m
+    radarZoomMap.insert(1000, 16); //662m vs 520m
+    radarZoomMap.insert(500, 17); //89m vs 70m
 
     m_radar_config = RadarEngine::RadarConfig::getInstance("");
     connect(m_radar_config,&RadarEngine::RadarConfig::configValueChange,
@@ -39,21 +82,128 @@ Map::Map(QObject *parent)
     mc->enableZoomControls(false);
 
     std::shared_ptr<LayerMapAdapter> mapLayer(std::make_shared<LayerMapAdapter>("layer view"));
-    mapLayer->setMapAdapter(std::make_shared<MapAdapterGoogle>(MapAdapterGoogle::GoogleLayerType::SATELLITE_ONLY));
+//    mapLayer->setMapAdapter(std::make_shared<MapAdapterBing>());
+//    mapLayer->setMapAdapter(std::make_shared<MapAdapterGoogle>(MapAdapterGoogle::GoogleLayerType::SATELLITE_ONLY));
+    mapLayer->setMapAdapter(std::make_shared<MapAdapterGoogle>());
 
     mc->addLayer(mapLayer);
 
     center.setLatitude(m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble());
     center.setLongitude(m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble());
     currentRange = m_radar_config->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
+    loading = true;
+
+    calculateScale();
 
     mc->setMapFocusPoint(center);
     mc->setViewportSize(QSizeF(400,400));
-    mc->setZoom(7);
+    mc->setZoom(currentZoom);
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Map::onTimeout);
     timer->start(1000);
+}
+
+void Map::triggerConfigChange(const QString key, const QVariant val)
+{
+    if(key == RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE)
+    {
+        int range = val.toInt();
+        /*
+        if(range < currentRange) mc->zoomIn(); //temp
+        else if(range > currentRange) mc->zoomOut(); //temp
+        */
+        currentRange = range;
+        currentZoom = radarZoomMap.value(currentRange);
+        mc->setZoom(currentZoom);
+        calculateScale();
+        loading = true;
+    } else if(key == RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE ||
+                  key == RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE )
+    {
+        updateMapCenterView();
+    }
+}
+
+void Map::calculateScale()
+{
+    /*
+     * radar 40.000 -> map 50000(zoom 8), scale 0.8, scale px 1.04829
+     * radar 30.000 -> map 10000(zoom 9), scale 3, scale px 0.56
+     * radar 20.000 -> map 10000(zoom 10), scale 3, scale px 1.67727
+     * radar 10.000 -> map 10000(zoom 11), scale 1, scale px 6.88562
+     * radar 5.000 -> map 1000(zoom 12), scale 5, scale px 2.90726
+     * radar 2.000 -> map 1000(zoom 13), scale 2, scale px 17.4436
+     * radar 1.500 -> map 500(zoom 14), scale 3, scale px 26.1653
+     * radar 1.000 -> map 200(zoom 15), scale 5, scale px 41.8645
+     * radar 500 -> map 100(zoom 16), scale 5, scale px 42.8693
+    */
+    int m_current_zoom = mc->getCurrentZoom();
+    double rangeRadar = m_radar_config->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
+    double rangeMap = scalebar_distances.at(m_current_zoom);
+//    double rangeMap = currentRange;
+    const double scalebar_line_length_px = rangeMap / std::pow(2.0, 18 - m_current_zoom) / 0.597164;
+    const double radar_line_length_px = rangeRadar / RETURNS_PER_LINE;
+    int iteration = scalebar_distances.size() - 1;
+
+    for (int var = iteration; var >= 0 ; var--)
+    {
+        if(scalebar_distances.at(var) > currentRange)
+        {
+            rangeMap = scalebar_distances.at(var);
+//            currentZoom = var;
+//            currentScale = currentRange/rangeMap;
+            break;
+        }
+    }
+    currentScale = scalebar_line_length_px/radar_line_length_px;
+}
+
+void Map::updateMapView()
+{
+    qDebug()<<Q_FUNC_INFO<<"map queue size";
+    qDebug()<<Q_FUNC_INFO<<mc->getMapQueueSize()<<"currentScale"<<currentScale<<"currentRange"<<currentRange<<"currentZoom calculated"<<currentZoom<<"currentZoom map"<<mc->getCurrentZoom()<<"currentZoom range"<<scalebar_distances.at(mc->getCurrentZoom());
+
+    if((mc->getMapQueueSize() != 0) || loading)
+    {
+        if(mc->getMapQueueSize() > 0)
+        {
+            loading = true;
+            qDebug()<<Q_FUNC_INFO<<"map loading...";
+        }
+
+        if(mc->getMapQueueSize() == 0)
+        {
+            loading = false;
+            m_current_grab = mc->grab().toImage();
+//            m_current_grab = m_current_grab.scaled(m_current_grab.size()*currentScale);
+            m_text->load(m_current_grab);
+
+            qDebug()<<Q_FUNC_INFO<<"map display change";
+        }
+    }
+
+    /*
+    if((mc->getMapQueueSize() != curLoadingMapSize) || loading)
+    {
+        if(mc->getMapQueueSize() != 0)
+        {
+            loading = true;
+            qDebug()<<Q_FUNC_INFO<<"map loading...";
+        }
+
+        if(mc->getMapQueueSize() == 0 && curLoadingMapSize)
+        {
+            loading = false;
+            m_current_grab = mc->grab().toImage();
+            curLoadingMapSize = mc->getMapQueueSize();
+
+            m_text->load(m_current_grab);
+
+            qDebug()<<Q_FUNC_INFO<<"map display change";
+        }
+    }
+    */
 }
 
 void Map::resize(const QSize &size)
@@ -118,23 +268,6 @@ void Map::onTimeout()
     updateMapView();
 }
 
-void Map::triggerConfigChange(const QString key, const QVariant val)
-{
-    if(key == RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE)
-    {
-        int range = val.toInt();
-        if(range < currentRange) mc->zoomIn(); //temp
-        else if(range > currentRange) mc->zoomOut(); //temp
-
-        currentRange = range;
-        loading = true;
-    } else if(key == RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE ||
-                  key == RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE )
-    {
-        updateMapCenterView();
-    }
-}
-
 void Map::updateMapCenterView()
 {
     PointWorldCoord currentPosCenter(
@@ -158,50 +291,6 @@ void Map::updateMapCenterView()
     }
 }
 
-void Map::updateMapView()
-{
-    qDebug()<<Q_FUNC_INFO<<mc->getMapQueueSize();
-
-    if((mc->getMapQueueSize() != 0) || loading)
-    {
-        if(mc->getMapQueueSize() > 0)
-        {
-            loading = true;
-            qDebug()<<Q_FUNC_INFO<<"map loading...";
-        }
-
-        if(mc->getMapQueueSize() == 0)
-        {
-            loading = false;
-            m_current_grab = mc->grab().toImage();
-            m_text->load(m_current_grab);
-
-            qDebug()<<Q_FUNC_INFO<<"map display change";
-        }
-    }
-
-    /*
-    if((mc->getMapQueueSize() != curLoadingMapSize) || loading)
-    {
-        if(mc->getMapQueueSize() != 0)
-        {
-            loading = true;
-            qDebug()<<Q_FUNC_INFO<<"map loading...";
-        }
-
-        if(mc->getMapQueueSize() == 0 && curLoadingMapSize)
-        {
-            loading = false;
-            m_current_grab = mc->grab().toImage();
-            curLoadingMapSize = mc->getMapQueueSize();
-
-            m_text->load(m_current_grab);
-
-            qDebug()<<Q_FUNC_INFO<<"map display change";
-        }
-    }
-    */
-}
 
 void Map::initGl()
 {
