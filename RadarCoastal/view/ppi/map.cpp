@@ -59,19 +59,52 @@ QList<double> scalebar_distances = QList<double>()
  * radar 500 -> map 100(zoom 16), scale 5, scale px 42.8693
 */
 QMap<int, int> radarZoomMap;
+QMap<int, double> radarScaleMap;
 
 Map::Map(QObject *parent)
     : QObject{parent}
 {
-    radarZoomMap.insert(40000, 8);
-    radarZoomMap.insert(30000, 9);
-    radarZoomMap.insert(20000, 10);
-    radarZoomMap.insert(10000, 12);
-    radarZoomMap.insert(5000, 14); //541m vs 510m
-    radarZoomMap.insert(2000, 15); //1024m vs 800m
-    radarZoomMap.insert(1500, 15); //1024m vs 600m
-    radarZoomMap.insert(1000, 16); //662m vs 520m
-    radarZoomMap.insert(500, 17); //89m vs 70m
+    /*
+    radarZoomMap.insert(40000, 11); //34940 vs 35343 ~ 0.988
+    radarZoomMap.insert(30000, 11); //25960 vs 35343 ~ 0.73
+    radarZoomMap.insert(20000, 12); //13500 vs 13870 ~ 0.97
+    radarZoomMap.insert(10000, 13); //8010 vs 8292 ~ 0.96
+    radarZoomMap.insert(5000, 14); //3830m vs 3891m ~ 0.94
+    radarZoomMap.insert(2000, 15); //1260m vs 1597m ~ 0.788
+    radarZoomMap.insert(1500, 16); //940m vs 874m ~ 1.07
+    radarZoomMap.insert(1000, 16); //680m vs 874m ~ 0.778
+    radarZoomMap.insert(500, 17); //250m vs 325m ~ 0.76
+
+    radarScaleMap.insert(40000, 34940./35343.); //34940 vs 35343 ~ 0.988
+    radarScaleMap.insert(30000, 25960./35343.); //25960 vs 35343 ~ 0.73
+    radarScaleMap.insert(20000, 13500./13870.); //13500 vs 13870 ~ 0.97
+    radarScaleMap.insert(10000, 8010./8292.); //8010 vs 8292 ~ 0.96
+    radarScaleMap.insert(5000, 3830./3891.); //3830m vs 3891m ~ 0.94
+    radarScaleMap.insert(2000, 1260./1597.); //1260m vs 1597m ~ 0.788
+    radarScaleMap.insert(1500, 940./874.); //940m vs 874m ~ 1.07
+    radarScaleMap.insert(1000, 680./874.); //680m vs 874m ~ 0.778
+    radarScaleMap.insert(500, 250./325.); //250m vs 325m ~ 0.76
+    */
+
+    radarZoomMap.insert(40000, 11); //29500 vs 30062 ~
+    radarZoomMap.insert(30000, 12); //25950 vs 17784 ~
+    radarZoomMap.insert(20000, 12); //17270 vs 17784 ~
+    radarZoomMap.insert(10000, 13); //6910 vs 7110 ~
+    radarZoomMap.insert(5000, 15); //3780 vs 1970 ~
+    radarZoomMap.insert(2000, 16); //1360 vs 908 ~
+    radarZoomMap.insert(1500, 16); //1020 vs 908 ~
+    radarZoomMap.insert(1000, 17); //860 vs 588 ~
+    radarZoomMap.insert(500, 17); //430 vs 588 ~
+
+    radarScaleMap.insert(40000, 29500./30062.); //29500 vs 30217 ~
+    radarScaleMap.insert(30000, 85950./17784.); //15620 vs 10601 ~
+    radarScaleMap.insert(20000, 17270./17784.); //10450 vs 10601 ~
+    radarScaleMap.insert(10000, 6910./7110.); //5340 vs 5497 ~
+    radarScaleMap.insert(5000, 3780./1970.); //3150 vs 1593 ~
+    radarScaleMap.insert(2000, 1360./908.); //130 vs 89 ~
+    radarScaleMap.insert(1500, 1020./908.); //130 vs 89 ~
+    radarScaleMap.insert(1000, 860./588.); //140 vs 89 ~
+    radarScaleMap.insert(500, 430./588.); //75 vs 89 ~
 
     m_radar_config = RadarEngine::RadarConfig::getInstance("");
     connect(m_radar_config,&RadarEngine::RadarConfig::configValueChange,
@@ -91,9 +124,11 @@ Map::Map(QObject *parent)
     center.setLatitude(m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble());
     center.setLongitude(m_radar_config->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble());
     currentRange = m_radar_config->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
+    currentZoom = radarZoomMap.value(currentRange);
+    currentScale = radarScaleMap.value(currentRange);
     loading = true;
 
-    calculateScale();
+//    calculateScale();
 
     mc->setMapFocusPoint(center);
     mc->setViewportSize(QSizeF(400,400));
@@ -115,8 +150,9 @@ void Map::triggerConfigChange(const QString key, const QVariant val)
         */
         currentRange = range;
         currentZoom = radarZoomMap.value(currentRange);
+        currentScale = radarScaleMap.value(currentRange);
         mc->setZoom(currentZoom);
-        calculateScale();
+//        calculateScale();
         loading = true;
     } else if(key == RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE ||
                   key == RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE )
@@ -127,17 +163,6 @@ void Map::triggerConfigChange(const QString key, const QVariant val)
 
 void Map::calculateScale()
 {
-    /*
-     * radar 40.000 -> map 50000(zoom 8), scale 0.8, scale px 1.04829
-     * radar 30.000 -> map 10000(zoom 9), scale 3, scale px 0.56
-     * radar 20.000 -> map 10000(zoom 10), scale 3, scale px 1.67727
-     * radar 10.000 -> map 10000(zoom 11), scale 1, scale px 6.88562
-     * radar 5.000 -> map 1000(zoom 12), scale 5, scale px 2.90726
-     * radar 2.000 -> map 1000(zoom 13), scale 2, scale px 17.4436
-     * radar 1.500 -> map 500(zoom 14), scale 3, scale px 26.1653
-     * radar 1.000 -> map 200(zoom 15), scale 5, scale px 41.8645
-     * radar 500 -> map 100(zoom 16), scale 5, scale px 42.8693
-    */
     int m_current_zoom = mc->getCurrentZoom();
     double rangeRadar = m_radar_config->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
     double rangeMap = scalebar_distances.at(m_current_zoom);
@@ -176,7 +201,17 @@ void Map::updateMapView()
         {
             loading = false;
             m_current_grab = mc->grab().toImage();
-//            m_current_grab = m_current_grab.scaled(m_current_grab.size()*currentScale);
+
+            QPixmap img = QPixmap::fromImage(m_current_grab);
+            img.save(qApp->applicationDirPath()+QDir::separator()+"map_grab_before.png", "png");
+            qDebug()<<Q_FUNC_INFO<<"image size before"<<m_current_grab.size();
+
+            m_current_grab = m_current_grab.scaled(m_current_grab.size()*currentScale);
+
+            qDebug()<<Q_FUNC_INFO<<"image size after"<<m_current_grab.size();
+            img = QPixmap::fromImage(m_current_grab);
+            img.save(qApp->applicationDirPath()+QDir::separator()+"map_grab_after.png", "png");
+
             m_text->load(m_current_grab);
 
             qDebug()<<Q_FUNC_INFO<<"map display change";
