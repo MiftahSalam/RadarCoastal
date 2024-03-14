@@ -12,7 +12,7 @@ const char fShader [] =
         "void main(void)\n"
         "{\n"
         "gl_FragColor = texture2D(texture1, texc.st);\n"
-        "};\n"
+        "}\n"
         ;
 
 const char vShader [] =
