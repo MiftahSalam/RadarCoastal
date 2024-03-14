@@ -154,16 +154,33 @@ unix: {
 } else:win32 {
     LIBS += -lOpenGL32
 
-    INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2024\pjs\v2
-    DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\pjs\v2
+    INCLUDEPATH +=C:\Users\ms_tensai\RadarEngineLib\include\2024\pjs\v2
+    DEPENDPATH += C:\Users\ms_tensai\RadarEngineLib\lib\include\2024\pjs\v2
+
+#    INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2024\pjs\v2
+#    DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\pjs\v2
+
+    INCLUDEPATH +=C:\Users\ms_tensai\maplib\include
+    DEPENDPATH += C:\Users\ms_tensai\maplib\include
+
+#    INCLUDEPATH +=C:\Users\miftah\maplib\include
+#    DEPENDPATH += C:\Users\miftah\maplib\include
 }
 
 #win32:!win32-g++: PRE_TARGETDEPS += C:/Qt/Qt5.12.12/5.12.12/mingw73_32/lib/Qt5Qmqttd.lib
 #else:win32-g++: PRE_TARGETDEPS += C:/Qt/Qt5.12.12/5.12.12/mingw73_32/lib/libQt5Qmqttd.a
 
-win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\pjs -lRadarEngine
-else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\pjs -lRadarEngine
+win32:CONFIG(release, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2024\pjs -lRadarEngine
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2024\pjs -lRadarEngine
 
+#win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\pjs -lRadarEngine
+#else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\pjs -lRadarEngine
+
+win32:CONFIG(release, debug|release): LIBS += -LC:\Users\ms_tensai\maplib\lib -lqmapcontrol1
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\ms_tensai\maplib\lib -lqmapcontrol1
+
+#win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\maplib\lib -lqmapcontrold1
+#else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\maplib\lib -lqmapcontrold1
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
