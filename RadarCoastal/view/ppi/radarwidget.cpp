@@ -19,27 +19,6 @@
 #define GL_MULTISAMPLE 0x809D
 #endif
 
-/*
-const char fShader [] =
-        "uniform sampler2D texture1;\n"
-        "varying mediump vec4 texc;\n"
-        "void main(void)\n"
-        "{\n"
-        "gl_FragColor = texture2D(texture1, texc.st);\n"
-        "};\n"
-        ;
-
-const char vShader [] =
-        "attribute highp vec4 aPos;\n"
-        "attribute mediump vec4 aTexCoord;\n"
-        "varying mediump vec4 texc;\n"
-        "void main(void)\n"
-        "{\n"
-            "gl_Position = aPos;\n"
-            "texc = aTexCoord;\n"
-        "}\n"
-        ;
-*/
 RadarWidget::RadarWidget(QWidget *parent)
     : QGLWidget(parent)
 {
@@ -158,30 +137,7 @@ void RadarWidget::drawHM(QPainter *painter, const int &side, const bool &heading
     //        painter.rotate(180-baringan);
     painter->rotate(90 - baringan);
 }
-/*
-void RadarWidget::drawTexture()
-{
-    m_text->load(map->m_current_grab);
 
-    vbo.create();
-    vbo.bind();
-    vbo.allocate(vertData.constData(), vertData.count() * sizeof(GLfloat));
-
-    m_environmentProgram->enableAttributeArray(0);
-    m_environmentProgram->enableAttributeArray(1);
-    m_environmentProgram->setAttributeBuffer(0, GL_FLOAT, 0, 3, 5 * sizeof(GLfloat));
-    m_environmentProgram->setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(GLfloat), 2, 5 * sizeof(GLfloat));
-
-    m_environmentProgram->bind();
-    m_text->bind();
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    m_text->unbind();
-    vbo.release();
-    m_environmentProgram->disableAttributeArray(0);
-    m_environmentProgram->disableAttributeArray(1);
-    m_environmentProgram->release();
-}
-*/
 void RadarWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
@@ -317,48 +273,6 @@ void RadarWidget::initializeGL()
     initializeOpenGLFunctions();
     glClearColor(0.f, 0.0f, 0.0f, .1f);
 
-    //    m_vertexShader = new QGLShader(QGLShader::Vertex);
-    //    m_vertexShader->compileSourceCode(vShader);
-
-    //    m_fragmentShaders = new QGLShader(QGLShader::Fragment);
-    //    m_fragmentShaders->compileSourceCode(fShader);
-
-    //    m_environmentProgram = new QGLShaderProgram;
-    //    m_environmentProgram->addShader(m_vertexShader);
-    //    m_environmentProgram->addShader(m_fragmentShaders);
-    //    m_environmentProgram->bindAttributeLocation("aPos", 0);
-    //    m_environmentProgram->bindAttributeLocation("aTexCoord", 1);
-    //    m_environmentProgram->link();
-    //    m_environmentProgram->bind();
-    //    m_environmentProgram->setUniformValue("texture1", 0);
-
-    /*
-    float vertices[4][8] = {
-        {-1.f,  1.f, 0.0f,   0.25f, 0.25f},
-        {-1.f, -1.f, 0.0f,   0.25f, .75f},
-        {1.f, -1.f, 0.0f,  0.75f, 0.75f},
-        {1.f,  1.f, 0.0f,  .75f, 0.25f}
-    };
-    */
-    /*
-
-    float vertices[4][8] = {
-        {-1.f, 1.f, 0.0f, 0.f, 0.f},
-        {-1.f, -1.f, 0.0f, 0.f, 1.0f},
-        {1.f, -1.f, 0.0f, 1.0f, 1.0f},
-        {1.f, 1.f, 0.0f, 1.0f, 0.f}};
-    for (int j = 0; j < 4; ++j)
-    {
-        vertData.append(vertices[j][0]);
-        vertData.append(vertices[j][1]);
-        vertData.append(vertices[j][2]);
-
-        vertData.append(vertices[j][3]);
-        vertData.append(vertices[j][4]);
-    }
-
-    m_text = new GLTextureCube(width(),height());
-    */
     map->initGl();
 
     glClearColor(0.f, 0.0f, 0.0f, 1.0f);

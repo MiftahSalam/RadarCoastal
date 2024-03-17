@@ -46,7 +46,6 @@ Map::Map(QObject *parent)
     mc->setMapFocusPoint(center);
     mc->setViewportSize(QSizeF(400,400));
     mc->setZoom(7);
-//    mc->show();
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Map::onTimeout);

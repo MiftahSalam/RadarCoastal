@@ -2,9 +2,6 @@
 #define GLWIDGET_H
 
 // #include <QOpenGLWidget>
-#include <QGLBuffer>
-#include <QGLShaderProgram>
-#include <QGLShader>
 #include <QOpenGLFunctions>
 #include <QTimer>
 #include <QFutureWatcher>
@@ -27,22 +24,8 @@ public:
     ~RadarWidget() override;
 
     void setRectRegoin(QRect rect);
-    //    void setRange(int range);
-    //    void computetRingWidth();
-    //    int getRange();
-    //    double getRingWidth();
 
 signals:
-    //    void signal_target_param(bool r1,
-    //                             int id,
-    //                             double lat,
-    //                             double lon,
-    //                             double alt,
-    //                             double rng,
-    //                             double brn,
-    //                             double spd,
-    //                             double crs
-    //                             );
     void signal_cursorMove(const QPoint pos, const int width, const int height);
     void signal_cursorLeftRelease(const QPoint pos, const int width, const int height);
 
@@ -54,7 +37,6 @@ protected:
 public slots:
     void timeOut();
     void trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data, size_t len);
-    //    void trigger_ReqDelTrack(bool r1,int id);
     void trigger_cursorMove(const QPoint pos);
     void trigger_cursorLeftRelease(const QPoint pos);
     void trigger_radarConfigChange(QString key, QVariant val);
@@ -68,7 +50,6 @@ private:
     void saveGLState();
     void restoreGLState();
     void setupViewport(int width, int height);
-    //    void drawTexture();
 
     Map *map;
     QList<PPIObject *> drawObjects;
@@ -80,24 +61,10 @@ private:
     PPIArpa *m_ppi_arpa;
     QTimer *timer;
     QRect region;
-    /*
-    QGLBuffer vbo;
-    QGLShader *m_vertexShader;
-    QGLShader *m_fragmentShaders;
-    QGLShaderProgram *m_environmentProgram;
-    GLTextureCube *m_text;
-    QVector<GLfloat> vertData;
-    */
     RadarEngine::RadarState cur_state;
     double cur_radar_angle_double;
     int cur_radar_angle;
     bool initGrab;
-    ////    int curRange;
-    //    int cur_arpa_id_count,cur_arpa_id_count1;
-    //    int cur_arpa_number;
-    //    quint64 arpa_measure_time;
-    //    quint64 arpa_measure_time1;
-    //    bool old_motion_mode;
 };
 
 #endif
