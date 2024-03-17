@@ -1,11 +1,10 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
-//#include <QOpenGLWidget>
-#include <QOpenGLBuffer>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLShader>
-#include <QOpenGLTexture>
+// #include <QOpenGLWidget>
+#include <QGLBuffer>
+#include <QGLShaderProgram>
+#include <QGLShader>
 #include <QOpenGLFunctions>
 #include <QTimer>
 #include <QFutureWatcher>
@@ -18,6 +17,7 @@
 #include "usecase/ppi/arpa.h"
 #include "usecase/stream/echosender.h"
 #include "view/ppi/ppiobject.h"
+#include "view/ppi/map.h"
 
 class RadarWidget : public QGLWidget, protected QOpenGLFunctions
 {
@@ -53,7 +53,7 @@ protected:
 
 public slots:
     void timeOut();
-    void trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8* data, size_t len);
+    void trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data, size_t len);
     //    void trigger_ReqDelTrack(bool r1,int id);
     void trigger_cursorMove(const QPoint pos);
     void trigger_cursorLeftRelease(const QPoint pos);
@@ -61,23 +61,31 @@ public slots:
     void trigger_captureFinish();
 
 private:
-    void drawRings(QPainter* painter, const int& side);
-    void drawHM(QPainter* painter, const int& side, const bool& heading_up, const double& currentHeading);
-    void drawGZ(QPainter* painter);
+    void drawRings(QPainter *painter, const int &side);
+    void drawHM(QPainter *painter, const int &side, const bool &heading_up, const double &currentHeading);
+    void drawGZ(QPainter *painter);
 
     void saveGLState();
     void restoreGLState();
     void setupViewport(int width, int height);
+    void drawTexture();
 
-    QList<PPIObject*> drawObjects;
+    Map *map;
+    QList<PPIObject *> drawObjects;
     FilterEvent *ppiEvent;
-    RadarEngine::RadarEngine* m_re;
-    RadarEngine::RadarConfig* m_instance_cfg;
+    RadarEngine::RadarEngine *m_re;
+    RadarEngine::RadarConfig *m_instance_cfg;
     EchoSender *echoSender;
     QFutureWatcher<RadarEngine::CaptureResult> watcherCapture;
     PPIArpa *m_ppi_arpa;
     QTimer *timer;
     QRect region;
+    QGLBuffer vbo;
+    QGLShader *m_vertexShader;
+    QGLShader *m_fragmentShaders;
+    QGLShaderProgram *m_environmentProgram;
+    GLTextureCube *m_text;
+    QVector<GLfloat> vertData;
 
     RadarEngine::RadarState cur_state;
     double cur_radar_angle_double;
@@ -90,6 +98,5 @@ private:
     //    quint64 arpa_measure_time1;
     //    bool old_motion_mode;
 };
-
 
 #endif
