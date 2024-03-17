@@ -3,6 +3,9 @@
 
 #include <QObject>
 #include <QOpenGLFunctions>
+#include <QGLBuffer>
+#include <QGLShaderProgram>
+#include <QGLShader>
 
 #include <QMapControl/QMapControl.h>
 
@@ -42,6 +45,7 @@ public:
 
     void resize(const QSize &size);
     void drawTexture();
+    void initGl();
 
     QImage m_current_grab;
 
@@ -54,8 +58,12 @@ private:
     QMapControl* mc;
     QTimer *timer;
     RadarEngine::RadarConfig* m_radar_config;
-
-    void initGl();
+    QGLBuffer vbo;
+    QGLShader *m_vertexShader;
+    QGLShader *m_fragmentShaders;
+    QGLShaderProgram *m_environmentProgram;
+    GLTextureCube *m_text;
+    QVector<GLfloat> vertData;
 };
 
 #endif // MAP_H

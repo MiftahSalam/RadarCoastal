@@ -68,7 +68,7 @@ private:
     void saveGLState();
     void restoreGLState();
     void setupViewport(int width, int height);
-    void drawTexture();
+    //    void drawTexture();
 
     Map *map;
     QList<PPIObject *> drawObjects;
@@ -80,13 +80,14 @@ private:
     PPIArpa *m_ppi_arpa;
     QTimer *timer;
     QRect region;
+    /*
     QGLBuffer vbo;
     QGLShader *m_vertexShader;
     QGLShader *m_fragmentShaders;
     QGLShaderProgram *m_environmentProgram;
     GLTextureCube *m_text;
     QVector<GLfloat> vertData;
-
+    */
     RadarEngine::RadarState cur_state;
     double cur_radar_angle_double;
     int cur_radar_angle;

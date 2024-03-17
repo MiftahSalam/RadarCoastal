@@ -19,24 +19,27 @@
 #define GL_MULTISAMPLE 0x809D
 #endif
 
-const char fShader[] =
-    "uniform sampler2D texture1;\n"
-    "varying mediump vec4 texc;\n"
-    "void main(void)\n"
-    "{\n"
-    "gl_FragColor = texture2D(texture1, texc.st);\n"
-    "};\n";
+/*
+const char fShader [] =
+        "uniform sampler2D texture1;\n"
+        "varying mediump vec4 texc;\n"
+        "void main(void)\n"
+        "{\n"
+        "gl_FragColor = texture2D(texture1, texc.st);\n"
+        "};\n"
+        ;
 
-const char vShader[] =
-    "attribute highp vec4 aPos;\n"
-    "attribute mediump vec4 aTexCoord;\n"
-    "varying mediump vec4 texc;\n"
-    "void main(void)\n"
-    "{\n"
-    "gl_Position = aPos;\n"
-    "texc = aTexCoord;\n"
-    "}\n";
-
+const char vShader [] =
+        "attribute highp vec4 aPos;\n"
+        "attribute mediump vec4 aTexCoord;\n"
+        "varying mediump vec4 texc;\n"
+        "void main(void)\n"
+        "{\n"
+            "gl_Position = aPos;\n"
+            "texc = aTexCoord;\n"
+        "}\n"
+        ;
+*/
 RadarWidget::RadarWidget(QWidget *parent)
     : QGLWidget(parent)
 {
@@ -155,7 +158,7 @@ void RadarWidget::drawHM(QPainter *painter, const int &side, const bool &heading
     //        painter.rotate(180-baringan);
     painter->rotate(90 - baringan);
 }
-
+/*
 void RadarWidget::drawTexture()
 {
     m_text->load(map->m_current_grab);
@@ -178,7 +181,7 @@ void RadarWidget::drawTexture()
     m_environmentProgram->disableAttributeArray(1);
     m_environmentProgram->release();
 }
-
+*/
 void RadarWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
@@ -200,7 +203,7 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    drawTexture();
+    map->drawTexture();
 
     m_re->radarDraw->DrawRadarImage();
 
@@ -314,20 +317,20 @@ void RadarWidget::initializeGL()
     initializeOpenGLFunctions();
     glClearColor(0.f, 0.0f, 0.0f, .1f);
 
-    m_vertexShader = new QGLShader(QGLShader::Vertex);
-    m_vertexShader->compileSourceCode(vShader);
+    //    m_vertexShader = new QGLShader(QGLShader::Vertex);
+    //    m_vertexShader->compileSourceCode(vShader);
 
-    m_fragmentShaders = new QGLShader(QGLShader::Fragment);
-    m_fragmentShaders->compileSourceCode(fShader);
+    //    m_fragmentShaders = new QGLShader(QGLShader::Fragment);
+    //    m_fragmentShaders->compileSourceCode(fShader);
 
-    m_environmentProgram = new QGLShaderProgram;
-    m_environmentProgram->addShader(m_vertexShader);
-    m_environmentProgram->addShader(m_fragmentShaders);
-    m_environmentProgram->bindAttributeLocation("aPos", 0);
-    m_environmentProgram->bindAttributeLocation("aTexCoord", 1);
-    m_environmentProgram->link();
-    m_environmentProgram->bind();
-    m_environmentProgram->setUniformValue("texture1", 0);
+    //    m_environmentProgram = new QGLShaderProgram;
+    //    m_environmentProgram->addShader(m_vertexShader);
+    //    m_environmentProgram->addShader(m_fragmentShaders);
+    //    m_environmentProgram->bindAttributeLocation("aPos", 0);
+    //    m_environmentProgram->bindAttributeLocation("aTexCoord", 1);
+    //    m_environmentProgram->link();
+    //    m_environmentProgram->bind();
+    //    m_environmentProgram->setUniformValue("texture1", 0);
 
     /*
     float vertices[4][8] = {
@@ -338,7 +341,7 @@ void RadarWidget::initializeGL()
     };
     */
     /*
-     */
+
     float vertices[4][8] = {
         {-1.f, 1.f, 0.0f, 0.f, 0.f},
         {-1.f, -1.f, 0.0f, 0.f, 1.0f},
@@ -354,7 +357,9 @@ void RadarWidget::initializeGL()
         vertData.append(vertices[j][4]);
     }
 
-    m_text = new GLTextureCube(width(), height());
+    m_text = new GLTextureCube(width(),height());
+    */
+    map->initGl();
 
     glClearColor(0.f, 0.0f, 0.0f, 1.0f);
 #ifdef QT_OPENGL_ES
