@@ -67,11 +67,14 @@ private:
     GLTextureCube *m_text;
     QVector<GLfloat> vertData;
     QImage m_current_grab;
+    double currentScale;
     int currentRange;
+    int currentZoom;
     bool loading;
 
     void updateMapView();
     void updateMapCenterView();
+    void calculateScale();
 };
 
 #endif // MAP_H
