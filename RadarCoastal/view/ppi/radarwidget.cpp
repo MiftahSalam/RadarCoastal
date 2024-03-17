@@ -224,6 +224,8 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     */
     if (show_rings)
         drawRings(&painter, side);
+
+    map->drawInfo(&painter);
 }
 
 void RadarWidget::trigger_captureFinish()

@@ -44,18 +44,20 @@ public:
     explicit Map(QObject *parent = nullptr);
 
     void resize(const QSize &size);
+    void drawInfo(QPainter* painter);
     void drawTexture();
     void initGl();
-
-    QImage m_current_grab;
+    bool isLoading() const { return loading; }
 
 signals:
 
 private slots:
     void onTimeout();
+    void triggerConfigChange(const QString key, const QVariant val);
 
 private:
     QMapControl* mc;
+    PointWorldCoord center;
     QTimer *timer;
     RadarEngine::RadarConfig* m_radar_config;
     QGLBuffer vbo;
@@ -64,6 +66,12 @@ private:
     QGLShaderProgram *m_environmentProgram;
     GLTextureCube *m_text;
     QVector<GLfloat> vertData;
+    QImage m_current_grab;
+    int currentRange;
+    bool loading;
+
+    void updateMapView();
+    void updateMapCenterView();
 };
 
 #endif // MAP_H
