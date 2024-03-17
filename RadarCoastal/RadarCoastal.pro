@@ -156,6 +156,10 @@ unix: {
     DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\hypernet\v2
 #    INCLUDEPATH +=C:\Users\ms_tensai\RadarEngineLib\include\2024\hypernet\v2
 #    DEPENDPATH += C:\Users\ms_tensai\RadarEngineLib\lib\include\2024\hypernet\v2
+    INCLUDEPATH +=C:\Users\ms_tensai\maplib\include
+    DEPENDPATH += C:\Users\ms_tensai\maplib\include
+#    INCLUDEPATH +=C:\Users\miftah\maplib\include
+#    DEPENDPATH += C:\Users\miftah\maplib\include
 }
 
 win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\hypernet\v2 -lRadarEngine
@@ -163,6 +167,11 @@ else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLi
 #win32:CONFIG(release, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2024\hypernet\v2 -lRadarEngine
 #else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2024\hypernet\v2 -lRadarEngine
 
+win32:CONFIG(release, debug|release): LIBS += -LC:\Users\ms_tensai\maplib\lib -lqmapcontrol1
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\ms_tensai\maplib\lib -lqmapcontrol1
+
+#win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\maplib\lib -lqmapcontrold1
+#else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\maplib\lib -lqmapcontrold1
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
