@@ -4,8 +4,10 @@
 
 #include <QApplication>
 #include <QDir>
+#include <QTranslator>
 
 QString loadStylesheetFile( const QString &path );
+QStringList findQmFiles();
 
 int main(int argc, char *argv[])
 {
@@ -25,11 +27,32 @@ int main(int argc, char *argv[])
 
     a.setStyleSheet( appStyle );
 
+    QTranslator translator;
+    QString lng;
+    QStringList lngLst = findQmFiles();
+    foreach (auto l, lngLst) {
+        if (l.contains("id")) {
+            lng = l;
+        }
+    }
+    translator.load(lng);
+    qApp->installTranslator(&translator);
+
     MainWindow w;
     w.showFullScreen();
 //    w.showMaximized();
 
     return a.exec();
+}
+
+QStringList findQmFiles()
+{
+    QDir dir(":/translantions");
+    QStringList fileNames = dir.entryList(QStringList("*.qm"), QDir::Files,
+                                          QDir::Name);
+    for (QString &fileName : fileNames)
+        fileName = dir.filePath(fileName);
+    return fileNames;
 }
 
 QString loadStylesheetFile( const QString &path )
