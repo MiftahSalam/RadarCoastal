@@ -63,5 +63,18 @@
         <source>Apply</source>
         <translation>Terapkan</translation>
     </message>
+    <name>FrameControl1</name>
+    <message>
+        <source>Rings %1</source>
+        <translation>Lingkaran %1</translation>
+    </message>
+    <message>
+        <source>Show Rings</source>
+        <translation>Tampilkan lingkaran</translation>
+    </message>
+    <message>
+        <source>Shutdown</source>
+        <translation>Matikan</translation>
+    </message>
 </context>
 </TS>
