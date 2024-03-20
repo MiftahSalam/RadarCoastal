@@ -13,6 +13,14 @@
         <source>Please turn to Standby Mode first</source>
         <translation>Silahkan ubah ke mode stanby lebih dulu</translation>
     </message>
+    <message>
+        <source>Settings</source>
+        <translation>Pengaturan</translation>
+    </message>
+    <message>
+        <source>Connections...</source>
+        <translation>Koneksi...</translation>
+    </message>
     <name>DialogBIT</name>
     <message>
         <source>Power test:</source>

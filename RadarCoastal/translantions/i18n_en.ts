@@ -13,6 +13,14 @@
         <source>Please turn to Standby Mode first</source>
         <translation>Please turn to Standby Mode first</translation>
     </message>
+    <message>
+        <source>Settings</source>
+        <translation>Settings</translation>
+    </message>
+    <message>
+        <source>Connections...</source>
+        <translation>Connections...</translation>
+    </message>
     <name>DialogBIT</name>
     <message>
         <source>Power test:</source>
