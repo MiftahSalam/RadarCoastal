@@ -50,5 +50,18 @@
         <source>Heading valid test:</source>
         <translation>Tes validasi arah:</translation>
     </message>
+    <name>DialogConnections</name>
+    <message>
+        <source>Connection Settings</source>
+        <translation>Menu Pengaturan Koneksi</translation>
+    </message>
+    <message>
+        <source>Show ARPA</source>
+        <translation>Tampilkan ARPA</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Terapkan</translation>
+    </message>
 </context>
 </TS>
