@@ -13,6 +13,10 @@ DialogBIT::DialogBIT(QWidget *parent) :
 {
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     ui->setupUi(this);
+    ui->pushButtonBITRadar->setText(tr("Start %1").arg("BiTE Radar"));
+    ui->pushButtonBITCamera->setText(tr("Start %1").arg("BiTE Camera"));
+    ui->pushButtonBITLora->setText(tr("Start %1").arg("BiTE LoRa"));
+    ui->pushButtonBITNav->setText(tr("Start %1").arg("BiTE Nav"));
 }
 
 DialogBIT::~DialogBIT()

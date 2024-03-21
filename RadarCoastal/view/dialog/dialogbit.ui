@@ -29,13 +29,13 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Subsitems BiTE</string>
+   <string>Menu BiTE</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabRadar">
       <attribute name="title">
