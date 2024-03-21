@@ -63,5 +63,18 @@
         <source>Apply</source>
         <translation>Apply</translation>
     </message>
+    <name>FrameControl1</name>
+    <message>
+        <source>Rings </source>
+        <translation>Ring %1</translation>
+    </message>
+    <message>
+        <source>Show Rings</source>
+        <translation>Show Rings</translation>
+    </message>
+    <message>
+        <source>Shutdown</source>
+        <translation>Shutdown</translation>
+    </message>
 </context>
 </TS>

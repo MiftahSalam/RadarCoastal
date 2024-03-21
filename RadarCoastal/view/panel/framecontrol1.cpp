@@ -88,7 +88,7 @@ void FrameControl1::handleRingRangeChange()
     }
 
     if(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool())
-        ui->labelRingRange->setText("Rings "+ringValue);
+        ui->labelRingRange->setText(tr("Rings %1").arg(ringValue));
 }
 
 void FrameControl1::trigger_radarConfigChange(QString key, QVariant val)
@@ -216,9 +216,9 @@ void FrameControl1::on_checkBoxShowRing_clicked(bool checked)
 {
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING,checked);
     if(checked)
-        ui->labelRingRange->setText("Rings "+ringValue);
+        ui->labelRingRange->setText(tr("Rings %1").arg(ringValue));
     else
-        ui->labelRingRange->setText("Rings off");
+        ui->labelRingRange->setText(tr("Rings %1").arg("off"));
 
 }
 
