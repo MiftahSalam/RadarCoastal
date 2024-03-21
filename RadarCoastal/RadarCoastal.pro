@@ -50,6 +50,7 @@ SOURCES += \
     usecase/stream/sitedatasender.cpp \
     usecase/track/track.cpp \
     usecase/track/trackmodelview.cpp \
+    usecase/tx_timer/tx_timer_counter.cpp \
     view/dialog/dialogbit.cpp \
     view/dialog/dialogconnections.cpp \
     view/dialog/dialoggz.cpp \
@@ -93,6 +94,7 @@ HEADERS += \
     usecase/stream/sitedatasender.h \
     usecase/track/track.h \
     usecase/track/trackmodelview.h \
+    usecase/tx_timer/tx_timer_counter.h \
     view/dialog/dialogbit.h \
     view/dialog/dialogconnections.h \
     view/dialog/dialoggz.h \
