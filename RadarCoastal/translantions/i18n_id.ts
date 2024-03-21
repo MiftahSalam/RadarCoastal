@@ -76,5 +76,18 @@
         <source>Shutdown</source>
         <translation>Matikan</translation>
     </message>
+    <name>FrameControl2</name>
+    <message>
+        <source>Gain %1</source>
+        <translation>Daya %1</translation>
+    </message>
+    <message>
+        <source>Sea %1</source>
+        <translation>Laut %1</translation>
+    </message>
+    <message>
+        <source>Rain</source>
+        <translation>Hujan</translation>
+    </message>
 </context>
 </TS>
