@@ -119,10 +119,8 @@ void RadarWidget::drawEbl(QPainter *painter, const int &side, const bool& headin
     painter->rotate(90-baringan);
 }
 
-void RadarWidget::drawRingsVrm(QPainter *painter, const int &side, const int curentVrm)
+void RadarWidget::drawRingsVrm(QPainter *painter, const int curentVrm)
 {
-    Q_UNUSED(side)
-
     double curRange = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
     switch (Utils::unit) {
     case 1:
@@ -132,20 +130,9 @@ void RadarWidget::drawRingsVrm(QPainter *painter, const int &side, const int cur
         break;
     }
 
-    const qreal range_ring = curRange/1;
-
     painter->setPen(QColor(255,25,50,255));
-//    painter->setPen(QColor(255,255,0,100));
-    for(int i=0;i<1;i++)
-    {
-        int range_calc = static_cast<int>(Utils::DistanceFromCenterInPix(range_ring*(i+1),curentVrm, curentVrm, curRange)/1.);
-//        qDebug()<<Q_FUNC_INFO<<"bufRng"<<bufRng;
-//        qDebug()<<Q_FUNC_INFO<<"bufRng calc"<<range_calc;
-        painter->drawEllipse(-range_calc,-range_calc,range_calc*2,range_calc*2);
-//        painter->drawEllipse(-bufRng/2,-bufRng/2,bufRng,bufRng);
-//        bufRng += ringCount;
-    }
-
+    int range_calc = static_cast<int>(Utils::DistanceFromCenterInPix(curentVrm, width(), height(), curRange));
+    painter->drawEllipse(-range_calc,-range_calc,range_calc*2,range_calc*2);
 }
 
 void RadarWidget::paintEvent(QPaintEvent *event)
@@ -224,7 +211,7 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     /*
       VRM marker
     */
-    if(show_vrm_marker) drawRingsVrm(&painter,side,curentVrm);
+    if(show_vrm_marker) drawRingsVrm(&painter, curentVrm);
 
 
 }
