@@ -246,5 +246,34 @@
         <source>Delete All</source>
         <translation>Hapus Semua</translation>
     </message>
+    <name>FrameTrail</name>
+    <message>
+        <source>Target tails : </source>
+        <translation>Jejak Sasaran : </translation>
+    </message>
+    <message>
+        <source>15 sec</source>
+        <translation>15 det</translation>
+    </message>
+    <message>
+        <source>30 sec</source>
+        <translation>30 det</translation>
+    </message>
+    <message>
+        <source>Continuous</source>
+        <translation>Continuous</translation>
+    </message>
+    <message>
+        <source>Trails :</source>
+        <translation>Jejak :</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>Aktif</translation>
+    </message>
+    <message>
+        <source>Clear trails</source>
+        <translation>Hapus jejak</translation>
+    </message>
 </context>
 </TS>
