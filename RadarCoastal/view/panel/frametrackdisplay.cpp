@@ -16,6 +16,10 @@ FrameTrackDisplay::FrameTrackDisplay(QWidget *parent) :
     ui(new Ui::FrameTrackDisplay)
 {
     ui->setupUi(this);
+    ui->label_3->setText(tr("Range%1%2").arg("\n").arg("(km)"));
+    ui->label_4->setText(tr("Bearing%1%2").arg("\n").arg("(deg)"));
+    ui->label_5->setText(tr("Speed%1%2").arg("\n").arg("(kts)"));
+    ui->label_6->setText(tr("Course%1%2").arg("\n").arg("(deg)"));
 
     track = Track::GetInstance();
 
@@ -33,10 +37,10 @@ void FrameTrackDisplay::timerTimeout()
 
     switch (unit) {
     case 0:
-        ui->label_3->setText("Range\n(Km)");
+        ui->label_3->setText(tr("Range%1%2").arg("\n").arg("(km)"));
         break;
     case 1:
-        ui->label_3->setText("Range\n(NM)");
+        ui->label_3->setText(tr("Range%1%2").arg("\n").arg("(NM)"));
         break;
     default:
         break;
