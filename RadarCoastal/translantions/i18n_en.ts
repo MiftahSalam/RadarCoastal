@@ -217,5 +217,34 @@
         <source>HDG</source>
         <translation>HDG</translation>
     </message>
+    <name>FrameTrackDisplay</name>
+    <message>
+        <source>Track Information</source>
+        <translation>Track Information</translation>
+    </message>
+    <message>
+        <source>Range%1%2</source>
+        <translation>Range%1%2</translation>
+    </message>
+    <message>
+        <source>Bearing%1%2</source>
+        <translation>Bearing%1%2</translation>
+    </message>
+    <message>
+        <source>Speed%1%2</source>
+        <translation>Speed%1%2</translation>
+    </message>
+    <message>
+        <source>Course%1%2</source>
+        <translation>Course%1%2</translation>
+    </message>
+    <message>
+        <source>Delete Selected</source>
+        <translation>Delete Selected</translation>
+    </message>
+    <message>
+        <source>Delete All</source>
+        <translation>Delete All</translation>
+    </message>
 </context>
 </TS>

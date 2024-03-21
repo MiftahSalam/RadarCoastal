@@ -217,5 +217,34 @@
         <source>HDG</source>
         <translation>Halu</translation>
     </message>
+    <name>FrameTrackDisplay</name>
+    <message>
+        <source>Track Information</source>
+        <translation>Informasi Sasaran</translation>
+    </message>
+    <message>
+        <source>Range%1%2</source>
+        <translation>Jarak%1%2</translation>
+    </message>
+    <message>
+        <source>Bearing%1%2</source>
+        <translation>Sudut%1%2</translation>
+    </message>
+    <message>
+        <source>Speed%1%2</source>
+        <translation>Kecepatan%1%2</translation>
+    </message>
+    <message>
+        <source>Course%1%2</source>
+        <translation>Halu%1%2</translation>
+    </message>
+    <message>
+        <source>Delete Selected</source>
+        <translation>Hapus Terpilih</translation>
+    </message>
+    <message>
+        <source>Delete All</source>
+        <translation>Hapus Semua</translation>
+    </message>
 </context>
 </TS>
