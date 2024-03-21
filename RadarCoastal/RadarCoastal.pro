@@ -48,6 +48,7 @@ SOURCES += \
     usecase/ppi/ppigrabber.cpp \
     usecase/track/track.cpp \
     usecase/track/trackmodelview.cpp \
+    usecase/tx_timer/tx_timer_counter.cpp \
     view/dialog/dialogbit.cpp \
     view/dialog/dialogconnections.cpp \
     view/dialog/dialoggz.cpp \
@@ -88,6 +89,7 @@ HEADERS += \
     usecase/ppi/ppigrabber.h \
     usecase/track/track.h \
     usecase/track/trackmodelview.h \
+    usecase/tx_timer/tx_timer_counter.h \
     view/dialog/dialogbit.h \
     view/dialog/dialogconnections.h \
     view/dialog/dialoggz.h \
