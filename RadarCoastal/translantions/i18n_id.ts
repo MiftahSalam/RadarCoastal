@@ -70,7 +70,7 @@
     </message>
     <message>
         <source>Show Rings</source>
-        <translation>Tampilkan lingkaran</translation>
+        <translation>Tampilkan Lingkaran Jarak</translation>
     </message>
     <message>
         <source>Shutdown</source>

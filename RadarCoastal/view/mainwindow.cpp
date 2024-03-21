@@ -97,6 +97,11 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     ui->frameCursor->resize(ui->frameCursor->width(),ui->frameCursor->height());
     if(height() > MAX_HEIGHT_THRESHOLD)
     {
+        ui->frameLeft->resize(ui->frameLeft->width()+35, ui->frameLeft->height());
+        ui->frameLeft->move(width()-ui->frameRight->width()-ui->frameLeft->width(),0);
+        ui->frameLeft->resize(ui->frameLeft->width(),height());
+        ui->frameCursor->move(width()-ui->frameRight->width()-ui->frameLeft->width()-ui->frameCursor->width(),height()-ui->frameCursor->height());
+        ui->frameCursor->resize(ui->frameCursor->width(),ui->frameCursor->height());
         ui->frameStatus->move(width()-ui->frameRight->width()-ui->frameLeft->width()-ui->frameStatus->width(),height()-ui->frameStatus->height()-ui->frameCursor->height());
         ui->pushButtonSetGZ->hide();
         ui->frameGZ->show();
