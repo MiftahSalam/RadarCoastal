@@ -89,5 +89,54 @@
         <source>Rain</source>
         <translation>Rain</translation>
     </message>
+    <name>FrameControl3</name>
+    <message>
+        <source>Show Radar Sweep</source>
+        <translation>Show Radar Sweep</translation>
+    </message>
+    <message>
+        <source>Show Compass</source>
+        <translation>Show Compass</translation>
+    </message>
+    <message>
+        <source>Show Heading Marker</source>
+        <translation>Show Heading Marker</translation>
+    </message>
+    <message>
+        <source>Orientation</source>
+        <translation>Orientation</translation>
+    </message>
+    <message>
+        <source>N Up</source>
+        <translation>N Up</translation>
+    </message>
+    <message>
+        <source>H Up</source>
+        <translation>H Up</translation>
+    </message>
+    <message>
+        <source>Metric</source>
+        <translation>Metric</translation>
+    </message>
+    <message>
+        <source>Nautic</source>
+        <translation>Nautic</translation>
+    </message>
+    <message>
+        <source>Day</source>
+        <translation>Day</translation>
+    </message>
+    <message>
+        <source>Night</source>
+        <translation>Night</translation>
+    </message>
+    <message>
+        <source>Unit:</source>
+        <translation>Unit:</translation>
+    </message>
+    <message>
+        <source>Orientation :</source>
+        <translation>Unit :</translation>
+    </message>
 </context>
 </TS>

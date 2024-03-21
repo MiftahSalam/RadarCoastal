@@ -74,7 +74,7 @@
     </message>
     <message>
         <source>Shutdown</source>
-        <translation>Matikan</translation>
+        <translation>Keluar</translation>
     </message>
     <name>FrameControl2</name>
     <message>
@@ -88,6 +88,55 @@
     <message>
         <source>Rain</source>
         <translation>Hujan</translation>
+    </message>
+    <name>FrameControl3</name>
+    <message>
+        <source>Show Radar Sweep</source>
+        <translation>Tampilkan Sapuan</translation>
+    </message>
+    <message>
+        <source>Show Compass</source>
+        <translation>Tampilkan Kompas</translation>
+    </message>
+    <message>
+        <source>Show Heading Marker</source>
+        <translation>Tampilkan Halu</translation>
+    </message>
+    <message>
+        <source>Orientation</source>
+        <translation>Orientasi</translation>
+    </message>
+    <message>
+        <source>N Up</source>
+        <translation>Utara</translation>
+    </message>
+    <message>
+        <source>H up</source>
+        <translation>Halu</translation>
+    </message>
+    <message>
+        <source>Metric</source>
+        <translation>Metrik</translation>
+    </message>
+    <message>
+        <source>Nautic</source>
+        <translation>Nautik</translation>
+    </message>
+    <message>
+        <source>Day</source>
+        <translation>Siang</translation>
+    </message>
+    <message>
+        <source>Night</source>
+        <translation>Malam</translation>
+    </message>
+    <message>
+        <source>Unit:</source>
+        <translation>Satuan:</translation>
+    </message>
+    <message>
+        <source>Orientation :</source>
+        <translation>Orientasi :</translation>
     </message>
 </context>
 </TS>
