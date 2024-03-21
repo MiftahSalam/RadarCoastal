@@ -246,5 +246,34 @@
         <source>Delete All</source>
         <translation>Delete All</translation>
     </message>
+    <name>FrameTrail</name>
+    <message>
+        <source>Target tails : </source>
+        <translation>Target tails : </translation>
+    </message>
+    <message>
+        <source>15 sec</source>
+        <translation>15 sec</translation>
+    </message>
+    <message>
+        <source>30 sec</source>
+        <translation>30 sec</translation>
+    </message>
+    <message>
+        <source>Continuous</source>
+        <translation>Continuous</translation>
+    </message>
+    <message>
+        <source>Trails :</source>
+        <translation>Trails :</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>On</translation>
+    </message>
+    <message>
+        <source>Clear trails</source>
+        <translation>Clear trailsk</translation>
+    </message>
 </context>
 </TS>
