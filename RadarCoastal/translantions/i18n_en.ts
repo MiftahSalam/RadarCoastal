@@ -50,5 +50,18 @@
         <source>Heading valid test:</source>
         <translation>Heading valid test:</translation>
     </message>
+    <name>DialogConnections</name>
+    <message>
+        <source>Connection Settings</source>
+        <translation>Connection Settings</translation>
+    </message>
+    <message>
+        <source>Show ARPA</source>
+        <translation>Show ARPA</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Apply</translation>
+    </message>
 </context>
 </TS>
