@@ -72,6 +72,42 @@
         <source>Apply</source>
         <translation>Apply</translation>
     </message>
+    <message>
+        <source>Warning</source>
+        <translation>Warning</translation>
+    </message>
+    <message>
+        <source>Invalid Mqtt server input.</source>
+        <translation>Invalid Mqtt server input.</translation>
+    </message>
+    <message>
+        <source>Input should be IP:port formatted</source>
+        <translation>Input should be IP:port formatted</translation>
+    </message>
+    <message>
+        <source>Invalid Mqtt server input host.</source>
+        <translation>Invalid Mqtt server input host.</translation>
+    </message>
+    <message>
+        <source>Input should be IP formatted</source>
+        <translation>Input should be IP formatted</translation>
+    </message>
+    <message>
+        <source>Invalid Mqtt server input port.</source>
+        <translation>Invalid Mqtt server input port.</translation>
+    </message>
+    <message>
+        <source>Input should be 2000-65500</source>
+        <translation>Input should be 2000-65500</translation>
+    </message>
+    <message>
+        <source>Invalid Mqtt topic input.</source>
+        <translation>Invalid Mqtt topic input.</translation>
+    </message>
+    <message>
+        <source>Input cannot be empty</source>
+        <translation>Input cannot be empty</translation>
+    </message>
     <name>FrameControl1</name>
     <message>
         <source>Rings </source>

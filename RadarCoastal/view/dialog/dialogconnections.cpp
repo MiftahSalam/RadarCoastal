@@ -118,8 +118,7 @@ void DialogConnections::on_pushButtonApply_clicked()
     if(arpa_conf_list.size() != 2)
     {
         ui->lineEditIPARPA->setText("");
-        QMessageBox::information(this,"Warning","Invalid Mqtt server input.\n"
-                                 "Input should be IP:port formatted");
+        QMessageBox::information(this,tr("Warning"),tr("Invalid Mqtt server input.")+"\n"+tr("Input should be IP:port formatted"));
         return;
     }
     else
@@ -128,8 +127,7 @@ void DialogConnections::on_pushButtonApply_clicked()
         if(host.isNull())
         {
             ui->lineEditIPARPA->setText("");
-            QMessageBox::information(this,"Warning","Invalid Mqtt server input host.\n"
-                                     "Input should be IP formatted");
+            QMessageBox::information(this,tr("Warning"),tr("Invalid Mqtt server input host.")+"\n"+tr("Input should be IP formatted"));
             return;
         }
         else
@@ -140,8 +138,7 @@ void DialogConnections::on_pushButtonApply_clicked()
             if(!ok)
             {
                 ui->lineEditIPARPA->setText("");
-                QMessageBox::information(this,"Warning","Invalid Mqtt server input port.\n"
-                                         "Input port should be 2000-65500");
+                QMessageBox::information(this,tr("Warning"),tr("Invalid Mqtt server input port.")+"\n"+tr("Input port should be 2000-65500"));
                 return;
             }
             else
@@ -149,8 +146,7 @@ void DialogConnections::on_pushButtonApply_clicked()
                 if(ui->lineEditPortARPA->text().isEmpty())
                 {
                     ui->lineEditIPARPA->setText("");
-                    QMessageBox::information(this,"Warning","Invalid Mqtt topic input.\n"
-                                             "Input cannot be empty");
+                    QMessageBox::information(this,tr("Warning"),tr("Invalid Mqtt topic input.")+"\n"+tr("Input cannot be empty"));
                     return;
                 }
                 else
@@ -170,8 +166,7 @@ void DialogConnections::on_pushButtonApplyNav_clicked()
     if(nav_conf_list.size() != 2)
     {
         ui->lineEditNavMqttServer->setText("");
-        QMessageBox::information(this,"Warning","Invalid Mqtt server input.\n"
-                                 "Input should be IP:port formatted");
+        QMessageBox::information(this,tr("Warning"),tr("Invalid Mqtt server input.")+"\n"+tr("Input should be IP:port formatted"));
         return;
     }
     else
@@ -180,8 +175,7 @@ void DialogConnections::on_pushButtonApplyNav_clicked()
         if(host.isNull())
         {
             ui->lineEditNavMqttServer->setText("");
-            QMessageBox::information(this,"Warning","Invalid Mqtt server input host.\n"
-                                     "Input should be IP formatted");
+            QMessageBox::information(this,tr("Warning"),tr("Invalid Mqtt server input host.")+"\n"+tr("Input should be IP formatted"));
             return;
         }
         else
@@ -192,8 +186,7 @@ void DialogConnections::on_pushButtonApplyNav_clicked()
             if(!ok)
             {
                 ui->lineEditNavMqttServer->setText("");
-                QMessageBox::information(this,"Warning","Invalid Mqtt server input port.\n"
-                                         "Input port should be 2000-65500");
+                QMessageBox::information(this,tr("Warning"),tr("Invalid Mqtt server input port.")+"\n"+tr("Input port should be 2000-65500"));
                 return;
             }
             else
@@ -201,8 +194,7 @@ void DialogConnections::on_pushButtonApplyNav_clicked()
                 if(ui->lineEditNavMqttTopic->text().isEmpty())
                 {
                     ui->lineEditNavMqttTopic->setText("");
-                    QMessageBox::information(this,"Warning","Invalid Mqtt topic input.\n"
-                                             "Input cannot be empty");
+                    QMessageBox::information(this,tr("Warning"),tr("Invalid Mqtt topic input.")+"\n"+tr("Input cannot be empty"));
                     return;
                 }
                 else
