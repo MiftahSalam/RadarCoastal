@@ -8,6 +8,7 @@
 
 QString loadStylesheetFile( const QString &path );
 QStringList findQmFiles();
+QString selectQmFile( const QString &lng );
 
 int main(int argc, char *argv[])
 {
@@ -29,13 +30,9 @@ int main(int argc, char *argv[])
 
     QTranslator translator;
     QString lng;
-    QStringList lngLst = findQmFiles();
-    foreach (auto l, lngLst) {
-        if (l.contains("id")) {
-            lng = l;
-        }
-    }
-    translator.load(lng);
+
+    lng = instance->getConfig(RadarEngine::NON_VOLATILE_APP_DISPLAY_LANGUAGE).toString();
+    translator.load(selectQmFile(lng));
     qApp->installTranslator(&translator);
 
     MainWindow w;
@@ -43,6 +40,20 @@ int main(int argc, char *argv[])
 //    w.showMaximized();
 
     return a.exec();
+}
+
+QString selectQmFile( const QString &lng )
+{
+    QString lngFile;
+    QStringList lngLst = findQmFiles();
+    foreach (auto l, lngLst) {
+        if (l.contains(lng)) {
+            lngFile = l;
+            break;
+        }
+    }
+
+    return lngFile;
 }
 
 QStringList findQmFiles()
