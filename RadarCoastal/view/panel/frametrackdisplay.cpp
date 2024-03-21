@@ -7,14 +7,16 @@
 #include <QSettings>
 #include <QDir>
 
-
 #define MAX_UPDATE_NUMBER 5
 
-FrameTrackDisplay::FrameTrackDisplay(QWidget *parent) :
-    QFrame(parent),
-    ui(new Ui::FrameTrackDisplay)
+FrameTrackDisplay::FrameTrackDisplay(QWidget *parent) : QFrame(parent),
+                                                        ui(new Ui::FrameTrackDisplay)
 {
     ui->setupUi(this);
+    ui->label_3->setText(tr("Range%1%2").arg("\n").arg("(km)"));
+    ui->label_4->setText(tr("Bearing%1%2").arg("\n").arg("(deg)"));
+    ui->label_5->setText(tr("Speed%1%2").arg("\n").arg("(kts)"));
+    ui->label_6->setText(tr("Course%1%2").arg("\n").arg("(deg)"));
 #ifdef DISPLAY_ONLY_MODE
     ui->pushButtonDelAll->hide();
     ui->pushButtonDelSel->hide();
@@ -23,7 +25,7 @@ FrameTrackDisplay::FrameTrackDisplay(QWidget *parent) :
     track = Track::GetInstance();
 
     timer = new QTimer(this);
-    connect(timer,SIGNAL(timeout()),this,SLOT(timerTimeout()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
 
     ui->tableViewTrack->setModel(track->GetModelView());
 
@@ -34,17 +36,17 @@ void FrameTrackDisplay::timerTimeout()
 {
     const quint8 unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
 
-    switch (unit) {
+    switch (unit)
+    {
     case 0:
-        ui->label_3->setText("Range\n(Km)");
+        ui->label_3->setText(tr("Range%1%2").arg("\n").arg("(km)"));
         break;
     case 1:
-        ui->label_3->setText("Range\n(NM)");
+        ui->label_3->setText(tr("Range%1%2").arg("\n").arg("(NM)"));
         break;
     default:
         break;
     }
-
 }
 
 FrameTrackDisplay::~FrameTrackDisplay()
@@ -55,10 +57,10 @@ FrameTrackDisplay::~FrameTrackDisplay()
 void FrameTrackDisplay::on_pushButtonDelSel_clicked()
 {
     int row_count = ui->tableViewTrack->model()->rowCount();
-    if(row_count>0)
+    if (row_count > 0)
     {
         int row = ui->tableViewTrack->currentIndex().row();
-        QString id_str = ui->tableViewTrack->model()->index(row,0).data().toString();
+        QString id_str = ui->tableViewTrack->model()->index(row, 0).data().toString();
 
         track->RemoveTrack(id_str);
     }
@@ -66,7 +68,8 @@ void FrameTrackDisplay::on_pushButtonDelSel_clicked()
 
 void FrameTrackDisplay::on_pushButtonDelAll_clicked()
 {
-    int row_count =  ui->tableViewTrack->model()->rowCount();
-    if(row_count>0) track->RemoveAllTrack();
+    int row_count = ui->tableViewTrack->model()->rowCount();
+    if (row_count > 0)
+        track->RemoveAllTrack();
 }
 #endif

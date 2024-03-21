@@ -8,6 +8,9 @@ FrameControl2::FrameControl2(QWidget *parent) :
     ui(new Ui::FrameControl2)
 {
     ui->setupUi(this);
+    ui->pushButtonGain->setText(tr("Gain %1").arg("(Man)"));
+    ui->pushButtonSea->setText(tr("Sea %1").arg("(Man)"));
+    ui->pushButtonRain->setText(tr("Rain"));
 
 #ifdef DISPLAY_ONLY_MODE
     setEnabled(false);
@@ -42,7 +45,7 @@ void FrameControl2::on_pushButtonGain_clicked()
 {
     if(ui->pushButtonGain->isChecked())
     {
-        ui->pushButtonGain->setText("Gain (Auto)");
+        ui->pushButtonGain->setText(tr("Gain %1").arg("(Auto)"));
         ui->horizontalSliderGain->setEnabled(false);
         ui->lineEditGain->setEnabled(false);
 
@@ -51,7 +54,7 @@ void FrameControl2::on_pushButtonGain_clicked()
     }
     else
     {
-        ui->pushButtonGain->setText("Gain (Man)");
+        ui->pushButtonGain->setText(tr("Gain %1").arg("(Man)"));
         ui->horizontalSliderGain->setEnabled(true);
         ui->lineEditGain->setEnabled(true);
         ui->lineEditGain->setText(QString::number(ui->horizontalSliderGain->value()));
@@ -77,7 +80,7 @@ void FrameControl2::on_pushButtonSea_clicked()
 {
     if(ui->pushButtonSea->isChecked())
     {
-        ui->pushButtonSea->setText("Land (Auto)");
+        ui->pushButtonSea->setText(tr("Sea %1").arg("(Auto)"));
         ui->horizontalSliderSea->setEnabled(false);
         ui->lineEditSea->setEnabled(false);
 //        emit signal_change_sea_req(-1);
@@ -85,7 +88,7 @@ void FrameControl2::on_pushButtonSea_clicked()
     }
     else
     {
-        ui->pushButtonSea->setText("Land (Man)");
+        ui->pushButtonSea->setText(tr("Sea %1").arg("(Man)"));
         ui->horizontalSliderSea->setEnabled(true);
         ui->lineEditSea->setEnabled(true);
         ui->lineEditSea->setText(QString::number(ui->horizontalSliderSea->value()));
