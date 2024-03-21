@@ -136,6 +136,46 @@ void RadarWidget::drawHM(QPainter *painter, const int &side, const bool& heading
     painter->rotate(90-baringan);
 }
 
+void RadarWidget::drawEbl(QPainter *painter, const int &side, const bool& heading_up, const double& curentEbl)
+{
+    double baringan = heading_up ? 0 : curentEbl;
+    painter->rotate(baringan-90);
+    painter->setPen(QColor(255,25,50,255));
+    //        painter.rotate(baringan-180);
+//    painter->setPen(QColor(255,255,0,255));
+    painter->drawLine(0,0,side,0);
+    //        painter.rotate(180-baringan);
+    painter->rotate(90-baringan);
+}
+
+void RadarWidget::drawRingsVrm(QPainter *painter, const int &side, const int curentVrm)
+{
+    Q_UNUSED(side)
+
+    double curRange = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
+    switch (Utils::unit) {
+    case 1:
+        curRange *= KM_TO_NM;
+        break;
+    default:
+        break;
+    }
+
+    const qreal range_ring = curRange/1;
+
+    painter->setPen(QColor(255,25,50,255));
+//    painter->setPen(QColor(255,255,0,100));
+    for(int i=0;i<1;i++)
+    {
+        int range_calc = static_cast<int>(Utils::DistanceFromCenterInPix(range_ring*(i+1),curentVrm, curentVrm, curRange)/1.);
+//        qDebug()<<Q_FUNC_INFO<<"bufRng"<<bufRng;
+//        qDebug()<<Q_FUNC_INFO<<"bufRng calc"<<range_calc;
+        painter->drawEllipse(-range_calc,-range_calc,range_calc*2,range_calc*2);
+//        painter->drawEllipse(-bufRng/2,-bufRng/2,bufRng,bufRng);
+//        bufRng += ringCount;
+    }
+
+}
 
 void RadarWidget::paintEvent(QPaintEvent *event)
 {
@@ -200,6 +240,10 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     const bool show_rings = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool();
     const bool heading_up = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
     const double currentHeading = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
+    const bool show_ebl_marker = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_EBL_MARKER).toBool();
+    const double curentEbl = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_EBL_VALUE).toDouble();
+    const bool show_vrm_marker = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_VRM_MARKER).toBool();
+    const double curentVrm = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toDouble();
 
     foreach (PPIObject* obj, drawObjects)
     {
@@ -219,6 +263,17 @@ void RadarWidget::paintEvent(QPaintEvent *event)
       range ring
     */
     if(show_rings) drawRings(&painter,side);
+
+    /*
+      EBL marker
+    */
+    if(show_ebl_marker) drawEbl(&painter, side, heading_up, curentEbl);
+
+    /*
+      VRM marker
+    */
+    if(show_vrm_marker) drawRingsVrm(&painter,side,curentVrm);
+
 
 }
 
