@@ -251,3 +251,51 @@ QPointF Utils::GpsAbsolute(double lat, double lon)
 
     return QPointF(lon-dlon,lat-dlat);
 }
+
+QString Utils::TimeElapsedDisplay(qint64 elapsedSecond)
+{
+    QDateTime from = QDateTime::fromSecsSinceEpoch(0);
+    QDateTime to = QDateTime::fromSecsSinceEpoch(elapsedSecond);
+    QDate dFrom = from.date();
+    QTime tFrom = from.time();
+    QDate dTo = to.date();
+    QTime tTo = to.time();
+    int dy = dTo.year()-dFrom.year();
+    int dm = dTo.month()-dFrom.month();
+    int dd = dTo.day()-dFrom.day();
+    int dh = tTo.hour()-tFrom.hour();
+    int dmin = tTo.minute()-tFrom.minute();
+    int ds = tTo.second()-tFrom.second();
+
+    QString yStr = QString::number(dy);
+    QString mStr = QString::number(dm);
+    QString dStr = QString::number(dd);
+    QString hStr = QString::number(dh);
+    QString minStr = QString::number(dmin);
+    QString sStr = QString::number(ds);
+
+    return yStr+" y, "+mStr+" m, "+dStr+" d, "+hStr+" h, "+minStr+" min, "+sStr+" s";
+}
+
+QDateTime Utils::TimeElapsed(qint64 elapsedSecond)
+{
+    QDateTime from = QDateTime::fromSecsSinceEpoch(0);
+    QDateTime to = QDateTime::fromSecsSinceEpoch(elapsedSecond);
+    QDate dFrom = from.date();
+    QTime tFrom = from.time();
+    QDate dTo = to.date();
+    QTime tTo = to.time();
+    QDateTime res;
+
+    int dy = dTo.year()-dFrom.year();
+    int dm = dTo.month()-dFrom.month();
+    int dd = dTo.day()-dFrom.day();
+    int dh = tTo.hour()-tFrom.hour();
+    int dmin = tTo.minute()-tFrom.minute();
+    int ds = tTo.second()-tFrom.second();
+
+    res.setDate(QDate(dy, dm, dd));
+    res.setTime(QTime(dh, dmin, ds));
+
+    return res;
+}

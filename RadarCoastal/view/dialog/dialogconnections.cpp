@@ -1,5 +1,7 @@
 #include "dialogconnections.h"
+#include "shared/utils.h"
 #include "ui_dialogconnections.h"
+#include "usecase/tx_timer/tx_timer_counter.h"
 
 #include <QMessageBox>
 #include <QIntValidator>
@@ -14,6 +16,9 @@ DialogConnections::DialogConnections(QWidget *parent) :
     ui->setupUi(this);
 
     initConfig();
+
+    auto elapsed = TxTimerCounter::GetCurrentElapsed();
+    ui->lineEditOpTime->setText(Utils::TimeElapsedDisplay(elapsed));
 }
 
 void DialogConnections::initConfig()
@@ -85,6 +90,11 @@ void DialogConnections::initConfig()
 DialogConnections::~DialogConnections()
 {
     delete ui;
+}
+
+void DialogConnections::upateOpTIme(QString elapsed)
+{
+    ui->lineEditOpTime->setText(elapsed);
 }
 
 void DialogConnections::on_checkBoxShow_clicked(bool checked)
