@@ -78,6 +78,11 @@ void MainWindow::TriggerShutdown()
         return;
     }
 
+    auto ret = QMessageBox::warning(this, tr("Warning"),tr("Are you sure want to exit?"),QMessageBox::Yes, QMessageBox::No);
+    if (ret == QMessageBox::No) {
+        return;
+    }
+
     m_re->TriggerStopRadar();
 #endif
     sleep(1);
