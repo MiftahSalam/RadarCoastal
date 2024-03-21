@@ -1,5 +1,14 @@
 <!DOCTYPE TS><TS>
 <context>
+    <name>QPlatformTheme</name>
+    <message>
+        <source>&amp;Yes</source>
+        <translation>&amp;Yes</translation>
+    </message>
+    <message>
+        <source>&amp;No</source>
+        <translation>&amp;No</translation>
+    </message>
     <name>MainWindow</name>
     <message>
         <source>Warning</source>

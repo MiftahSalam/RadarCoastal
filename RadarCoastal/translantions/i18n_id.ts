@@ -1,5 +1,14 @@
 <!DOCTYPE TS><TS>
 <context>
+    <name>QPlatformTheme</name>
+    <message>
+        <source>&amp;Yes</source>
+        <translation>&amp;Ya</translation>
+    </message>
+    <message>
+        <source>&amp;No</source>
+        <translation>&amp;Tidak</translation>
+    </message>
     <name>MainWindow</name>
     <message>
         <source>Warning</source>
@@ -12,6 +21,10 @@
     <message>
         <source>Please turn to Standby Mode first</source>
         <translation>Silahkan ubah ke mode stanby lebih dulu</translation>
+    </message>
+    <message>
+        <source>Are you sure want to exit?</source>
+        <translation>Apakah anda yakin ingin keluar?</translation>
     </message>
     <message>
         <source>Settings</source>
