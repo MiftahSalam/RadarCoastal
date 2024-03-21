@@ -188,5 +188,34 @@
         <source>deg</source>
         <translation>deg</translation>
     </message>
+    <name>FrameOSD</name>
+    <message>
+        <source>Sensor Data</source>
+        <translation>Sensor Data</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Apply</translation>
+    </message>
+    <message>
+        <source>Local</source>
+        <translation>Local</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Temperature</translation>
+    </message>
+    <message>
+        <source>Humidity</source>
+        <translation>Humidity</translation>
+    </message>
+    <message>
+        <source>HDG Auto</source>
+        <translation>HDG Auto</translation>
+    </message>
+    <message>
+        <source>HDG</source>
+        <translation>HDG</translation>
+    </message>
 </context>
 </TS>
