@@ -188,5 +188,34 @@
         <source>deg</source>
         <translation>derajat</translation>
     </message>
+    <name>FrameOSD</name>
+    <message>
+        <source>Sensor Data</source>
+        <translation>Data Sensor</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Terapkan</translation>
+    </message>
+    <message>
+        <source>Local</source>
+        <translation>Lokal</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Suhu</translation>
+    </message>
+    <message>
+        <source>Humidity</source>
+        <translation>Kelembapan</translation>
+    </message>
+    <message>
+        <source>HDG Auto</source>
+        <translation>Halu Auto</translation>
+    </message>
+    <message>
+        <source>HDG</source>
+        <translation>Halu</translation>
+    </message>
 </context>
 </TS>
