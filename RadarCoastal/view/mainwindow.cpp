@@ -73,8 +73,8 @@ void MainWindow::TriggerShutdown()
 #ifndef DISPLAY_ONLY_MODE
     if(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_RADAR_STATUS).toInt() == RadarEngine::RADAR_TRANSMIT)
     {
-        QMessageBox::information(this, tr("Warning"),"Radar is in Transmit Mode.\n"
-                                 "Please turn to Standby Mode first");
+        QMessageBox::information(this, tr("Warning"),tr("Radar is in Transmit Mode")+".\n"+
+                                 tr("Please turn to Standby Mode first"));
         return;
     }
 
