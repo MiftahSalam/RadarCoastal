@@ -138,5 +138,55 @@
         <source>Orientation :</source>
         <translation>Orientasi :</translation>
     </message>
+    <name>FrameCursor</name>
+    <message>
+        <source>Cursor</source>
+        <translation>Cursor</translation>
+    </message>
+    <name>FrameGZ</name>
+    <message>
+        <source>Show Guard zone</source>
+        <translation>Tampilkan Guard zone</translation>
+    </message>
+    <message>
+        <source>Enable Notif</source>
+        <translation>Aktifkan Notif</translation>
+    </message>
+    <message>
+        <source>Type :</source>
+        <translation>Tipe :</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation>Busur</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Lingkaran</translation>
+    </message>
+    <message>
+        <source>Inner range :</source>
+        <translation>Jarak Dalam :</translation>
+    </message>
+    <message>
+        <source>Outer range :</source>
+        <translation>Jarak Luar :</translation>
+    </message>
+    <message>
+        <source>Start bearing :</source>
+        <translation>Sudut Awal :</translation>
+    </message>
+    <message>
+        <source>End bearing :</source>
+        <translation>Sudut Akhir :</translation>
+    </message>
+    <message>
+        <source>Notif threshold :</source>
+        <translation>Batas Notif :</translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>derajat</translation>
+    </message>
 </context>
 </TS>

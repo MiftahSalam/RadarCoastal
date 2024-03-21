@@ -138,5 +138,55 @@
         <source>Orientation :</source>
         <translation>Unit :</translation>
     </message>
+    <name>FrameCursor</name>
+    <message>
+        <source>Cursor</source>
+        <translation>Kursor</translation>
+    </message>
+    <name>FrameGZ</name>
+    <message>
+        <source>Show Guard zone</source>
+        <translation>Show Guard zone</translation>
+    </message>
+    <message>
+        <source>Enable Notif</source>
+        <translation>Enable Notif</translation>
+    </message>
+    <message>
+        <source>Type :</source>
+        <translation>Type :</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation>Arc</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Circle</translation>
+    </message>
+    <message>
+        <source>Inner range :</source>
+        <translation>Inner range :</translation>
+    </message>
+    <message>
+        <source>Outer range :</source>
+        <translation>Outer range :</translation>
+    </message>
+    <message>
+        <source>Start bearing :</source>
+        <translation>Start bearing :</translation>
+    </message>
+    <message>
+        <source>End bearing :</source>
+        <translation>End bearing :</translation>
+    </message>
+    <message>
+        <source>Notif threshold :</source>
+        <translation>Notif threshold :</translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>deg</translation>
+    </message>
 </context>
 </TS>
