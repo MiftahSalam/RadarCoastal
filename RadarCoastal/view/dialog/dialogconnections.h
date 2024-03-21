@@ -16,6 +16,8 @@ public:
     explicit DialogConnections(QWidget *parent = nullptr);
     ~DialogConnections() override;
     
+    void upateOpTIme(QString elapsed);
+
 signals:
     void signal_settingChange();
     void signal_panTiltPositionEdited(double pan_position,double tilt_position);

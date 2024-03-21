@@ -6,6 +6,7 @@
 #include <RadarEngine/radarengine.h>
 
 #include "ppi/radarwidget.h"
+#include "usecase/tx_timer/tx_timer_counter.h"
 #include "view/dialog/dialogconnections.h"
 #include "view/dialog/dialoggz.h"
 #include "view/dialog/dialogbit.h"
@@ -24,6 +25,7 @@ public:
 
 private slots:
     void TriggerShutdown();
+    void TriggerUpdateFromTxTimer(qint64 elapsed);
 
     void OnPushButtonBITClicked();
 
@@ -46,6 +48,7 @@ private:
     DialogConnections* m_dialog_conns;
     DialogGZ *m_dialog_gz;
     DialogBIT *m_dialog_bit;
+    TxTimerCounter *m_radar_timer;
 };
 
 #endif // MAINWINDOW_H
