@@ -76,6 +76,42 @@
         <source>Apply</source>
         <translation>Terapkan</translation>
     </message>
+    <message>
+        <source>Warning</source>
+        <translation>Peringatan</translation>
+    </message>
+    <message>
+        <source>Invalid Mqtt server input.</source>
+        <translation>Input data Mqtt server tidak valid.</translation>
+    </message>
+    <message>
+        <source>Input should be IP:port formatted</source>
+        <translation>Input harus berformat IP:port</translation>
+    </message>
+    <message>
+        <source>Invalid Mqtt server input host.</source>
+        <translation>Input data Mqtt server host tidak valid.</translation>
+    </message>
+    <message>
+        <source>Input should be IP formatted</source>
+        <translation>Input harus berformat IP</translation>
+    </message>
+    <message>
+        <source>Invalid Mqtt server input port.</source>
+        <translation>Input data Mqtt server port tidak valid.</translation>
+    </message>
+    <message>
+        <source>Input should be 2000-65500</source>
+        <translation>Input harus bernilai 2000-65500</translation>
+    </message>
+    <message>
+        <source>Invalid Mqtt topic input.</source>
+        <translation>Input data Mqtt topic tidak valid.</translation>
+    </message>
+    <message>
+        <source>Input cannot be empty</source>
+        <translation>Input tidak boleh kosong</translation>
+    </message>
     <name>FrameControl1</name>
     <message>
         <source>Rings %1</source>
