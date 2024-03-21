@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/translations"/>
+    <qresource prefix="/">
+        <file>translantions/i18n_en.qm</file>
+        <file>translantions/i18n_id.qm</file>
+    </qresource>
+</RCC>

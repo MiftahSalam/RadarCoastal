@@ -131,6 +131,10 @@ FORMS += \
     view/panel/framecursor.ui \
     view/panel/frametrail.ui
 
+TRANSLATIONS += \
+    translantions/i18n_en.ts \
+    translantions/i18n_id.ts
+
 contains(DEFINES, DISPLAY_ONLY_MODE) {
     HEADERS += \
         usecase/stream/arpareceiver.h
@@ -168,4 +172,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 #    HMI_style.css
 
 RESOURCES += \
-    assets.qrc
+    assets.qrc \
+    i18n.qrc
+
+DISTFILES += \
+    translantions/i18n_en.ts \
+    translantions/i18n_id.ts
