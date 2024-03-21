@@ -56,8 +56,6 @@ private slots:
 
     void on_lineEditEBL_textChanged(const QString &arg1);
 
-    void on_lineEditVRM_textChanged(const QString &arg1);
-
 private:
     void initConfig();
 

@@ -15,10 +15,13 @@ FrameControl2::FrameControl2(QWidget *parent) :
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     m_instance_re = RadarEngine::RadarEngine::GetInstance(this);
 
+    initConfig();
+
     ui->lineEditGain->setValidator(new QIntValidator(0,255,ui->lineEditGain));
     ui->lineEditRain->setValidator(new QIntValidator(0,255,ui->lineEditRain));
     ui->lineEditSea->setValidator(new QIntValidator(0,255,ui->lineEditSea));
     ui->lineEditMTI->setValidator(new QIntValidator(0,255,ui->lineEditMTI));
+    ui->lineEditVRM->setValidator(new QIntValidator(0,distanceList.first(),ui->lineEditVRM));
 
     ui->lineEditGain->setText(QString::number(ui->horizontalSliderGain->value()));
     ui->lineEditRain->setText(QString::number(ui->horizontalSliderRain->value()));
@@ -27,17 +30,17 @@ FrameControl2::FrameControl2(QWidget *parent) :
 
     ui->horizontalSliderVRM->setMinimum(100);
     ui->horizontalSliderVRM->setMaximum(distanceList.first());
-    ui->horizontalSliderVRM->setSingleStep(distanceList.last()/100);
-    ui->horizontalSliderVRM->setPageStep(distanceList.last()/1000);
+    ui->horizontalSliderVRM->setSingleStep(10);
+    ui->horizontalSliderVRM->setPageStep(10);
 }
 
 void FrameControl2::initConfig()
 {
     ui->checkBoxMTI->setChecked(m_instance_cfg->getConfig(RadarEngine::VOLATILE_RADAR_PARAMS_FILTER_CONTROL_MTI).toBool());
     ui->checkBoxEBL->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_EBL_MARKER).toBool());
-    ui->checkBoxVRM->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_VRM_MARKER).toBool());
-    ui->horizontalSlideEBL->setValue(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_EBL_VALUE).toDouble());
-    ui->horizontalSliderVRM->setValue(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toDouble());
+    ui->checkBoxVRM->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_EBL_MARKER).toBool());
+    ui->horizontalSlideEBL->setValue(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toInt());
+    ui->horizontalSliderVRM->setValue(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toInt());
     ui->lineEditEBL->setText(QString::number(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_EBL_VALUE).toInt()));
     ui->lineEditVRM->setText(QString::number(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toInt()));
 }
@@ -184,6 +187,7 @@ void FrameControl2::on_horizontalSlideEBL_valueChanged(int value)
 
 void FrameControl2::on_horizontalSliderVRM_valueChanged(int value)
 {
+//    qDebug()<<Q_FUNC_INFO<<ui->horizontalSliderVRM->maximum()<<ui->horizontalSliderVRM->singleStep()<<ui->horizontalSliderVRM->pageStep()<<value;
     const int vrm_value = value;
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE,vrm_value);
     ui->lineEditVRM->setText(QString::number(vrm_value));
@@ -196,12 +200,3 @@ void FrameControl2::on_lineEditEBL_textChanged(const QString &arg1)
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_EBL_VALUE,ebl_value);
     ui->horizontalSlideEBL->setValue(ebl_value);
 }
-
-
-void FrameControl2::on_lineEditVRM_textChanged(const QString &arg1)
-{
-    const int vrm_value = arg1.toInt();
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE,vrm_value);
-    ui->horizontalSliderVRM->setValue(vrm_value);
-}
-
