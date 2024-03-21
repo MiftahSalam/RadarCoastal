@@ -76,5 +76,18 @@
         <source>Shutdown</source>
         <translation>Shutdown</translation>
     </message>
+    <name>FrameControl2</name>
+    <message>
+        <source>Gain %1</source>
+        <translation>Gain %1</translation>
+    </message>
+    <message>
+        <source>Sea %1</source>
+        <translation>Sea %1</translation>
+    </message>
+    <message>
+        <source>Rain</source>
+        <translation>Rain</translation>
+    </message>
 </context>
 </TS>
