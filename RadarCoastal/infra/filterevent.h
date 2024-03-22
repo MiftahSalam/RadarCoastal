@@ -13,7 +13,7 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event);
 
 signals:
-    void send_rightButtonClicked(const QPoint &p);
+    void send_rightButtonClicked(const QPoint &gp, const QPoint &p);
     void send_leftButtonClicked(const QPoint &p);
     void send_leftButtonReleased(const QPoint &p);
     void move_mouse(const QPoint &p);

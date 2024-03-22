@@ -14,8 +14,12 @@ PPIArpaObject::PPIArpaObject(QObject *parent): PPIObject(parent)
 }
 #endif
 
-void PPIArpaObject::Draw(QPainter* painter, const int &side)
+void PPIArpaObject::Draw(QPainter* painter, const int &side, const int &width, const int &height, const QPoint &off_center)
 {
+    Q_UNUSED(width)
+    Q_UNUSED(height)
+    Q_UNUSED(off_center)
+
 #ifndef DISPLAY_ONLY_MODE
     if(m_ppi_arpa->m_re->radarArpa->targetNumber > 0)
     {

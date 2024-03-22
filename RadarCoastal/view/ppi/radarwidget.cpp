@@ -42,6 +42,7 @@ RadarWidget::RadarWidget(QWidget *parent)
 
     connect(ppiEvent,&FilterEvent::send_leftButtonReleased,this,&RadarWidget::trigger_cursorLeftRelease);
     connect(ppiEvent,&FilterEvent::move_mouse,this,&RadarWidget::trigger_cursorMove);
+    connect(ppiEvent,&FilterEvent::send_rightButtonClicked,this,&RadarWidget::trigger_contextMenu);
     connect(timer, SIGNAL(timeout()), this, SLOT(timeOut()));
 
     drawObjects<<arpa<<gz<<gz1<<compass;
@@ -49,17 +50,47 @@ RadarWidget::RadarWidget(QWidget *parent)
     cur_radar_angle_double = 0.;
     cur_radar_angle = 0;
     initGrab = false;
+    m_center_offset = QPoint(0, 0); //tes offcenter
 
     timer->start(100);
 }
 
 void RadarWidget::trigger_cursorMove(const QPoint pos)
 {
-    emit signal_cursorMove(pos, width(), height());
+    QPoint center_point = m_center_point-m_center_offset; //tes offenter
+
+    qDebug()<<"pos"<<pos<<"center_point"<<center_point;
+
+    emit signal_cursorMove(pos, 2*center_point.x(), 2*center_point.y());
+
+//    emit signal_cursorMove(pos, width(), height());
 }
+
 void RadarWidget::trigger_cursorLeftRelease(const QPoint pos)
 {
-    emit signal_cursorLeftRelease(pos, width(), height());
+    QPoint center_point = m_center_point-m_center_offset; //tes offenter
+
+    emit signal_cursorLeftRelease(pos, 2*center_point.x(), 2*center_point.y());
+
+//    emit signal_cursorLeftRelease(pos, width(), height());
+}
+
+void RadarWidget::trigger_contextMenu(const QPoint &g_pos, const QPoint &pos)
+{
+    qDebug()<<Q_FUNC_INFO<<"pos"<<pos;
+    QMenu menu(this);
+
+    menu.addAction("Off Center",[this,pos](){
+        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_PPI_ENABLE_OFF_CENTER, true); //tes offcenter
+        this->m_center_offset = this->m_center_point-pos;
+    });
+    menu.addAction("Center",[this](){
+        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_PPI_ENABLE_OFF_CENTER, false); //tes offcenter
+        this->m_center_offset = QPoint(0,0);
+    });
+
+    menu.exec(g_pos);
+
 }
 
 void RadarWidget::timeOut()
@@ -70,30 +101,16 @@ void RadarWidget::timeOut()
 void RadarWidget::drawRings(QPainter *painter, const int &side)
 {
     Q_UNUSED(side)
-    double range = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
-    const quint8 unit = static_cast<quint8>(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
 
-    switch (unit) {
-    case 1:
-        range *= KM_TO_NM;
-        break;
-    default:
-        break;
+    const int ring_step = side/RING_COUNT;
+    const int ring_limit = side*2;
+    int ring_total =  ring_step;
+
+    while (ring_total < ring_limit) {
+        int ring_size =  ring_total*2;
+        painter->drawEllipse(-ring_total,-ring_total,ring_size,ring_size);
+        ring_total += ring_step;
     }
-
-    const qreal range_ring = range/RING_COUNT;
-
-    //    painter->setPen(QColor(255,255,0,100));
-    for(int i=0;i<RING_COUNT;i++)
-    {
-        int range_calc = static_cast<int>(Utils::DistanceFromCenterInPix(range_ring*(i+1),width(), height(), range)/1.);
-        //        qDebug()<<Q_FUNC_INFO<<"bufRng"<<bufRng;
-        //        qDebug()<<Q_FUNC_INFO<<"bufRng calc"<<range_calc;
-        painter->drawEllipse(-range_calc,-range_calc,range_calc*2,range_calc*2);
-        //        painter->drawEllipse(-bufRng/2,-bufRng/2,bufRng,bufRng);
-        //        bufRng += ringCount;
-    }
-
 }
 
 void RadarWidget::drawHM(QPainter *painter, const int &side, const bool& heading_up, const double& currentHeading)
@@ -153,6 +170,9 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     makeCurrent();
 
+    setupViewport(width(), height(), m_center_offset); //tes offcenter
+//    setupViewport(width(), height());
+
     const int preset_color = m_instance_cfg->getConfig(RadarEngine::VOLATILE_DISPLAY_PRESET_COLOR).toInt();
     /*
     if(preset_color == 0)
@@ -164,7 +184,7 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     QColor trans(Qt::transparent);
     glClearColor(trans.redF(), trans.greenF(), trans.blueF(), trans.alphaF());
 
-    setupViewport(width(), height());
+//    setupViewport(width(), height());
 
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -184,7 +204,16 @@ void RadarWidget::paintEvent(QPaintEvent *event)
         painter.setPen(QColor(0,255,0,255));
     else if(preset_color == 1)
         painter.setPen(QColor(255,255,0,255));
-    painter.translate(width()/2,height()/2);
+
+    //    painter.translate(width()/2,height()/4); //tes offenter
+//    painter.translate(m_center_offset); //tes offenter
+//    painter.translate(width()/4,height()/4); //tes offenter
+//    if(offset_enable) //off-center enabled
+//        painter.translate(m_center_offset); //tes offenter
+//    else
+//        painter.translate(width()/2,height()/2);
+    QPoint center_point = m_center_point-m_center_offset; //tes offenter
+    painter.translate(center_point); //tes offenter
 
     int side = region.width()/2;
     const bool show_heading_marker = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_HEADING_MARKER).toBool();
@@ -198,7 +227,7 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     foreach (PPIObject* obj, drawObjects)
     {
-        obj->Draw(&painter,side);
+        obj->Draw(&painter,side,width(),height(), center_point);
     }
 
     /*ring boundary*/
@@ -240,7 +269,11 @@ void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data
 
 void RadarWidget::resizeGL(int width, int height)
 {
-    setupViewport(width, height);
+    m_center_point = QPoint(width/2, height/2);
+//    m_center_offset = QPoint(0, 0); //tes offcenter
+//    m_center_offset = QPoint(width/3, -height/3); //tes offcenter
+//    bool offset_enable = RadarConfig::RadarConfig::getInstance("")->getConfig(RadarConfig::VOLATILE_PPI_ENABLE_OFF_CENTER).toBool(); //tes offcenter
+    setupViewport(width, height, m_center_offset);
 }
 void RadarWidget::setRectRegoin(QRect rect)
 {
@@ -263,13 +296,21 @@ void RadarWidget::initializeGL()
     m_re->radarDraw->Init(this);
 }
 
-void RadarWidget::setupViewport(int width, int height)
+void RadarWidget::setupViewport(const int &width, const int &height, const QPoint &offset)
 {
     int side = qMin(width, height); //scale 1
     //    int side = qMin(width, height)*2; //scale 2
     //    int side = qMin(width, height)/2; //scale 0.5
-    glViewport((width - side) / 2, (height - side) / 2, side, side);
+    //    glViewport(0, side / 4, side, side); //tes offcenter
+        bool offset_enabled = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_PPI_ENABLE_OFF_CENTER).toBool(); //tes offcenter
 
+        if(offset_enabled)
+            glViewport(-offset.x(), offset.y(), side, side); //tes offcenter
+        else
+            glViewport((width - side) / 2, (height - side) / 2, side, side);
+
+    //    glViewport(-side / 4, side / 4, side, side); //tes offcenter
+    //    glViewport((width - side) / 2, (height - side) / 2, side, side);
 }
 
 void RadarWidget::saveGLState()

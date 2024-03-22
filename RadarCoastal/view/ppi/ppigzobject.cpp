@@ -26,8 +26,12 @@ PPIGZObject::PPIGZObject(QObject *parent, QString id): PPIObject(parent), m_id(i
 
 }
 
-void PPIGZObject::Draw(QPainter* painter, const int &side)
+void PPIGZObject::Draw(QPainter* painter, const int &side, const int &width, const int &height, const QPoint &off_center)
 {
+    Q_UNUSED(width)
+    Q_UNUSED(height)
+    Q_UNUSED(off_center)
+
     const bool show_gz = RadarEngine::RadarConfig::getInstance("")->getConfig(shown_key).toBool();
     if(show_gz)
     {
@@ -110,6 +114,18 @@ void PPIGZObject::Draw(QPainter* painter, const int &side)
             int spanAngle;
 
             //        qDebug()<<inner_range_pix<<outer_range_pix<<side<<gz_sett.inner_range<<gz_sett.outer_range<<curRange;
+            //            if(offcenter_enabled)
+            //            {
+            //                inner_start_x += off_center.x();
+            //                inner_start_y += off_center.y();
+            //                outter_start_x += off_center.x();
+            //                outter_start_y += off_center.y();
+            //                inner_end_x += off_center.x();
+            //                inner_end_y += off_center.y();
+            //                outter_end_x += off_center.x();
+            //                outter_end_y += off_center.y();
+            //            }
+
             painter->drawLine(inner_start_x,inner_start_y,outter_start_x,outter_start_y);
             painter->drawLine(inner_end_x,inner_end_y,outter_end_x,outter_end_y);
 
