@@ -1,14 +1,21 @@
 #include "ppicompassobject.h"
 
+#include <qmath.h>
+
 PPICompassObject::PPICompassObject(QObject *parent): PPIObject(parent)
 {
 }
 
-void PPICompassObject::Draw(QPainter* painter, const int &side)
+void PPICompassObject::Draw(QPainter* painter, const int &side, const int &width, const int &height, const QPoint &off_center)
 {
+    QPoint center_point = QPoint(width/2,height/2);
+
     const bool show_compass = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_COMPASS).toBool();
     if(show_compass)
     {
+        painter->translate(-off_center);
+        painter->translate(center_point);
+
         const bool heading_up = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toInt();
         const double bearing = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
 
@@ -29,19 +36,6 @@ void PPICompassObject::Draw(QPainter* painter, const int &side)
         QString text;
         for(int j=0;j<12;j++)
         {
-            /*
-            brn = (j*30)+180;
-            brn = brn == 360 ? 0 : brn;
-
-            while(brn>360 || brn<0)
-            {
-                if(brn>360)
-                    brn -= 360;
-                if(brn<0)
-                    brn += 360;
-            }
-            */
-
             if(j<9)
                 brn = (j*30)+90;
             else
@@ -84,18 +78,75 @@ void PPICompassObject::Draw(QPainter* painter, const int &side)
             margin_a = 10;
             margin_b = 5;
 
-            if(j%15==0)
-                painter->drawLine(0,side,0,side-margin_a);
-            else
-                painter->drawLine(0,side,0,side-margin_b);
 
-            painter->rotate(2);
+            QPoint p1(-center_point+off_center);
+            //                QPoint p1(-off_center.x(),-off_center.y());
+            //            QPoint p1(-height/4,-height/4);
+            //            QPoint p1(0,-height/4);
+            QPoint p2(side*qCos(j*2*M_PI/180.),side*qSin(j*2*M_PI/180.));
+            QLineF line1(p1,p2);
+            QLineF line2;
+            //            QPoint p3 = line1.pointAt(0.95).toPoint();
+
+            line2.setP1(p2);
+            line2.setAngle(line1.angle());
+            //            line2.setLength(-10);
+            //            qDebug()<<Q_FUNC_INFO<<"j"<<j<<"p2"<<p2;
+            //            qDebug()<<Q_FUNC_INFO<<"line2"<<line2;
+
+            if(j%15==0)
+            {
+                line2.setLength(-margin_a);
+                painter->drawLine(line2);
+            }
+            //                painter->drawLine(p2,p3);
+            //                painter->drawLine(0,-side,p3.x(),p3.y());
+            //                painter->drawLine(0,-side,0,-side+margin_a);
+            //            painter->drawLine(0,side,0,side-margin_a);
+            else
+            {
+                line2.setLength(-margin_b);
+                painter->drawLine(line2);
+            }
+            //                painter->drawLine(p2,p3);
+            //                painter->drawLine(0,-side,p3.x(),p3.y());
+            //                painter->drawLine(0,-side,0,-side+margin_b);
+            //            painter->drawLine(0,side,0,side-margin_b);
         }
+
+        //        for(int j=0;j<180;j++)
+        //        {
+        //            margin_a = 10;
+        //            margin_b = 5;
+
+        //            if(j%15==0)
+        //                painter->drawLine(0,side,0,side-margin_a);
+        //            else
+        //                painter->drawLine(0,side,0,side-margin_b);
+
+        //            painter->rotate(2);
+        //        }
 
         if(heading_up)
             painter->rotate(bearing);
 
         painter->setPen(curPen);
-    }
 
+        painter->translate(-center_point); //tes offenter
+        painter->translate(off_center); //tes offcenter
+    }
 }
+
+QPoint PPICompassObject::calculateGradien(const QPoint &p1, const QPoint &p2)
+{
+    QLineF line1(p1,p2);
+//    float gradient = line1.dy()/line1.dx();
+//    float c = line1.y1()-(gradient*line1.x1());
+
+    // r2 =
+
+//    qDebug()<<Q_FUNC_INFO<<"dx"<<line1.dx()<<"dy"<<line1.dy()<<"gradient"<<gradient<<"c"<<c<<"angle"<<line1.angle()<<"point parameter"<<line1.pointAt(0.9);
+
+    return line1.pointAt(0.5).toPoint();
+}
+

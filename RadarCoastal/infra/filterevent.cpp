@@ -11,10 +11,10 @@ FilterEvent::FilterEvent(QObject *parent) : QObject(parent)
 bool FilterEvent::eventFilter(QObject *obj, QEvent *event)
 {
      if (event->type() == QEvent::ContextMenu) {
-        qDebug()<<Q_FUNC_INFO<<"contex menu";
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
+         QContextMenuEvent *cntxEvent = static_cast<QContextMenuEvent*> (event);
+ //        qDebug()<<Q_FUNC_INFO<<"contex menu. pos"<<cntxEvent->pos();
 
-        emit send_rightButtonClicked(mouseEvent->globalPos());
+         emit send_rightButtonClicked(cntxEvent->globalPos(), cntxEvent->pos());
         return true;
     }
     else if(event->type() == QEvent::MouseButtonPress){
