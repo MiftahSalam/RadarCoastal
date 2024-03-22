@@ -134,9 +134,17 @@ void RadarWidget::drawRingsVrm(QPainter *painter, const int curentVrm)
         break;
     }
 
-    painter->setPen(QColor(255,25,50,255));
+    QPen curPen = painter->pen();
+    QPen pen(QBrush(QColor(255,25,50,255)), curPen.width(), Qt::DashLine);
+    QVector<qreal> dashes;
+    qreal space = 10;
+    dashes << 5 << space << 5 << space;
+    pen.setDashPattern(dashes);
+
+    painter->setPen(pen);
     int range_calc = static_cast<int>(Utils::DistanceFromCenterInPix(curentVrm, width(), height(), curRange));
     painter->drawEllipse(-range_calc,-range_calc,range_calc*2,range_calc*2);
+    painter->setPen(curPen);
 }
 
 void RadarWidget::paintEvent(QPaintEvent *event)
