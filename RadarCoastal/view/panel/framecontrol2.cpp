@@ -46,7 +46,7 @@ void FrameControl2::initConfig()
     ui->checkBoxVRM->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_EBL_MARKER).toBool());
     ui->horizontalSlideEBL->setValue(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toInt());
     ui->horizontalSliderVRM->setValue(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toInt());
-    ui->lineEditEBL->setText(Utils::RangeDisplay(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_EBL_VALUE).toDouble(), Utils::ONE_PRECISION));
+    ui->lineEditEBL->setText(QString::number(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_EBL_VALUE).toDouble(), 'f', 1)+Utils::degChar);
     ui->lineEditVRM->setText(Utils::RangeDisplay(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toDouble(), Utils::ONE_PRECISION));
 }
 
@@ -184,9 +184,13 @@ void FrameControl2::on_checkBoxVRM_clicked(bool checked)
 
 void FrameControl2::on_horizontalSlideEBL_valueChanged(int value)
 {
-    const int ebl_value = value;
+    int ebl_value = value;
+    if (ebl_value >= 360) {
+        ebl_value = 0;
+        ui->horizontalSlideEBL->setValue(0);
+    }
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_EBL_VALUE,ebl_value);
-    ui->lineEditEBL->setText(QString::number(ebl_value));
+    ui->lineEditEBL->setText(QString::number(ebl_value)+Utils::degChar);
 }
 
 void FrameControl2::on_horizontalSliderVRM_valueChanged(int value)
@@ -195,12 +199,4 @@ void FrameControl2::on_horizontalSliderVRM_valueChanged(int value)
     const int vrm_value = value;
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE,vrm_value);
     ui->lineEditVRM->setText(Utils::RangeDisplay(static_cast<double>(vrm_value), Utils::ONE_PRECISION));
-}
-
-
-void FrameControl2::on_lineEditEBL_textChanged(const QString &arg1)
-{
-    const int ebl_value = arg1.toInt();
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_EBL_VALUE,ebl_value);
-    ui->horizontalSlideEBL->setValue(ebl_value);
 }

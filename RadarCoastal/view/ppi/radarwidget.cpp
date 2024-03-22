@@ -107,16 +107,20 @@ void RadarWidget::drawHM(QPainter *painter, const int &side, const bool& heading
     painter->rotate(90-baringan);
 }
 
-void RadarWidget::drawEbl(QPainter *painter, const int &side, const bool& heading_up, const double& curentEbl)
+void RadarWidget::drawEbl(QPainter *painter, const int &side, const double& curentEbl)
 {
-    double baringan = heading_up ? 0 : curentEbl;
-    painter->rotate(baringan-90);
-    painter->setPen(QColor(255,25,50,255));
-    //        painter.rotate(baringan-180);
-//    painter->setPen(QColor(255,255,0,255));
+    QPen curPen = painter->pen();
+    QPen pen(QBrush(QColor(255,25,50,255)), curPen.width(), Qt::DashLine);
+    QVector<qreal> dashes;
+    qreal space = 10;
+    dashes << 5 << space << 5 << space;
+    pen.setDashPattern(dashes);
+
+    painter->rotate(curentEbl-90);
+    painter->setPen(pen);
     painter->drawLine(0,0,side,0);
-    //        painter.rotate(180-baringan);
-    painter->rotate(90-baringan);
+    painter->rotate(90-curentEbl);
+    painter->setPen(curPen);
 }
 
 void RadarWidget::drawRingsVrm(QPainter *painter, const int curentVrm)
@@ -206,7 +210,7 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     /*
       EBL marker
     */
-    if(show_ebl_marker) drawEbl(&painter, side, heading_up, curentEbl);
+    if(show_ebl_marker) drawEbl(&painter, side, curentEbl);
 
     /*
       VRM marker

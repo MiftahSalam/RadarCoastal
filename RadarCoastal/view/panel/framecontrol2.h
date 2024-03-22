@@ -54,8 +54,6 @@ private slots:
 
     void on_horizontalSliderVRM_valueChanged(int value);
 
-    void on_lineEditEBL_textChanged(const QString &arg1);
-
 private:
     void initConfig();
 
