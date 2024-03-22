@@ -16,6 +16,8 @@ const int Utils::FIVE_PRECISION = 5;
 
 quint8 Utils::unit = 0;
 
+char Utils::degChar = static_cast<char>(176);
+
 QPointF Utils::PixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
 {
     QPoint screen_middle(0,0);

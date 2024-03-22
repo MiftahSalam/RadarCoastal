@@ -65,7 +65,7 @@ private:
     void drawHM(QPainter* painter, const int& side, const bool& heading_up, const double& currentHeading);
     void drawGZ(QPainter* painter);
     void drawRingsVrm(QPainter* painter, const int curentVrm);
-    void drawEbl(QPainter* painter, const int& side, const bool& heading_up, const double& curentEbl);
+    void drawEbl(QPainter* painter, const int& side, const double& curentEbl);
 
     void saveGLState();
     void restoreGLState();
