@@ -300,7 +300,7 @@ QDateTime Utils::TimeElapsed(qint64 elapsedSecond)
     return res;
 }
 
-QString Utils::RangeDisplay(double rng)
+QString Utils::RangeDisplay(double rng, int precision)
 {
     QString unit_str;
     QString rngStr;
@@ -325,7 +325,7 @@ QString Utils::RangeDisplay(double rng)
         default:
             break;
         }
-        rngStr = QString::number(rng,'f',1)+unit_str;
+        rngStr = QString::number(rng,'f',precision)+unit_str;
     }
     else
     {

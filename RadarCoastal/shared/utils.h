@@ -28,7 +28,7 @@ public:
     static QString TickToTime(quint8 tick);
     static QString TimeElapsedDisplay(qint64 elapsedSecond);
     static QDateTime TimeElapsed(qint64 elapsedSecond);
-    static QString RangeDisplay(double rng);
+    static QString RangeDisplay(double rng, int precision);
 };
 
 
