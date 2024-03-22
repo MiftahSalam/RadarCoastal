@@ -290,7 +290,7 @@
       <widget class="QCheckBox" name="checkBoxMTI">
        <property name="maximumSize">
         <size>
-         <width>76</width>
+         <width>55</width>
          <height>20</height>
         </size>
        </property>
@@ -336,7 +336,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>30</width>
+         <width>50</width>
          <height>16777215</height>
         </size>
        </property>
@@ -367,7 +367,7 @@
       <widget class="QCheckBox" name="checkBoxEBL">
        <property name="maximumSize">
         <size>
-         <width>76</width>
+         <width>55</width>
          <height>20</height>
         </size>
        </property>
@@ -416,7 +416,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>30</width>
+         <width>50</width>
          <height>16777215</height>
         </size>
        </property>
@@ -429,7 +429,7 @@
         <string>360</string>
        </property>
        <property name="maxLength">
-        <number>3</number>
+        <number>10</number>
        </property>
        <property name="frame">
         <bool>false</bool>
@@ -450,7 +450,7 @@
       <widget class="QCheckBox" name="checkBoxVRM">
        <property name="maximumSize">
         <size>
-         <width>76</width>
+         <width>55</width>
          <height>20</height>
         </size>
        </property>
@@ -505,7 +505,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>30</width>
+         <width>50</width>
          <height>16777215</height>
         </size>
        </property>
@@ -518,7 +518,7 @@
         <string>255</string>
        </property>
        <property name="maxLength">
-        <number>3</number>
+        <number>10</number>
        </property>
        <property name="frame">
         <bool>false</bool>
