@@ -1,4 +1,5 @@
 #include "framecontrol2.h"
+#include "shared/utils.h"
 #include "ui_framecontrol2.h"
 
 #include <QIntValidator>
@@ -41,8 +42,8 @@ void FrameControl2::initConfig()
     ui->checkBoxVRM->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_EBL_MARKER).toBool());
     ui->horizontalSlideEBL->setValue(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toInt());
     ui->horizontalSliderVRM->setValue(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toInt());
-    ui->lineEditEBL->setText(QString::number(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_EBL_VALUE).toInt()));
-    ui->lineEditVRM->setText(QString::number(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toInt()));
+    ui->lineEditEBL->setText(Utils::RangeDisplay(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_EBL_VALUE).toDouble()));
+    ui->lineEditVRM->setText(Utils::RangeDisplay(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toDouble()));
 }
 
 FrameControl2::~FrameControl2()
@@ -184,13 +185,12 @@ void FrameControl2::on_horizontalSlideEBL_valueChanged(int value)
     ui->lineEditEBL->setText(QString::number(ebl_value));
 }
 
-
 void FrameControl2::on_horizontalSliderVRM_valueChanged(int value)
 {
 //    qDebug()<<Q_FUNC_INFO<<ui->horizontalSliderVRM->maximum()<<ui->horizontalSliderVRM->singleStep()<<ui->horizontalSliderVRM->pageStep()<<value;
     const int vrm_value = value;
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE,vrm_value);
-    ui->lineEditVRM->setText(QString::number(vrm_value));
+    ui->lineEditVRM->setText(Utils::RangeDisplay(static_cast<double>(vrm_value)));
 }
 
 

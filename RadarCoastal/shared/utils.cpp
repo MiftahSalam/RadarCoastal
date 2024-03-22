@@ -299,3 +299,38 @@ QDateTime Utils::TimeElapsed(qint64 elapsedSecond)
 
     return res;
 }
+
+QString Utils::RangeDisplay(double rng)
+{
+    QString unit_str;
+    QString rngStr;
+    switch (unit) {
+    case 0:
+        break;
+    default:
+        break;
+    }
+
+    if(rng >= 1000.)
+    {
+        rng /= 1000.;
+        switch (unit) {
+        case 0:
+            unit_str = Utils::KmUnitStr;
+            break;
+        case 1:
+            rng *= KM_TO_NM;
+            unit_str = Utils::NMUnitStr;
+            break;
+        default:
+            break;
+        }
+        rngStr = QString::number(rng,'f',1)+unit_str;
+    }
+    else
+    {
+        rngStr = QString::number(static_cast<int>(rng))+Utils::MtrUnitStr;
+    }
+
+    return rngStr;
+}
