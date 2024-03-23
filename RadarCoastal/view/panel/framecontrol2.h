@@ -46,6 +46,14 @@ private slots:
 
     void on_horizontalSliderMTI_valueChanged(int value);
 
+    void on_checkBoxEBL_clicked(bool checked);
+
+    void on_checkBoxVRM_clicked(bool checked);
+
+    void on_horizontalSlideEBL_valueChanged(int value);
+
+    void on_horizontalSliderVRM_valueChanged(int value);
+
 private:
     void initConfig();
 

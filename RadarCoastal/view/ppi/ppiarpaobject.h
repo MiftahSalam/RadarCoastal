@@ -20,7 +20,7 @@ public:
     Track* m_track;
 #endif
 
-    void Draw(QPainter* painter, const int &side) override;
+    void Draw(QPainter* painter, const int &side, const int &width, const int &height, const QPoint &off_center) override;
 
 };
 
