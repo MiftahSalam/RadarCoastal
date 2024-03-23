@@ -13,7 +13,10 @@ class PPICompassObject : public PPIObject
 public:
     PPICompassObject(QObject* parent = nullptr);
 
-    void Draw(QPainter* painter, const int &side) override;
+    void Draw(QPainter* painter, const int &side, const int &width, const int &height, const QPoint &off_center) override;
+
+private:
+    QPoint calculateGradien(const QPoint &p1, const QPoint &p2);
 };
 
 #endif // PPICOMPASSOBJECT_H

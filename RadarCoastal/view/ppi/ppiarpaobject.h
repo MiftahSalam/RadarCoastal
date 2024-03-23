@@ -10,7 +10,7 @@ class PPIArpaObject : public PPIObject
 public:
     PPIArpaObject(QObject* parent = nullptr, PPIArpa* arpa = nullptr);
 
-    void Draw(QPainter* painter, const int &side) override;
+    void Draw(QPainter* painter, const int &side, const int &width, const int &height, const QPoint &off_center) override;
 
     PPIArpa* m_ppi_arpa;
 };

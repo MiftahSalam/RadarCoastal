@@ -16,6 +16,8 @@ const int Utils::FIVE_PRECISION = 5;
 
 quint8 Utils::unit = 0;
 
+char Utils::degChar = static_cast<char>(176);
+
 QPointF Utils::PixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
 {
     QPoint screen_middle(0,0);
@@ -298,4 +300,39 @@ QDateTime Utils::TimeElapsed(qint64 elapsedSecond)
     res.setTime(QTime(dh, dmin, ds));
 
     return res;
+}
+
+QString Utils::RangeDisplay(double rng, int precision)
+{
+    QString unit_str;
+    QString rngStr;
+    switch (unit) {
+    case 0:
+        break;
+    default:
+        break;
+    }
+
+    if(rng >= 1000.)
+    {
+        rng /= 1000.;
+        switch (unit) {
+        case 0:
+            unit_str = Utils::KmUnitStr;
+            break;
+        case 1:
+            rng *= KM_TO_NM;
+            unit_str = Utils::NMUnitStr;
+            break;
+        default:
+            break;
+        }
+        rngStr = QString::number(rng,'f',precision)+unit_str;
+    }
+    else
+    {
+        rngStr = QString::number(static_cast<int>(rng))+Utils::MtrUnitStr;
+    }
+
+    return rngStr;
 }

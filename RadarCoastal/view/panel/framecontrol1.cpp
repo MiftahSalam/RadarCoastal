@@ -31,8 +31,13 @@ void FrameControl1::initConfig()
 
 void FrameControl1::handleRingRangeChange()
 {
-    double rng = static_cast<double>(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt())/1000.;
+    double rng = static_cast<double>(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt());
     double rng_ring = rng/RING_COUNT;
+
+    ui->labelRange->setText(Utils::RangeDisplay(rng, Utils::ONE_PRECISION));
+    ringValue = Utils::RangeDisplay(rng_ring, Utils::ONE_PRECISION);
+
+    /*
     QString unit_str;
 
     switch (Utils::unit) {
@@ -78,6 +83,7 @@ void FrameControl1::handleRingRangeChange()
         ringValue = QString::number(rng_ring,'f',1)+unit_str;
     }
 
+    */
     if(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool())
         ui->labelRingRange->setText(tr("Rings %1").arg(ringValue));
 }
