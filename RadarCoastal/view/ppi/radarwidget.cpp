@@ -15,6 +15,13 @@
 #include "view/ppi/ppicompassobject.h"
 #include "radarwidget.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, RadarWidget)
+#else
+#include <QDebug>
+#endif
+
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE 0x809D
 #endif
@@ -86,7 +93,11 @@ void RadarWidget::trigger_cursorMove(const QPoint pos)
 {
     QPoint center_point = m_center_point - m_center_offset; // tes offenter
 
+#ifdef USE_LOG4QT
+    logger()->trace() << "pos" << pos.x() << pos.y() << "center_point" << center_point.x() << center_point.y();
+#else
     qDebug() << "pos" << pos << "center_point" << center_point;
+#endif
 
     emit signal_cursorMove(pos, 2 * center_point.x(), 2 * center_point.y());
 
@@ -104,7 +115,11 @@ void RadarWidget::trigger_cursorLeftRelease(const QPoint pos)
 
 void RadarWidget::trigger_contextMenu(const QPoint &g_pos, const QPoint &pos)
 {
+#ifdef USE_LOG4QT
+    logger()->trace() << Q_FUNC_INFO << "pos" << pos.x() << pos.y();
+#else
     qDebug() << Q_FUNC_INFO << "pos" << pos;
+#endif
     QMenu menu(this);
 
     menu.addAction("Off Center", [this, pos]()
@@ -222,9 +237,10 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     if (echoSender->m_re->m_radar_capture->isStart() && echoSender->m_re->m_radar_capture->pendingGrabAvailable())
     {
-        qDebug() << Q_FUNC_INFO << "gl format rgba" << format().rgba();
-        qDebug() << Q_FUNC_INFO << "gl format alpha" << format().alpha();
-
+#ifdef USE_LOG4QT
+        logger()->trace() << Q_FUNC_INFO << "gl format rgba" << format().rgba();
+        logger()->trace() << Q_FUNC_INFO << "gl format alpha" << format().alpha();
+#endif
         auto echo = grabFrameBuffer(true);
         //        auto echo = echoSender->m_re->m_radar_capture->readPixel(width(), height());
 
@@ -318,7 +334,9 @@ void RadarWidget::trigger_captureFinish()
 
 void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data, size_t len)
 {
-    //    qDebug()<<Q_FUNC_INFO<<angle;
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<angle;
+#endif
     cur_radar_angle_double = SCALE_RAW_TO_DEGREES2048(angle);
     cur_radar_angle = angle;
 

@@ -4,9 +4,20 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, SiteDataSender)
+#else
+#include <QDebug>
+#endif
+
 SiteDataSender::SiteDataSender(QObject *parent) : QObject(parent)
 {
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO;
+#else
     qDebug()<<Q_FUNC_INFO;
+#endif
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
 
     initConfigWS();
@@ -24,15 +35,23 @@ void SiteDataSender::initConfigWS()
 
     if(config_ws_str_list.size() != 3)
     {
+#ifdef USE_LOG4QT
+    logger()->fatal()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
+#else
         qDebug()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
         exit(1);
+#endif
     }
 
     QStringList config_ws_str_list$ = config_ws_str.split("$");
     if(config_ws_str_list$.size() != 2)
     {
+#ifdef USE_LOG4QT
+    logger()->fatal()<<Q_FUNC_INFO<<"invalid config ws site period"<<config_ws_str;
+#else
         qDebug()<<Q_FUNC_INFO<<"invalid config ws site period"<<config_ws_str;
         exit(1);
+#endif
     }
 
     bool ok;
@@ -47,7 +66,9 @@ void SiteDataSender::initConfigWS()
 
 void SiteDataSender::triggerConfigChange(const QString key, const QVariant val)
 {
-//    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val.toString();
+#endif
     if(key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_WS) //todo use config
     {
         m_stream_ws->SetConfig(val.toString());

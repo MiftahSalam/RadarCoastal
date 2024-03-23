@@ -1,6 +1,11 @@
 #include "usecase/alarm/alarmmanager.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, AlarmManager)
+#else
 #include <QDebug>
+#endif
 
 AlarmManager* AlarmManager::m_alarm_manager{nullptr};
 RadarEngine::RadarEngine* AlarmManager::m_re{nullptr};
@@ -45,7 +50,11 @@ void AlarmManager::Confirm(const QString id)
 
 void AlarmManager::TriggerAlarm(const QString id, const QString message)
 {
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<id<<message;
+#else
     qDebug()<<Q_FUNC_INFO<<id<<message;
+#endif
 
     m_no_alarm_count = 0;
 

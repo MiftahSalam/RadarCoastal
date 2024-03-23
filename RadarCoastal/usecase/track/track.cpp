@@ -1,5 +1,12 @@
 #include "track.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, Track)
+#else
+#include <QDebug>
+#endif
+
 #define MAX_UPDATE_NUMBER 2
 
 Track* Track::m_track{nullptr};
@@ -50,7 +57,11 @@ QStandardItemModel* Track::GetModelView() const
 
 void Track::updateManyTarget(const int updateCount)
 {
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO;
+#else
     qDebug()<<Q_FUNC_INFO;
+#endif
     if(m_instance_re->radarArpa->targetNumber > 0)
     {
         int num_limit = updateCount;
@@ -67,9 +78,15 @@ void Track::updateManyTarget(const int updateCount)
             m_cur_arpa_id_count++;
             num_limit--;
         }
+#ifdef USE_LOG4QT
+        for (auto trk : modelList) {
+            logger()->trace()<<Q_FUNC_INFO<<"id"<<trk->id<<"ts"<<trk->timestamp;
+        }
+#else
         for (auto trk : modelList) {
             qDebug()<<Q_FUNC_INFO<<"id"<<trk->id<<"ts"<<trk->timestamp;
         }
+#endif
         if (modelList.size() > 0) m_arpa_sender->SendManyData(modelList);
 
         if(m_cur_arpa_id_count >= m_instance_re->radarArpa->targetNumber)
@@ -79,7 +96,11 @@ void Track::updateManyTarget(const int updateCount)
 
 void Track::updateAllTarget()
 {
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO;
+#else
     qDebug()<<Q_FUNC_INFO;
+#endif
     if(m_instance_re->radarArpa->targetNumber > 0)
     {
         QList<TrackModel*> modelList;
@@ -103,7 +124,11 @@ void Track::updateAllTarget()
 
 void Track::updateOneTarget()
 {
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO;
+#else
     qDebug()<<Q_FUNC_INFO;
+#endif
     if(m_instance_re->radarArpa->targetNumber > 0)
     {
         int num_limit = 1;
@@ -223,7 +248,11 @@ void Track::timerTimeout()
 
 void Track::trigger_LostTarget(int id)
 {
+#ifdef USE_LOG4QT
+    logger()->info()<<Q_FUNC_INFO<<id;
+#else
     qDebug()<<Q_FUNC_INFO<<id;
+#endif
 
     m_track_repo->Remove(id);
     m_model_view->Remove(id);
@@ -235,8 +264,12 @@ void Track::initCfg()
     QStringList config_ws_str_list$ = config_ws_str.split("$");
     if(config_ws_str_list$.size() != 2)
     {
+#ifdef USE_LOG4QT
+        logger()->fatal()<<Q_FUNC_INFO<<"invalid config ws arpa max size"<<config_ws_str;
+#else
         qDebug()<<Q_FUNC_INFO<<"invalid config ws arpa max size"<<config_ws_str;
         exit(1);
+#endif
     }
 
     bool ok;

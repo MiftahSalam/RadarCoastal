@@ -7,6 +7,13 @@
 #include <QMessageBox>
 #include <QFile>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameControl3)
+#else
+#include <QDebug>
+#endif
+
 FrameControl3::FrameControl3(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameControl3)
@@ -84,7 +91,11 @@ void FrameControl3::on_comboBoxDisplayMode_currentIndexChanged(int index)
 
     if( styleFile.open( QFile::ReadOnly ) )
     {
-        qDebug() << "loading stylesheet file...";
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<< "loading stylesheet file...";
+#else
+    qDebug()<<Q_FUNC_INFO<< "loading stylesheet file...";
+#endif
         style = QLatin1String( styleFile.readAll() );
         qApp->setStyleSheet(style);
     }
@@ -104,8 +115,10 @@ void FrameControl3::on_comboBoxDisplayUnit_currentIndexChanged(int index)
     const int cur_range = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
     int cur_zoom_lvl = distanceList.indexOf(cur_range);
 
+#ifndef USE_LOG4QT
     qDebug()<<Q_FUNC_INFO<<"distanceList"<<distanceList;
     qDebug()<<Q_FUNC_INFO<<"distanceListNautical"<<distanceListNautical;
+#endif
 
     switch (prev_unit_idx) {
     case 0:

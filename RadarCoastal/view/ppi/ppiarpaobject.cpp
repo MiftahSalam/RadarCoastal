@@ -1,6 +1,13 @@
 #include "ppiarpaobject.h"
 #include "qmath.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, PPIArpaObject)
+#else
+#include <QDebug>
+#endif
+
 PPIArpaObject::PPIArpaObject(QObject *parent, PPIArpa *arpa) : PPIObject(parent)
 {
     m_ppi_arpa = arpa;
@@ -71,11 +78,17 @@ void PPIArpaObject::Draw(QPainter *painter, const int &side, const int &width, c
                               Qt::AlignCenter | Qt::TextWordWrap, target_text);
         }
 
+#ifdef USE_LOG4QT
+        for (int i = 0; i < m_ppi_arpa->m_re->radarArpa->targetNumber; i++)
+        {
+            logger()->trace()<<Q_FUNC_INFO<<"target"<<i<<m_ppi_arpa->m_re->radarArpa->targets[i];
+        }
+#else
         for (int i = 0; i < m_ppi_arpa->m_re->radarArpa->targetNumber; i++)
         {
             //            qDebug()<<Q_FUNC_INFO<<"target"<<i<<m_re->radarArpa->m_target[i]->m_position.lat<<m_re->radarArpa->m_target[i]->m_position.lon<<m_re->radarArpa->m_target[i]->m_speed_kn;
         }
-
+#endif
         painter->setPen(curPen);
     }
 }

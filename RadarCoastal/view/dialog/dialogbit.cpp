@@ -7,6 +7,13 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, DialogBIT)
+#else
+#include <QDebug>
+#endif
+
 DialogBIT::DialogBIT(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogBIT)
@@ -102,7 +109,11 @@ void DialogBIT::on_pushButtonBITNav_clicked()
     auto status_gps = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt();
     auto status_hdt = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt();
 
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<status_gps<<status_hdt;
+#else
     qDebug()<<Q_FUNC_INFO<<status_gps<<status_hdt;
+#endif
     switch (status_gps) {
     case 0:
     {

@@ -2,6 +2,13 @@
 #include "framestatus.h"
 #include "ui_framestatus.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameStatus)
+#else
+#include <QDebug>
+#endif
+
 FrameStatus::FrameStatus(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameStatus)
@@ -21,7 +28,11 @@ FrameStatus::FrameStatus(QWidget *parent) :
 
 void FrameStatus::trigger_Alarm(const QString id, const QString msg)
 {
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<msg;
+#else
     qDebug()<<Q_FUNC_INFO<<msg;
+#endif
 
     if(id == "No Alarm")
     {
@@ -79,7 +90,11 @@ void FrameStatus::updateRadarStatus(const RadarEngine::RadarState status)
 
 void FrameStatus::updateNavStatus(const int status)
 {
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<status;
+#else
     qDebug()<<Q_FUNC_INFO<<status;
+#endif
     switch (status) {
     case 0:
         ui->labelNavStatus->setText("Offline");
@@ -121,7 +136,11 @@ FrameStatus::~FrameStatus()
 void FrameStatus::on_alarmStatus_clicked(const QPoint &p)
 {
     Q_UNUSED(p)
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO;
+#else
     qDebug()<<Q_FUNC_INFO;
+#endif
     m_alarm_manager->Confirm(ui->labelAlarmStatus->text());
 }
 

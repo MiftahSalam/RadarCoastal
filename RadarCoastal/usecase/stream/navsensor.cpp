@@ -5,9 +5,20 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, NavSensor)
+#else
+#include <QDebug>
+#endif
+
 NavSensor::NavSensor(QObject *parent) : QObject(parent)
 {
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO;
+#else
     qDebug()<<Q_FUNC_INFO;
+#endif
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
 
     initConfigMqtt();
@@ -26,8 +37,12 @@ void NavSensor::initConfigMqtt()
 
     if(nav_config_str_list.size() != 3)
     {
+#ifdef USE_LOG4QT
+        logger()->fatal()<<Q_FUNC_INFO<<"invalid config mqtt"<<nav_config_str;
+#else
         qDebug()<<Q_FUNC_INFO<<"invalid config mqtt"<<nav_config_str;
         exit(1);
+#endif
     }
 
     bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
@@ -47,7 +62,10 @@ void NavSensor::initConfigMqtt()
 
 void NavSensor::triggerConfigChange(const QString key, const QVariant val)
 {
-//    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
+    //    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val.toString();
+#endif
     if(key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG)
     {
         m_stream_mqtt->SetConfig(val.toString());
@@ -61,7 +79,11 @@ void NavSensor::triggerConfigChange(const QString key, const QVariant val)
 
             if(nav_config_str_list.size() != 3)
             {
+#ifdef USE_LOG4QT
+                logger()->warn()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
+#else
                 qDebug()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
+#endif
                 return;
             }
 
@@ -75,7 +97,11 @@ void NavSensor::triggerConfigChange(const QString key, const QVariant val)
 
             if(nav_config_str_list.size() != 3)
             {
+#ifdef USE_LOG4QT
+                logger()->warn()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
+#else
                 qDebug()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
+#endif
                 return;
             }
 
@@ -140,67 +166,92 @@ void NavSensor::UpdateStatus()
 
 void NavSensor::triggerReceivedData(const QString data)
 {
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<"data"<<data;
+#else
     qDebug()<<Q_FUNC_INFO<<data;
+#endif
     QString msg = data;
     if(msg.contains("gps:") )
-        {
-            m_no_osd_count = 0;
+    {
+        m_no_osd_count = 0;
 
-            qDebug()<<Q_FUNC_INFO<<"osd"<<msg.remove("gps");
-            m_append_data_osd.append(msg);
-
-            int index_hdr = m_append_data_osd.indexOf("?");
-            if(index_hdr >= 0)
-            {
-                int index_end = m_append_data_osd.indexOf("!");
-                if(index_end >= 0)
-                {
-                    if(index_end > index_hdr)
-                    {
-                        //?-6.939176#107.632770#31!
-                        m_append_data_osd = m_append_data_osd.mid(index_hdr,index_end-index_hdr);
-                        qDebug()<<Q_FUNC_INFO<<"filter"<<m_append_data_osd.remove("!").remove("?").remove("\r").remove("\n");
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
-                        QStringList msg_list = m_append_data_osd.split("#",QString::SkipEmptyParts);
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<"osd"<<msg.remove("gps");
 #else
-                        QStringList msg_list = m_append_data_osd.split("#",QString::SkipEmptyParts);
+        qDebug()<<Q_FUNC_INFO<<"osd"<<msg.remove("gps");
+#endif
+        m_append_data_osd.append(msg);
+
+        int index_hdr = m_append_data_osd.indexOf("?");
+        if(index_hdr >= 0)
+        {
+            int index_end = m_append_data_osd.indexOf("!");
+            if(index_end >= 0)
+            {
+                if(index_end > index_hdr)
+                {
+                    //?-6.939176#107.632770#31!
+                    m_append_data_osd = m_append_data_osd.mid(index_hdr,index_end-index_hdr);
+#ifdef USE_LOG4QT
+                    logger()->trace()<<Q_FUNC_INFO<<"filter"<<m_append_data_osd.remove("!").remove("?").remove("\r").remove("\n");
+#else
+                    qDebug()<<Q_FUNC_INFO<<"filter"<<m_append_data_osd.remove("!").remove("?").remove("\r").remove("\n");
 #endif
 
-                        if(msg_list.size() == 3)
-                        {
-                            if(isGPSDataValid(msg_list.at(0),msg_list.at(1)))
-                            {
-                                m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE,msg_list.at(0).toDouble());
-                                m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE,msg_list.at(1).toDouble());
-                                m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 3); //data valid
-                            }
-                            else m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
+#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
+                    QStringList msg_list = m_append_data_osd.split("#",QString::SkipEmptyParts);
+#else
+                    QStringList msg_list = m_append_data_osd.split("#",QString::SkipEmptyParts);
+#endif
 
-                            if(isHDGDataValid(msg_list.at(2)))
-                            {
-                                m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING,msg_list.at(2).toDouble());
-                                m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 3); //data valid
-                            }
-                            else m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
-                        }
-                        else
+                    if(msg_list.size() == 3)
+                    {
+                        if(isGPSDataValid(msg_list.at(0),msg_list.at(1)))
                         {
-                            qDebug()<<Q_FUNC_INFO<<"osd invalid";
-                            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
-                            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
+                            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE,msg_list.at(0).toDouble());
+                            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE,msg_list.at(1).toDouble());
+                            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 3); //data valid
                         }
+                        else m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
 
-                        m_append_data_osd.clear();
+                        if(isHDGDataValid(msg_list.at(2)))
+                        {
+                            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING,msg_list.at(2).toDouble());
+                            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 3); //data valid
+                        }
+                        else m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
                     }
                     else
                     {
-                        m_append_data_osd.remove(0,index_hdr);
+#ifdef USE_LOG4QT
+                        logger()->warn()<<Q_FUNC_INFO<<"osd invalid";
+#else
+                        qDebug()<<Q_FUNC_INFO<<"osd invalid";
+#endif
+                        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
+                        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
                     }
+
+                    m_append_data_osd.clear();
                 }
-                qDebug()<<Q_FUNC_INFO<<index_end;
+                else
+                {
+                    m_append_data_osd.remove(0,index_hdr);
+                }
             }
-            qDebug()<<Q_FUNC_INFO<<index_hdr;
-        }}
+#ifdef USE_LOG4QT
+            logger()->trace()<<Q_FUNC_INFO<<"index_end"<<index_end;
+#else
+            qDebug()<<Q_FUNC_INFO<<index_end;
+#endif
+        }
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<"index_hdr"<<index_hdr;
+#else
+        qDebug()<<Q_FUNC_INFO<<index_hdr;
+#endif
+    }}
 
 void NavSensor::Reconnect()
 {

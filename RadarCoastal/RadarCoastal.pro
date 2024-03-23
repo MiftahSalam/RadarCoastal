@@ -24,6 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 #CONFIG += QMQTT_WEBSOCKETS
 DEFINES += SAVE_CAPTURE
+DEFINES += USE_LOG4QT
 
 #MODE += DEBUG_MODE
 
@@ -147,6 +148,12 @@ unix: {
     INCLUDEPATH += /usr/include/hypernet-2024
     DEPENDPATH += /usr/include/hypernet-2024
 
+    contains(DEFINES, USE_LOG4QT) {
+        message(Using log4qt...)
+        LIBS += -L/usr/local/log4qt/lib/ -llog4qt
+        INCLUDEPATH += /usr/local/log4qt/include
+        DEPENDPATH += /usr/local/log4qt/include
+    }
 } else:win32 {
     LIBS += -lOpenGL32
 
@@ -154,6 +161,14 @@ unix: {
     DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\hypernet\v2
 #    INCLUDEPATH +=C:\Users\ms_tensai\RadarEngineLib\include\2024\hypernet\v2
 #    DEPENDPATH += C:\Users\ms_tensai\RadarEngineLib\lib\include\2024\hypernet\v2
+
+    contains(DEFINES, USE_LOG4QT) {
+        message(Using log4qt...)
+        LIBS += -LC:\log4qt\lib -llog4qt
+        INCLUDEPATH += C:\log4qt\include
+        DEPENDPATH += C:\log4qt\include
+    }
+
 }
 
 win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\hypernet\v2 -lRadarEngine
