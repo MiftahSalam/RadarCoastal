@@ -6,8 +6,8 @@
 
 struct NavDataModel
 {
-    quint8 status_gps;
-    quint8 status_hdg;
+    qint8 status_gps;
+    qint8 status_hdg;
     long long timestamp;
     double lat;
     double lon;
@@ -16,6 +16,8 @@ struct NavDataModel
     NavDataModel()
     {
         timestamp = -1;
+        status_gps = -1;
+        status_hdg = -1;
     }
 };
 

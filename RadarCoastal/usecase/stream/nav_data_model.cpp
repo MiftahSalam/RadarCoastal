@@ -157,30 +157,31 @@ NavDataModel NavDataDecoderNMEA::decode()
                             qDebug()<<Q_FUNC_INFO<<" invalid latitude: "<<msg_list.at(2);
     #endif
                             result.status_gps = 2; //data not valid
-
-//                            return result;
                         }
-                        result.lon = msg_list.at(2).toDouble(&ok);
-                        if(!ok)
+                        else
                         {
-    #ifdef USE_LOG4QT
-                            logger()->warn()<<Q_FUNC_INFO<<" invalid longitude: "<<msg_list.at(2);
-    #else
-                            qDebug()<<Q_FUNC_INFO<<" invalid latitude: "<<msg_list.at(2);
-    #endif
-                            result.status_gps = 2; //data not valid
+                            result.lon = msg_list.at(4).toDouble(&ok);
+                            if(!ok)
+                            {
+        #ifdef USE_LOG4QT
+                                logger()->warn()<<Q_FUNC_INFO<<" invalid longitude: "<<msg_list.at(4);
+        #else
+                                qDebug()<<Q_FUNC_INFO<<" invalid latitude: "<<msg_list.at(2);
+        #endif
+                                result.status_gps = 2; //data not valid
+                            }
+                            else
+                            {
+                                result.status_gps = 3; //data valid
 
-//                            return result;
+                                result.lat /= 100.;
+                                result.lon /= 100.;
+                                result.status_gps = 3; //data valid
+
+                                if(msg_list.at(3) == "S") result.lat = -result.lat;
+                                if(msg_list.at(5) == "W") result.lon = -result.lon;
+                            }
                         }
-
-                        result.lat /= 100.;
-                        result.lon /= 100.;
-                        result.status_gps = 3; //data valid
-
-                        if(msg_list.at(3) == "S") result.lat = -result.lat;
-                        if(msg_list.at(5) == "W") result.lon = -result.lon;
-
-//                        return result;
                     }
                     else if(m_append_data_osd.contains("HDT") && msg_list.size() > 2)
                     {
@@ -195,12 +196,7 @@ NavDataModel NavDataDecoderNMEA::decode()
                             qDebug()<<Q_FUNC_INFO<<" invalid heading: "<<msg_list.at(2);
     #endif
                             result.status_hdg = 2; //data not valid
-
-//                            return result;
-                        }
-                        result.status_hdg = 3; //data valid
-
-//                        return result;
+                        } else result.status_hdg = 3; //data valid
                     }
                     else
                     {
