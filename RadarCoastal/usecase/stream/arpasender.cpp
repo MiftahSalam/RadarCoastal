@@ -6,6 +6,13 @@
 #include "qjsonobject.h"
 #include "shared/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, ArpaSender)
+#else
+#include <QDebug>
+#endif
+
 ArpaSenderDecoder::ArpaSenderDecoder(long long ts,
                                      int id,
                                      double lat,
@@ -196,7 +203,7 @@ QString ArpaSenderDecoderNMEA::decode()
         QString brn_str = QString::number(m->brn,'f',Utils::ONE_PRECISION);
         QString spd_str = QString::number(m->spd,'f',Utils::ONE_PRECISION);
         QString crs_str = QString::number(m->crs,'f',Utils::ONE_PRECISION);
-    //    QString alt_str =  QString::number(m_data.alt,'f',Utils::ONE_PRECISION);
+        //    QString alt_str =  QString::number(m_data.alt,'f',Utils::ONE_PRECISION);
         QString populate = id_str+"#"+rng_str+"#"+brn_str+"#"+lat_str+"#"+lon_str+"#"+spd_str+"#"+crs_str+"\r\n";
 
         //    lat_str.replace(".",",");
@@ -214,7 +221,11 @@ QString ArpaSenderDecoderNMEA::decode()
 ArpaSender::ArpaSender(QObject *parent)
     : QObject{parent}
 {
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO;
+#else
     qDebug()<<Q_FUNC_INFO;
+#endif
 
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
 
@@ -285,14 +296,14 @@ void ArpaSender::SendOneData(TrackModel data)
 
 void ArpaSender::SendOneData(long long ts,
                              int id,
-                            double lat,
-                            double lon,
-                            double alt,
-                            double rng,
-                            double brn,
-                            double spd,
-                            double crs
-                          )
+                             double lat,
+                             double lon,
+                             double alt,
+                             double rng,
+                             double brn,
+                             double spd,
+                             double crs
+                             )
 {
     QPointF gpsCorrection = Utils::GpsAbsolute(lat,lon);
 
@@ -328,8 +339,12 @@ void ArpaSender::initConfigWS()
 
     if(config_ws_str_list.size() != 3)
     {
+#ifdef USE_LOG4QT
+        logger()->fatal()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
+#else
         qDebug()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
         exit(1);
+#endif
     }
 
     m_stream_ws = new Stream(this,config_ws_str);
@@ -342,8 +357,12 @@ void ArpaSender::initConfigMqtt()
 
     if(config_str_list.size() != 3)
     {
+#ifdef USE_LOG4QT
+        logger()->fatal()<<Q_FUNC_INFO<<"invalid config mqtt"<<config_str;
+#else
         qDebug()<<Q_FUNC_INFO<<"invalid config mqtt"<<config_str;
         exit(1);
+#endif
     }
 
     m_topic = config_str_list.last();
@@ -355,6 +374,9 @@ void ArpaSender::initConfigMqtt()
 void ArpaSender::triggerConfigChange(const QString key, const QVariant val)
 {
     //    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val.toString();
+#endif
     if(key == RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG)
     {
         m_stream_mqtt->SetConfig(val.toString());

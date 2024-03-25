@@ -1,5 +1,12 @@
 #include "mqttdevicewrapper.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, MqttDeviceWrapper)
+#else
+#include <QDebug>
+#endif
+
 QMap<QString, MqttDeviceWrapper*> MqttDeviceWrapper::m_wrappers;
 
 MqttDeviceWrapper::MqttDeviceWrapper(QObject *parent):
@@ -8,7 +15,11 @@ MqttDeviceWrapper::MqttDeviceWrapper(QObject *parent):
     m_publisher = nullptr;
     m_subsciber = nullptr;
 
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO;
+#else
     qDebug()<<Q_FUNC_INFO;
+#endif
 }
 
 MqttDeviceWrapper::~MqttDeviceWrapper()
@@ -19,7 +30,11 @@ MqttDeviceWrapper::~MqttDeviceWrapper()
 }
 MqttDeviceWrapper* MqttDeviceWrapper::GetInstance(const QString config)
 {
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<"config"<<config;
+#else
     qDebug()<<Q_FUNC_INFO<<"config"<<config;
+#endif
     if(!m_wrappers.contains(config))
     {
         MqttDeviceWrapper* wrapper = new MqttDeviceWrapper(nullptr);
@@ -62,7 +77,11 @@ bool MqttDeviceWrapper::InitConfig(const QString config)
         m_subsciber = new Subscriber(this,m_mqttConfig.host,m_mqttConfig.port, m_defaultTopic);
         connect(m_subsciber,&Subscriber::SignalOnReceived, this, &MqttDeviceWrapper::receiveData);
     }
+#ifdef USE_LOG4QT
+    logger()->warn()<<Q_FUNC_INFO<<"invalid config"<<config;
+#else
     else qDebug()<<Q_FUNC_INFO<<"invalid config"<<config;
+#endif
 
     return ret_val;
 }
@@ -145,7 +164,12 @@ void MqttDeviceWrapper::Write(const QString data)
     {
         QMQTT::Message message(m_idCounter,format.at(0),format.at(1).toUtf8());
         m_publisher->PublishData(message);
-    } else qDebug()<<Q_FUNC_INFO<<"invalid mqtt data"<<data;
+    }
+#ifdef USE_LOG4QT
+    logger()->warn()<<Q_FUNC_INFO<<"invalid mqtt data"<<data;
+#else
+    else qDebug()<<Q_FUNC_INFO<<"invalid mqtt data"<<data;
+#endif
 }
 
 Subscriber::Subscriber(QObject *parent, const QHostAddress& host, const quint16 port, QString topic) :
@@ -175,7 +199,11 @@ MqttClient::MqttClient(QObject *parent,
 
     connectToHost();
 
-    qDebug()<<Q_FUNC_INFO<<topic;
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<"topic"<<topic;
+#else
+    qDebug()<<Q_FUNC_INFO<<"topic"<<topic;
+#endif
     if(!topic.isEmpty()) AddTopic(topic);
     else m_topic_list.clear();
 }
@@ -184,7 +212,11 @@ void MqttClient::AddTopic(const QString topic)
 {
     if(!m_topic_list.contains(topic))
     {
-        qDebug()<<Q_FUNC_INFO<<topic;
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<"topic"<<topic;
+#else
+    qDebug()<<Q_FUNC_INFO<<"topic"<<topic;
+#endif
         m_topic_list.append(topic);
         subscribe(topic);
     }
@@ -202,7 +234,11 @@ void MqttClient::onConnected()
     {
         subscribe(topic);
     }
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO;
+#else
     qDebug()<<Q_FUNC_INFO;
+#endif
 }
 
 void MqttClient::onDisconnected()
@@ -211,10 +247,18 @@ void MqttClient::onDisconnected()
     {
         unsubscribe(topic);
     }
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO;
+#else
     qDebug()<<Q_FUNC_INFO;
+#endif
 }
 
 void MqttClient::onSubscribed(const QString& topic, const quint8 qos)
 {
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<"topic"<<topic<<"qos"<<qos;
+#else
     qDebug()<<Q_FUNC_INFO<<"topic"<<topic<<"qos"<<qos;
+#endif
 }

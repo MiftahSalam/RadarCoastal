@@ -6,6 +6,19 @@
 #include <QDir>
 #include <QTranslator>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+#include <log4qt/propertyconfigurator.h>
+#include <log4qt/loggerrepository.h>
+
+static void initializeRootLogger();
+static void shutdownRootLogger();
+static void logStartup();
+static void logShutdown();
+static void setupRootLogger(const QString &introMessage);
+static void shutDownRootLogger(const QString &extroMessage);
+#endif
+
 QString loadStylesheetFile( const QString &path );
 QStringList findQmFiles();
 QString selectQmFile( const QString &lng );
@@ -19,6 +32,11 @@ int main(int argc, char *argv[])
         QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL); //tiap pc beda.why??
 
     QApplication a(argc, argv);
+
+#ifdef USE_LOG4QT
+    initializeRootLogger();
+    logStartup();
+#endif
 
     QString appStyle;
     if(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_DISPLAY_PRESET_COLOR).toInt() == 0)
@@ -39,7 +57,17 @@ int main(int argc, char *argv[])
     w.showFullScreen();
 //    w.showMaximized();
 
-    return a.exec();
+    int ret;
+    {
+        ret = a.exec();
+    }
+
+#ifdef USE_LOG4QT
+    logShutdown();
+    shutdownRootLogger();
+#endif
+
+    return ret;
 }
 
 QString selectQmFile( const QString &lng )
@@ -55,6 +83,56 @@ QString selectQmFile( const QString &lng )
 
     return lngFile;
 }
+
+#ifdef USE_LOG4QT
+void initializeRootLogger()
+{
+    setupRootLogger(QStringLiteral("Root logger is setup."));
+}
+
+void shutdownRootLogger()
+{
+    shutDownRootLogger(QStringLiteral("Root logger was shutdown."));
+}
+
+void logStartup()
+{
+    auto logger = Log4Qt::Logger::rootLogger();
+
+    logger->info(QStringLiteral("################################################################"));
+    logger->info(QStringLiteral("#                          START                               #"));
+    logger->info(QStringLiteral("################################################################"));
+}
+
+void logShutdown()
+{
+    auto logger = Log4Qt::Logger::rootLogger();
+
+    logger->info(QStringLiteral("################################################################"));
+    logger->info(QStringLiteral("#                          STOP                                #"));
+    logger->info(QStringLiteral("################################################################"));
+}
+
+void setupRootLogger(const QString &introMessage)
+{
+    QString configFile = QApplication::applicationDirPath() + QDir::separator() + QStringLiteral(".log4qt.properties");
+    qDebug()<<configFile;
+    if (QFile::exists(configFile))
+        Log4Qt::PropertyConfigurator::configureAndWatch(configFile);
+    if (!introMessage.isEmpty())
+        Log4Qt::Logger::rootLogger()->info(introMessage);
+}
+
+void shutDownRootLogger(const QString &extroMessage)
+{
+    auto logger = Log4Qt::Logger::rootLogger();
+
+    if (!extroMessage.isEmpty())
+        logger->info(extroMessage);
+    logger->removeAllAppenders();
+    logger->loggerRepository()->shutdown();
+}
+#endif
 
 QStringList findQmFiles()
 {

@@ -1,5 +1,12 @@
 #include "wsdevicewrapper.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, WSDeviceWrapper)
+#else
+#include <QDebug>
+#endif
+
 WSDeviceWrapper::WSDeviceWrapper(QObject *parent, QString config): DeviceWrapper(parent)
 {
     m_config = config;
@@ -94,7 +101,11 @@ bool WSDeviceWrapper::InitConfig(const QString config)
         m_config = config;
         url = cfg_split.at(0);
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<"config"<<config;
+#else
         qDebug()<<Q_FUNC_INFO<<"cfg_split"<<cfg_split;
+#endif
 
 #if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
         QStringList url_split = url.split(":", Qt::SkipEmptyParts);

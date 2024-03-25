@@ -2,7 +2,12 @@
 #include "ui_framecursor.h"
 #include "shared/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameCursor)
+#else
 #include <QDebug>
+#endif
 
 FrameCursor::FrameCursor(QWidget *parent) :
     QFrame(parent),
@@ -35,8 +40,10 @@ void FrameCursor::trigger_cursorMove(const QPoint pos, const int vp_width, const
     QPointF gps = Utils::PixToGPS(pos.x()-screen_middle.x(),-pos.y()+screen_middle.y(),vp_width,vp_height,curRange,curLat,curLon);
     QStringList gps_str = Utils::GPSString(gps.x(),gps.y());
 
-//    qDebug()<<Q_FUNC_INFO<<"pos"<<pos<<"width"<<vp_width<<"height"<<vp_height;
-//    qDebug()<<Q_FUNC_INFO<<"curRange"<<curRange<<"curLat"<<curLat<<"curLon"<<curLon<<"cursor"<<distance;
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<"pos"<<pos.x()<<pos.y()<<"width"<<vp_width<<"height"<<vp_height;
+    logger()->trace()<<Q_FUNC_INFO<<"curRange"<<curRange<<"curLat"<<curLat<<"curLon"<<curLon<<"cursor"<<distance.x()<<distance.y();
+#endif
     ui->labelCursorRange->setText(Utils::RangeDisplay(distance.x()*1000., Utils::TWO_PRECISION));
     /*
     switch (unit) {

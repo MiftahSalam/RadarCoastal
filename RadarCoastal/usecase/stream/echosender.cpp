@@ -10,6 +10,13 @@
 #include "shared/utils.h"
 #include "usecase/stream/baseresponsejson.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, EchoSender)
+#else
+#include <QDebug>
+#endif
+
 EchoSender::EchoSender(QObject *parent)
     : QObject{parent}
 {
@@ -33,8 +40,12 @@ void EchoSender::initConfigWS()
 
     if(config_ws_str_list.size() != 3)
     {
+#ifdef USE_LOG4QT
+    logger()->fatal()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
+#else
         qDebug()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
         exit(1);
+#endif
     }
 
     m_stream_ws = new Stream(this,config_ws_str);
@@ -57,6 +68,19 @@ void EchoSender::triggerSendData(const QString echoStr, const int vp_width, cons
 #ifdef SAVE_CAPTURE
     saveJsonDataToFile(json.toJson());
 #endif
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<"base64"<<echoStr;
+    logger()->debug()<<Q_FUNC_INFO<<"vp_width"<<vp_width;
+    logger()->debug()<<Q_FUNC_INFO<<"vp_height"<<vp_height;
+    logger()->debug()<<Q_FUNC_INFO<<"box.topLeftLat"<<box.topLeftLat;
+    logger()->debug()<<Q_FUNC_INFO<<"box.topLeftLon"<<box.topLeftLon;
+    logger()->debug()<<Q_FUNC_INFO<<"box.bottomLeftLat"<<box.bottomLeftLat;
+    logger()->debug()<<Q_FUNC_INFO<<"box.bottomLeftLon"<<box.bottomLeftLon;
+    logger()->debug()<<Q_FUNC_INFO<<"box.topRightLat"<<box.topRightLat;
+    logger()->debug()<<Q_FUNC_INFO<<"box.topRightLon"<<box.topRightLon;
+    logger()->debug()<<Q_FUNC_INFO<<"box.bottomRightLat"<<box.bottomRightLat;
+    logger()->debug()<<Q_FUNC_INFO<<"box.bottomRightLon"<<box.bottomRightLon;
+#else
     /*
     qDebug()<<Q_FUNC_INFO<<"base64"<<echoStr;
     */
@@ -70,7 +94,7 @@ void EchoSender::triggerSendData(const QString echoStr, const int vp_width, cons
     qDebug()<<Q_FUNC_INFO<<"box.topRightLon"<<box.topRightLon;
     qDebug()<<Q_FUNC_INFO<<"box.bottomRightLat"<<box.bottomRightLat;
     qDebug()<<Q_FUNC_INFO<<"box.bottomRightLon"<<box.bottomRightLon;
-
+#endif
 }
 
 void EchoSender::sendDataAsync(const RadarEngine::CaptureResult echo)

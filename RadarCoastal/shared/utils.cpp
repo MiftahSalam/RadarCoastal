@@ -6,6 +6,13 @@
 #include <RadarEngine/global.h>
 #include <RadarEngine/radarconfig.h>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, Utils)
+#else
+#include <QDebug>
+#endif
+
 const QString Utils::MtrUnitStr = " m";
 const QString Utils::KmUnitStr = " Km";
 const QString Utils::NMUnitStr = " NM";
@@ -43,9 +50,12 @@ QPointF Utils::PixToGPS(const int pos_x, const int pos_y, const int vp_width, co
             static_cast<double>(r_radar) / static_cast<double>(MAX_PIX) * vp_range * sin(deg2rad(SCALE_RAW_TO_DEGREES2048(angle_radar))) /
             cos(deg2rad(own_lat)) / 60. / 1852.;
 
-    //    qDebug()<<Q_FUNC_INFO<<"line"<<line.length()<<angle<<line;
-    //    qDebug()<<Q_FUNC_INFO<<"pol"<<pol.r<<pol.angle;
-    //    qDebug()<<Q_FUNC_INFO<<"pos"<<pos.lat<<pos.lon<<currentRange;
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<"line"<<line.length()<<angle;
+#endif
+//        qDebug()<<Q_FUNC_INFO<<"line"<<line.length()<<angle<<line;
+//        qDebug()<<Q_FUNC_INFO<<"pol"<<pol.r<<pol.angle;
+//        qDebug()<<Q_FUNC_INFO<<"pos"<<pos.lat<<pos.lon<<currentRange;
 
 
     QPointF pos_to_convert;
@@ -92,10 +102,15 @@ QPointF Utils::GPSToPix(const double lon, const double lat, const int vp_width, 
     line.setAngle(angle);
     line.setLength(r_radar);
 
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<"line"<<line.length()<<angle;
+    logger()->trace()<<Q_FUNC_INFO<<"pol"<<r_radar<<angle_radar;
+    logger()->trace()<<Q_FUNC_INFO<<"pos"<<lat<<lon<<vp_range;
+#else
     qDebug()<<Q_FUNC_INFO<<"line"<<line.length()<<angle<<line;
     qDebug()<<Q_FUNC_INFO<<"pol"<<r_radar<<angle_radar;
     qDebug()<<Q_FUNC_INFO<<"pos"<<lat<<lon<<vp_range;
-
+#endif
 
     QPointF pos_to_convert;
     //    double dif_lat = (lat - currentOwnShipLat) * currentRange;
@@ -242,13 +257,15 @@ QPointF Utils::GpsAbsolute(double lat, double lon)
         dlon = offset_lon*cos_angle-offset_lat*sin_angle;
         dlat = offset_lon*sin_angle+offset_lat*cos_angle;
 
-        //           qDebug()<<Q_FUNC_INFO<<"offset_lon"<<offset_lon;
-        //           qDebug()<<Q_FUNC_INFO<<"offset_lat"<<offset_lat;
-        //           qDebug()<<Q_FUNC_INFO<<"cos_angle"<<cos_angle;
-        //           qDebug()<<Q_FUNC_INFO<<"sin_angle"<<sin_angle;
-        //           qDebug()<<Q_FUNC_INFO<<"dlon"<<dlon;
-        //           qDebug()<<Q_FUNC_INFO<<"dlat"<<dlat;
-
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO;
+    logger()->trace()<<Q_FUNC_INFO<<"offset_lon"<<offset_lon;
+    logger()->trace()<<Q_FUNC_INFO<<"offset_lat"<<offset_lat;
+    logger()->trace()<<Q_FUNC_INFO<<"cos_angle"<<cos_angle;
+    logger()->trace()<<Q_FUNC_INFO<<"sin_angle"<<sin_angle;
+    logger()->trace()<<Q_FUNC_INFO<<"dlon"<<dlon;
+    logger()->trace()<<Q_FUNC_INFO<<"dlat"<<dlat;
+#endif
     }
 
     return QPointF(lon-dlon,lat-dlat);
