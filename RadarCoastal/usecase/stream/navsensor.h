@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "infra/stream/stream.h"
+#include "usecase/stream/nav_data_model.h"
 #include <RadarEngine/radarconfig.h>
 
 class NavSensor : public QObject
@@ -24,14 +25,13 @@ private slots:
 private:
     RadarEngine::RadarConfig* m_instance_cfg;
     Stream *m_stream_mqtt;
+    NavDataDecoder *decoder;
     QString m_topic;
     QString m_append_data_osd;
     int m_no_osd_count;
     quint8 m_no_hdg_count,m_no_gps_count;
 
     Stream::StreamConfig generateStreamConfig(const QString config);
-    bool isGPSDataValid(const QString lat_str, const QString lon_str);
-    bool isHDGDataValid(const QString data);
     void initConfigMqtt();
 };
 
