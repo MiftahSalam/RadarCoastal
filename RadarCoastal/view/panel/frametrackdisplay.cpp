@@ -1,7 +1,6 @@
 #include "frametrackdisplay.h"
 #include "ui_frametrackdisplay.h"
 
-#include <QDebug>
 #include <QDateTime>
 #include <QMenu>
 #include <QSettings>

@@ -3,6 +3,13 @@
 
 #include <RadarEngine/global.h>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, TxTimerCounter)
+#else
+#include <QDebug>
+#endif
+
 const QString APP = "hypernet";
 
 TxTimerCounter* TxTimerCounter::m_tx_timer{nullptr};
@@ -26,7 +33,11 @@ TxTimerCounter::TxTimerCounter(QObject *parent)
     m_current_counter = m_settings->value("counter/tx", 0).toLongLong();
     m_latest_time = QDateTime::currentDateTime();
 
+#ifdef USE_LOG4QT
+    logger()->info()<<Q_FUNC_INFO<<"latest counter:"<<m_current_counter;
+#else
     qDebug()<<Q_FUNC_INFO<<"latest counter:"<<m_current_counter;
+#endif
 
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,this,&TxTimerCounter::triggerTimeOut);
@@ -53,7 +64,11 @@ void TxTimerCounter::triggerTimeOut()
         m_current_counter += deltaTime;
         m_settings->setValue("counter/tx", m_current_counter);
 
+#ifdef USE_LOG4QT
+        logger()->debug()<<Q_FUNC_INFO<<"tx elapsed:"<<Utils::TimeElapsedDisplay(m_current_counter);
+#else
         qDebug()<<Q_FUNC_INFO<<"tx elapsed:"<<Utils::TimeElapsedDisplay(m_current_counter);
+#endif
 
         emit signal_updateElapsed(m_current_counter);
     }

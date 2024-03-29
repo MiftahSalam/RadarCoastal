@@ -2,13 +2,24 @@
 
 #include <RadarEngine/radarconfig.h>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, GZAlarm)
+#else
+#include <QDebug>
+#endif
+
 GZAlarm::GZAlarm(QObject *parent, QString id, RadarEngine::RadarEngine *re): Alarm(parent, AlarmType::ALARM_GZ, id),m_id(id)
 {
     m_re = re;
     if(m_re == nullptr)
     {
+#ifdef USE_LOG4QT
+    logger()->fatal()<<Q_FUNC_INFO<<"m_re is null";
+#else
         qDebug()<<Q_FUNC_INFO<<"m_re is null";
         exit(-1);
+#endif
     }
 
     if(id == "GZ 1")
@@ -48,16 +59,28 @@ void GZAlarm::checkAlarm()
             qint64 now = QDateTime::currentSecsSinceEpoch();
             int bogey = m_re->guardZones[m_id]->GetBogeyCount();
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<m_id<<gz_settings_notif_thr<<bogey<<gz_settings_time-now;
+#else
             qDebug()<<Q_FUNC_INFO<<m_id<<gz_settings_notif_thr<<bogey<<gz_settings_time-now;
+#endif
 
             if(bogey > gz_settings_notif_thr)
             {
                 if(!gz_settings_confirmed || (gz_settings_confirmed && TIMED_OUT(now,(gz_settings_time))))
                 {
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<m_id<<gz_settings_confirmed<<gz_settings_time;
+#else
                     qDebug()<<Q_FUNC_INFO<<m_id<<gz_settings_confirmed<<gz_settings_time;
+#endif
                     if(TIMED_OUT(now,(gz_settings_time)))
                     {
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<m_id<<"timeout";
+#else
                         qDebug()<<Q_FUNC_INFO<<m_id<<"timeout";
+#endif
 
                         const int gz_settings_timeout = RadarEngine::RadarConfig::getInstance("")->getConfig(m_timeout_key).toInt(); //s
                         RadarEngine::RadarConfig::getInstance("")->setConfig(m_time_key,gz_settings_timeout+now);

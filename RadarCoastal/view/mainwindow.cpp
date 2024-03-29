@@ -2,10 +2,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QDebug>
 #include <QResizeEvent>
 #include <QMessageBox>
 #include <unistd.h>
+
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, MainWindow)
+#else
+#include <QDebug>
+#endif
 
 const int PADDING = 5;
 const int MARGIN = 10;
@@ -84,6 +90,11 @@ void MainWindow::TriggerShutdown()
     }
 
     m_re->TriggerStopRadar();
+#else
+    auto ret = QMessageBox::warning(this, tr("Warning"),tr("Are you sure want to exit?"),QMessageBox::Yes, QMessageBox::No);
+    if (ret == QMessageBox::No) {
+        return;
+    }
 #endif
     sleep(1);
     close();
@@ -105,7 +116,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<width()<<height();
+#else
     qDebug()<<Q_FUNC_INFO<<event->size()<<width()<<height();
+#endif
 
     ui->frameRight->move(width()-ui->frameRight->width(),0);
     ui->frameRight->resize(ui->frameRight->width(),height());

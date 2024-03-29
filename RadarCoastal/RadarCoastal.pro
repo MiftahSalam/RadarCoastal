@@ -22,6 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
+DEFINES += USE_LOG4QT
 
 #MODE += DEBUG_MODE
 #DEFINES += DISPLAY_ONLY_MODE
@@ -45,7 +46,6 @@ SOURCES += \
     usecase/alarm/alarmmanager.cpp \
     usecase/alarm/gzalarm.cpp \
     usecase/ppi/arpa.cpp \
-    usecase/ppi/ppigrabber.cpp \
     usecase/track/track.cpp \
     usecase/track/trackmodelview.cpp \
     usecase/tx_timer/tx_timer_counter.cpp \
@@ -86,7 +86,6 @@ HEADERS += \
     usecase/alarm/alarmmanager.h \
     usecase/alarm/gzalarm.h \
     usecase/ppi/arpa.h \
-    usecase/ppi/ppigrabber.h \
     usecase/track/track.h \
     usecase/track/trackmodelview.h \
     usecase/tx_timer/tx_timer_counter.h \
@@ -149,11 +148,24 @@ unix: {
     INCLUDEPATH += /usr/include/pjs-2024
     DEPENDPATH += /usr/include/pjs-2024
 
+    contains(DEFINES, USE_LOG4QT) {
+        message(Using log4qt...)
+        LIBS += -L/usr/local/log4qt/lib/ -llog4qt
+        INCLUDEPATH += /usr/local/log4qt/include
+        DEPENDPATH += /usr/local/log4qt/include
+    }
 } else:win32 {
     LIBS += -lOpenGL32
 
     INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2024\pjs\v2
     DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\pjs\v2
+
+    contains(DEFINES, USE_LOG4QT) {
+        message(Using log4qt...)
+        LIBS += -LC:\log4qt\lib -llog4qt
+        INCLUDEPATH += C:\log4qt\include
+        DEPENDPATH += C:\log4qt\include
+    }
 }
 
 #win32:!win32-g++: PRE_TARGETDEPS += C:/Qt/Qt5.12.12/5.12.12/mingw73_32/lib/Qt5Qmqttd.lib
