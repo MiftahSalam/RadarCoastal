@@ -14,6 +14,7 @@ PPIArpaObject::PPIArpaObject(QObject *parent, PPIArpa *arpa) : PPIObject(parent)
     m_ppi_arpa = arpa;
 }
 #else
+#include "shared/utils.h"
 PPIArpaObject::PPIArpaObject(QObject *parent) : PPIObject(parent)
 {
     m_track = Track::GetInstance();
@@ -135,8 +136,12 @@ void PPIArpaObject::Draw(QPainter *painter, const int &side, const int &width, c
             painter->setPen(pen);
             painter->drawText(txtX, txtY, rect.width(), rect.height(), Qt::AlignCenter | Qt::TextWordWrap, target_text);
 
-            //            qDebug()<<Q_FUNC_INFO<<"target"<<track->id<<track->lat<<track->lon<<track->spd;
-            //            qDebug()<<Q_FUNC_INFO<<"position:"<<x2<<y2;
+#ifdef USE_LOG4QT
+            logger()->trace()<<Q_FUNC_INFO<<" target: "<<track->id<<track->lat<<track->lon<<track->spd;
+            logger()->trace()<<Q_FUNC_INFO<< "position: "<<x2<<y2;
+#else
+            qDebug()<<Q_FUNC_INFO<<"arpa raw data"<<msg;
+#endif
         }
 #endif
         painter->setPen(curPen);
