@@ -93,6 +93,7 @@ void RadarWidget::trigger_contextMenu(const QPoint &g_pos, const QPoint &pos)
 #else
     qDebug() << Q_FUNC_INFO << "pos" << pos;
 #endif
+#ifndef DISPLAY_ONLY_MODE
     QMenu menu(this);
 
     menu.addAction("Off Center", [this, pos]()
@@ -105,6 +106,7 @@ void RadarWidget::trigger_contextMenu(const QPoint &g_pos, const QPoint &pos)
         this->m_center_offset = QPoint(0,0); });
 
     menu.exec(g_pos);
+#endif
 }
 
 void RadarWidget::timeOut()
@@ -262,7 +264,7 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     */
     if (show_rings)
         drawRings(&painter, side);
-
+#ifndef DISPLAY_ONLY_MODE
     /*
       EBL marker
     */
@@ -274,6 +276,7 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     */
     if (show_vrm_marker)
         drawRingsVrm(&painter, curentVrm);
+#endif
 }
 
 void RadarWidget::trigger_DrawSpoke(/*int transparency,*/ int angle, UINT8 *data, size_t len)
