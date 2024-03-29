@@ -86,25 +86,28 @@ void Track::updateAllTrack()
 
 void Track::timerTimeout()
 {
-//    updateManyTarget(MAX_UPDATE_NUMBER);
-//    updateOneTarget();
-//    updateAllTarget();
 #ifdef DISPLAY_ONLY_MODE
     updateAllTrack();
+#else
+    updateManyTarget(MAX_UPDATE_NUMBER);
+    //    updateOneTarget();
+    //    updateAllTarget();
 #endif
 }
 
-void Track::updateModel(TrackModel trackModel)
+void Track::updateModel(TrackModel* trackModel)
 {
-    if (m_track_repo->FindOne(trackModel.id) != nullptr)
+    if (m_track_repo->FindOne(trackModel->id) != nullptr)
     {
-        m_track_repo->Update(trackModel);
-        m_model_view->UpdateModel(trackModel);
+        m_track_repo->Update(*trackModel);
+        m_model_view->UpdateModel(*trackModel);
     }
     else
     {
-        m_track_repo->Insert(trackModel);
-        m_model_view->InsertModel(trackModel);
+        trackModel->timestamp = QDateTime::currentMSecsSinceEpoch();
+
+        m_track_repo->Insert(*trackModel);
+        m_model_view->InsertModel(*trackModel);
     }
 }
 
@@ -159,9 +162,9 @@ void Track::updateManyTarget(const int updateCount)
         {
             if (m_instance_re->radarArpa->targets[m_cur_arpa_id_count]->targetId > 0)
             {
-                TrackModel trackModel = arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]);
+                TrackModel* trackModel = new TrackModel(arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]));
                 updateModel(trackModel);
-                modelList.append(new TrackModel(trackModel));
+                modelList.append(trackModel);
             }
             m_cur_arpa_id_count++;
             num_limit--;
@@ -196,9 +199,9 @@ void Track::updateAllTarget()
         {
             if (m_instance_re->radarArpa->targets[m_cur_arpa_id_count]->targetId > 0)
             {
-                TrackModel trackModel = arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]);
+                TrackModel* trackModel = new TrackModel(arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]));
                 updateModel(trackModel);
-                modelList.append(new TrackModel(trackModel));
+                modelList.append(trackModel);
             }
             m_cur_arpa_id_count++;
         }
@@ -225,9 +228,9 @@ void Track::updateOneTarget()
         {
             if (m_instance_re->radarArpa->targets[m_cur_arpa_id_count]->targetId > 0)
             {
-                TrackModel trackModel = arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]);
+                TrackModel* trackModel = new TrackModel(arpaToTrackModel(m_instance_re->radarArpa->targets[m_cur_arpa_id_count]));
                 updateModel(trackModel);
-                m_arpa_sender->SendOneData(trackModel);
+                m_arpa_sender->SendOneData(*trackModel);
             }
             m_cur_arpa_id_count++;
             num_limit--;

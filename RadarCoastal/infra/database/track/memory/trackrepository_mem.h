@@ -14,7 +14,7 @@ public:
     virtual void Insert(const TrackModel& trackModel);
     virtual TrackModel* FindOne(const int& trackId);
     virtual std::list<TrackModel*> FindAll();
-    virtual void Update(const TrackModel& trackModel);
+    virtual void Update(TrackModel &trackModel);
     virtual void Remove(const int& trackId);
 
     QMap<QString, TrackModel*> model;

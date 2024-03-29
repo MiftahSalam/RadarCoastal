@@ -46,10 +46,11 @@ void TrackRepository_Mem::Insert(const TrackModel &trackModel)
 //    }
 }
 
-void TrackRepository_Mem::Update(const TrackModel &trackModel)
+void TrackRepository_Mem::Update(TrackModel &trackModel)
 {
     QString key = QString::number(trackModel.id);
     TrackModel *track = model.value(key);
+    trackModel.timestamp = track->timestamp;
     if (track) {
         model.insert(key,new TrackModel(trackModel));
     }
