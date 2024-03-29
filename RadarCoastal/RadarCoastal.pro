@@ -142,8 +142,14 @@ contains(DEFINES, DISPLAY_ONLY_MODE) {
     HEADERS += \
         usecase/stream/arpareceiver.h
 
+    HEADERS -= \
+        usecase/stream/arpasender.h
+
     SOURCES += \
         usecase/stream/arpareceiver.cpp
+
+    SOURCES -= \
+        usecase/stream/arpasender.cpp
 }
 
 unix: {
