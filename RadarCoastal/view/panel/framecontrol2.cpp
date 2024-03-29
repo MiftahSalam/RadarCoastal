@@ -4,6 +4,13 @@
 
 #include <QIntValidator>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameControl2)
+#else
+#include <QDebug>
+#endif
+
 FrameControl2::FrameControl2(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameControl2)
@@ -195,7 +202,11 @@ void FrameControl2::on_horizontalSlideEBL_valueChanged(int value)
 
 void FrameControl2::on_horizontalSliderVRM_valueChanged(int value)
 {
-//    qDebug()<<Q_FUNC_INFO<<ui->horizontalSliderVRM->maximum()<<ui->horizontalSliderVRM->singleStep()<<ui->horizontalSliderVRM->pageStep()<<value;
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<ui->horizontalSliderVRM->maximum()<<ui->horizontalSliderVRM->singleStep()<<ui->horizontalSliderVRM->pageStep()<<value;
+#else
+    qDebug()<<Q_FUNC_INFO<<ui->horizontalSliderVRM->maximum()<<ui->horizontalSliderVRM->singleStep()<<ui->horizontalSliderVRM->pageStep()<<value;
+#endif
     const int vrm_value = value;
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE,vrm_value);
     ui->lineEditVRM->setText(Utils::RangeDisplay(static_cast<double>(vrm_value), Utils::ONE_PRECISION));
