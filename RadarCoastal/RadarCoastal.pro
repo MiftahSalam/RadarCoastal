@@ -46,7 +46,6 @@ SOURCES += \
     usecase/alarm/alarmmanager.cpp \
     usecase/alarm/gzalarm.cpp \
     usecase/ppi/arpa.cpp \
-    usecase/ppi/ppigrabber.cpp \
     usecase/track/track.cpp \
     usecase/track/trackmodelview.cpp \
     usecase/tx_timer/tx_timer_counter.cpp \
@@ -87,7 +86,6 @@ HEADERS += \
     usecase/alarm/alarmmanager.h \
     usecase/alarm/gzalarm.h \
     usecase/ppi/arpa.h \
-    usecase/ppi/ppigrabber.h \
     usecase/track/track.h \
     usecase/track/trackmodelview.h \
     usecase/tx_timer/tx_timer_counter.h \

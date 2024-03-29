@@ -17,7 +17,6 @@
 #include "ppiarpaobject.h"
 #include "ppigzobject.h"
 #include "ppicompassobject.h"
-#include "usecase/ppi/ppigrabber.h"
 
 class RadarWidget : public QGLWidget, protected QOpenGLFunctions
 {
