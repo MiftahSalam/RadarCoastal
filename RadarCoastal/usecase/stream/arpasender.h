@@ -7,78 +7,7 @@
 
 #include "domain/track/trackmodel.h"
 #include "infra/stream/stream.h"
-
-struct ArpaSenderModel
-{
-    int id;
-    double lat;
-    double lon;
-    double alt;
-    double rng;
-    double brn;
-    double spd;
-    double crs;
-};
-
-class ArpaSenderDecoder
-{
-public:
-    ArpaSenderDecoder(int id,
-                      double lat,
-                      double lon,
-                      double alt,
-                      double rng,
-                      double brn,
-                      double spd,
-                      double crs);
-    ArpaSenderDecoder(TrackModel data);
-    ArpaSenderDecoder(QList<TrackModel*> data);
-
-    virtual ~ArpaSenderDecoder(){}
-
-    virtual QString decode() = 0;
-
-protected:
-    QList<ArpaSenderModel*> m_data;
-    bool isArray;
-};
-
-class ArpaSenderDecoderJson: public ArpaSenderDecoder
-{
-public:
-    ArpaSenderDecoderJson(int id,
-                          double lat,
-                          double lon,
-                          double alt,
-                          double rng,
-                          double brn,
-                          double spd,
-                          double crs);
-    ArpaSenderDecoderJson(TrackModel data);
-    ArpaSenderDecoderJson(QList<TrackModel*> data);
-
-    // ArpaSenderDecoder interface
-    QString decode() override;
-    QJsonDocument decodeJsonDoc();
-};
-
-class ArpaSenderDecoderNMEA: public ArpaSenderDecoder
-{
-public:
-    ArpaSenderDecoderNMEA(int id,
-                          double lat,
-                          double lon,
-                          double alt,
-                          double rng,
-                          double brn,
-                          double spd,
-                          double crs);
-    ArpaSenderDecoderNMEA(TrackModel data);
-    ArpaSenderDecoderNMEA(QList<TrackModel*> data);
-
-    // ArpaSenderDecoder interface
-    QString decode() override;
-};
+#include "usecase/stream/arpa_sender_model.h"
 
 class ArpaSender : public QObject
 {
@@ -86,9 +15,10 @@ class ArpaSender : public QObject
 public:
     explicit ArpaSender(QObject *parent = nullptr);
 
-    void SendManyData(QList<TrackModel*> data);
+    void SendManyData(QList<TrackModel *> data);
     void SendOneData(TrackModel data);
     void SendOneData(
+            long long ts,
             int id,
             double lat,
             double lon,
@@ -96,8 +26,7 @@ public:
             double rng,
             double brn,
             double spd,
-            double crs
-            );
+            double crs);
 signals:
 
 private slots:
@@ -107,8 +36,8 @@ private:
     Stream *m_stream;
     QString m_topic;
 
-    Stream::StreamConfig generateStreamConfig(const QString config);
-
+    void initConfig();
+    void sendMqtt(ArpaSenderDecoder *decoder);
 };
 
 #endif // ARPASENDER_H
