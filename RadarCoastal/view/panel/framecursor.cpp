@@ -45,17 +45,6 @@ void FrameCursor::trigger_cursorMove(const QPoint pos, const int vp_width, const
     logger()->trace()<<Q_FUNC_INFO<<"curRange"<<curRange<<"curLat"<<curLat<<"curLon"<<curLon<<"cursor"<<distance.x()<<distance.y();
 #endif
     ui->labelCursorRange->setText(Utils::RangeDisplay(distance.x()*1000., Utils::TWO_PRECISION));
-    /*
-    switch (Utils::unit) {
-    case 0:
-        break;
-    case 1:
-        ui->labelCursorRange->setText(Utils::RangeDisplay(distance.x()*1000*KM_TO_NM, Utils::TWO_PRECISION));
-        break;
-    default:
-        break;
-    }
-    */
     ui->labelCursorBrn->setText(QString::number(distance.y(),'f',Utils::TWO_PRECISION));
     ui->labelCursorLat->setText(gps_str.at(0));
     ui->labelCursorLon->setText(gps_str.at(1));
