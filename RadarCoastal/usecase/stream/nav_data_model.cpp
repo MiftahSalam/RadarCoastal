@@ -15,13 +15,17 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, NavDataEncoder)
 NavDataEncoder::NavDataEncoder(long long ts,
                                double lat,
                                double lon,
-                               double hdg
+                               double hdg,
+                               bool gps_man,
+                               bool hdg_man
                                )
 {
     m_data.timestamp = ts;
     m_data.lat = lat;
     m_data.lon = lon;
     m_data.hdg = hdg;
+    m_data.gps_man = gps_man;
+    m_data.hdg_man = hdg_man;
 }
 
 NavDataEncoder::NavDataEncoder(NavDataModel data)
@@ -32,8 +36,10 @@ NavDataEncoder::NavDataEncoder(NavDataModel data)
 NavDataEncoderCustom::NavDataEncoderCustom(long long ts,
                                            double lat,
                                            double lon,
-                                           double hdg
-                                           ): NavDataEncoder(ts, lat, lon, hdg)
+                                           double hdg,
+                                           bool gps_man,
+                                           bool hdg_man
+                                           ): NavDataEncoder(ts, lat, lon, hdg, gps_man, hdg_man)
 {
 }
 
@@ -43,7 +49,11 @@ NavDataEncoderCustom::NavDataEncoderCustom(NavDataModel data): NavDataEncoder(da
 
 QString NavDataEncoderCustom::encode()
 {
-    QString decodedData = QString("?%1#%2#%3!").arg(m_data.lat).arg(m_data.lon).arg(m_data.hdg);
+    QString decodedData = QString("?%1#%2#%3!")
+            .arg(QString::number(m_data.lat, 'f', 6))
+            .arg(QString::number(m_data.lon, 'f', 6))
+            .arg(QString::number(m_data.hdg, 'f', 1))
+            ;
     return decodedData;
 }
 

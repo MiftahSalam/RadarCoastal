@@ -201,8 +201,7 @@ void FrameOSD::on_timeout()
     sensor->Reconnect();
     sensor->UpdateStatus();
 #ifndef DISPLAY_ONLY_MODE
-    if(!ui->checkBoxGPS->isChecked())
-        sensor->SendData(ui->lineEditLat->text(),ui->lineEditLon->text(),ui->lineEditHDG->text());
+    sensor->SendData();
 #else
     updateModeControl();
 #endif

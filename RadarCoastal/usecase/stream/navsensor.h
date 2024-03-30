@@ -14,7 +14,7 @@ public:
     explicit NavSensor(QObject *parent = nullptr);
     void Reconnect();
     void UpdateStatus();
-    void SendData(QString lat, QString lon, QString hdt);
+    void SendData();
 
 signals:
 
@@ -31,6 +31,11 @@ private:
 
     void sendMqtt(NavDataEncoder *encoder);
     void initConfig();
+#ifdef DISPLAY_ONLY_MODE
+    void processDisplayOnlyNav(const QString data);
+#else
+    void processRawNav(const QString data);
+#endif
 };
 
 #endif // NAVSENSOR_H

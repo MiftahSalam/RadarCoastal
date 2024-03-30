@@ -12,6 +12,8 @@ struct NavDataModel
     double lat;
     double lon;
     double hdg;
+    bool gps_man;
+    bool hdg_man;
 
     NavDataModel()
     {
@@ -44,7 +46,9 @@ public:
     NavDataEncoder(long long ts,
                       double lat,
                       double lon,
-                      double hdg
+                      double hdg,
+                      bool gps_man,
+                      bool hdg_man
                    );
     NavDataEncoder(NavDataModel data);
 
@@ -92,7 +96,9 @@ public:
     NavDataEncoderCustom(long long ts,
                           double lat,
                           double lon,
-                          double hdg
+                          double hdg,
+                         bool gps_man,
+                         bool hdg_man
                          );
     NavDataEncoderCustom(NavDataModel data);
 
