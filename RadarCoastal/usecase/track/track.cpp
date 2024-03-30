@@ -53,7 +53,7 @@ void Track::triggerOnNewTrack(QList<TrackModel *> tracks)
 
     for (auto track : tracks)
     {
-        updateModel(*track);
+        updateModel(track);
     }
 }
 

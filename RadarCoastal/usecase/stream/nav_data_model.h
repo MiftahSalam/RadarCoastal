@@ -44,11 +44,13 @@ class NavDataEncoder
 {
 public:
     NavDataEncoder(long long ts,
-                      double lat,
-                      double lon,
-                      double hdg,
-                      bool gps_man,
-                      bool hdg_man
+                   double lat,
+                   double lon,
+                   double hdg,
+                   bool gps_man,
+                   bool hdg_man,
+                   quint8 status_gps,
+                   quint8 status_hdg
                    );
     NavDataEncoder(NavDataModel data);
 
@@ -75,6 +77,22 @@ private:
     QString m_append_data_osd;
 };
 
+class NavDataDecoderJson: public NavDataDecoder
+{
+public:
+    NavDataDecoderJson();
+
+    // NavDataDecoder interface
+    NavDataModel decode() override;
+
+protected:
+    void reset() override;
+
+private:
+    QString m_append_data_osd;
+};
+
+
 class NavDataDecoderCustom: public NavDataDecoder
 {
 public:
@@ -94,11 +112,13 @@ class NavDataEncoderCustom: public NavDataEncoder
 {
 public:
     NavDataEncoderCustom(long long ts,
-                          double lat,
-                          double lon,
-                          double hdg,
+                         double lat,
+                         double lon,
+                         double hdg,
                          bool gps_man,
-                         bool hdg_man
+                         bool hdg_man,
+                         quint8 status_gps,
+                         quint8 status_hdg
                          );
     NavDataEncoderCustom(NavDataModel data);
 
@@ -110,12 +130,14 @@ class NavDataEncoderJson: public NavDataEncoder
 {
 public:
     NavDataEncoderJson(long long ts,
-                          double lat,
-                          double lon,
-                          double hdg,
-                         bool gps_man,
-                         bool hdg_man
-                         );
+                       double lat,
+                       double lon,
+                       double hdg,
+                       bool gps_man,
+                       bool hdg_man,
+                       quint8 status_gps,
+                       quint8 status_hdg
+                       );
     NavDataEncoderJson(NavDataModel data);
 
     // NavDataEncoder interface

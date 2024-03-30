@@ -25,7 +25,11 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
 
     initConfig();
 
+#ifdef DISPLAY_ONLY_MODE
+    decoder = new NavDataDecoderJson();
+#else
     decoder = new NavDataDecoderNMEA();
+#endif
     //    decoder = new NavDataDecoderCustom();
 
     m_no_osd_count = 11;
@@ -98,6 +102,7 @@ void NavSensor::sendMqtt(NavDataEncoder *encoder)
         m_stream->SendData(mq_data);
 }
 
+#ifndef DISPLAY_ONLY_MODE
 void NavSensor::SendData()
 {
     //    QString m_data = m_topic + ":" + "?" + lat + "#" + lon + "#" + hdt + "!";
@@ -108,6 +113,8 @@ void NavSensor::SendData()
     double hdt = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
     double gps_man = !m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
     double hdt_man = !m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
+    quint8 gps_status = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt();
+    quint8 hdt_status = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt();
 
     /*
     NavDataEncoder *encoder = dynamic_cast<NavDataEncoder *>(new NavDataEncoderCustom(
@@ -126,7 +133,9 @@ void NavSensor::SendData()
                                                                  lon,
                                                                  hdt,
                                                                  gps_man,
-                                                                 hdt_man
+                                                                 hdt_man,
+                                                                 gps_status,
+                                                                 hdt_status
                                                                  )
                                                              );
     sendMqtt(encoder);
@@ -134,6 +143,7 @@ void NavSensor::SendData()
     delete encoder;
 
 }
+#endif
 
 void NavSensor::UpdateStatus()
 {
@@ -157,14 +167,7 @@ void NavSensor::UpdateStatus()
         break;
     }
 }
-#ifdef DISPLAY_ONLY_MODE
-
-void NavSensor::processDisplayOnlyNav(const QString data)
-{
-
-}
-#else
-void NavSensor::processRawNav(const QString data)
+void NavSensor::processNavData(QString data)
 {
     decoder->update(data.toUtf8());
 
@@ -192,9 +195,8 @@ void NavSensor::processRawNav(const QString data)
     }
     else if (model.status_hdg == 2) m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
 }
-#endif
 
-void NavSensor::triggerReceivedData(const QString data)
+void NavSensor::triggerReceivedData(QString data)
 {
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO << "data: " << data;
@@ -202,17 +204,18 @@ void NavSensor::triggerReceivedData(const QString data)
     qDebug() << Q_FUNC_INFO << data;
 #endif
 
-
 #ifdef DISPLAY_ONLY_MODE
-    processDisplayOnlyNav(data);
+    data.remove(SITE_DATA_TOPIC+MQTT_MESSAGE_SEPARATOR);
 #else
     if (data.contains(SITE_DATA_TOPIC))
     {
         return;
     }
+
+    data.remove(m_topic+MQTT_MESSAGE_SEPARATOR);
 #endif
 
-    processRawNav(data);
+    processNavData(data);
 }
 void NavSensor::Reconnect()
 {
