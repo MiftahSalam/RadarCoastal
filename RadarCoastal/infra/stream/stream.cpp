@@ -48,6 +48,11 @@ void Stream::Reconnect()
     m_streamDevice->Reconnect();
 }
 
+void Stream::UpdateTimeStamp()
+{
+    m_streamDevice->UpdateTimeStamp();
+}
+
 void Stream::SendData(const QString &data)
 {
     m_streamDevice->Write(data);

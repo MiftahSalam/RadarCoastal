@@ -33,6 +33,7 @@ public:
     void SetConfig(const QString& config);
     void ChangeConfig(const QString& config);
     void Reconnect();
+    void UpdateTimeStamp();
 
 protected:
     QString streamError;

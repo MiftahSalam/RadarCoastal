@@ -14,12 +14,14 @@ public:
     explicit NavSensor(QObject *parent = nullptr);
     void Reconnect();
     void UpdateStatus();
-    void SendData(QString lat, QString lon, QString hdt);
+#ifndef DISPLAY_ONLY_MODE
+    void SendData();
+#endif
 
 signals:
 
 private slots:
-    void triggerReceivedData(const QString data);
+    void triggerReceivedData(QString data);
     void triggerConfigChange(const QString key, const QVariant val);
 
 private:
@@ -31,6 +33,7 @@ private:
 
     void sendMqtt(NavDataEncoder *encoder);
     void initConfig();
+    void processNavData(QString data);
 };
 
 #endif // NAVSENSOR_H

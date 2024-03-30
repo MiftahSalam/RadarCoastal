@@ -110,9 +110,7 @@ void MqttDeviceWrapper::receiveData(QMQTT::Message message)
 {
     QString payload = QString::fromUtf8(message.payload());
     QString topic = message.topic();
-    //    _currentData = payload;
-    qWarning()<<Q_FUNC_INFO<<"payload"<<payload<<"topic"<<topic;
-    m_last_data_time = QDateTime::currentSecsSinceEpoch();
+    qDebug()<<Q_FUNC_INFO<<"payload"<<payload<<"topic"<<topic;
     emit ReadyRead(topic+MQTT_MESSAGE_SEPARATOR+payload);
 }
 
@@ -164,6 +162,7 @@ void MqttDeviceWrapper::Write(const QString data)
     {
         QMQTT::Message message(m_idCounter,format.at(0),format.at(1).toUtf8());
         m_publisher->PublishData(message);
+        return;
     }
 #ifdef USE_LOG4QT
     logger()->warn()<<Q_FUNC_INFO<<"invalid mqtt data"<<data;
