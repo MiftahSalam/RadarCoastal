@@ -112,8 +112,8 @@ void FrameControl3::on_comboBoxDisplayMode_currentIndexChanged(int index)
 
 void FrameControl3::on_comboBoxDisplayUnit_currentIndexChanged(int index)
 {
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT,index);
     Utils::unit = static_cast<quint8>(index);
+    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT,index);
 
     const int cur_range = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
     int cur_zoom_lvl = distanceList.indexOf(cur_range);
