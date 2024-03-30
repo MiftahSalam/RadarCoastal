@@ -10,7 +10,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, ArpaSender)
 #endif
 
 ArpaSender::ArpaSender(QObject *parent)
-    : QObject{parent}
+    : QObject{parent}, m_stream{nullptr}
 {
 #ifdef USE_LOG4QT
     logger()->trace() << Q_FUNC_INFO;
@@ -40,7 +40,9 @@ void ArpaSender::initConfig()
     }
 
     m_topic = config_str_list.last();
-    m_stream = new Stream(this, config_str);
+    if (!m_stream) {
+        m_stream = new Stream(this, config_str);
+    }
 }
 
 void ArpaSender::SendManyData(QList<TrackModel *> data)
@@ -107,6 +109,8 @@ void ArpaSender::sendMqtt(ArpaSenderDecoder *decoder)
 {
     QString mq_data = m_topic + MQTT_MESSAGE_SEPARATOR + decoder->decode();
 
+    qDebug()<<Q_FUNC_INFO<<" mq_data: "<<mq_data;
+
     if (m_stream->GetStreamStatus() == DeviceWrapper::NOT_AVAIL)
         m_stream->Reconnect();
     else
@@ -115,12 +119,12 @@ void ArpaSender::sendMqtt(ArpaSenderDecoder *decoder)
 
 void ArpaSender::triggerConfigChange(const QString key, const QVariant val)
 {
-    //    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
 #ifdef USE_LOG4QT
     logger()->trace() << Q_FUNC_INFO << "key" << key << "val" << val.toString();
 #endif
     if (key == RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG)
     {
+        initConfig();
         m_stream->SetConfig(val.toString());
     }
 }
