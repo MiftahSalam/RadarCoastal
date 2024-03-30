@@ -109,7 +109,18 @@ void NavSensor::SendData()
     double gps_man = !m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
     double hdt_man = !m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
 
+    /*
     NavDataEncoder *encoder = dynamic_cast<NavDataEncoder *>(new NavDataEncoderCustom(
+                                                                 QDateTime::currentMSecsSinceEpoch(),
+                                                                 lat,
+                                                                 lon,
+                                                                 hdt,
+                                                                 gps_man,
+                                                                 hdt_man
+                                                                 )
+                                                             );
+    */
+    NavDataEncoder *encoder = dynamic_cast<NavDataEncoder *>(new NavDataEncoderJson(
                                                                  QDateTime::currentMSecsSinceEpoch(),
                                                                  lat,
                                                                  lon,

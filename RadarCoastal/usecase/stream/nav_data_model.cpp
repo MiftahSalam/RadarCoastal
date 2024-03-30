@@ -2,6 +2,8 @@
 #include "infra/stream/mqttdevicewrapper.h"
 
 #include <QDateTime>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <math.h>
 
@@ -57,6 +59,37 @@ QString NavDataEncoderCustom::encode()
     return decodedData;
 }
 
+
+NavDataEncoderJson::NavDataEncoderJson(long long ts, double lat, double lon, double hdg, bool gps_man, bool hdg_man): NavDataEncoder(ts, lat, lon, hdg, gps_man, hdg_man)
+{
+}
+
+NavDataEncoderJson::NavDataEncoderJson(NavDataModel data): NavDataEncoder(data)
+{
+}
+
+QString NavDataEncoderJson::encode()
+{
+    QJsonObject obj;
+    QJsonObject objPos;
+    QJsonObject objHdt;
+    QJsonObject objRadar;
+
+    objPos["mode"] = m_data.gps_man ? "manual" : "auto";
+    objPos["latitude"] = m_data.lat;
+    objPos["longitude"] = m_data.lon;
+
+    objHdt["mode"] = m_data.hdg_man ? "manual" : "auto";
+    objHdt["heading"] = m_data.hdg;
+
+    obj["position"] = objPos;
+    obj["heading"] = objHdt;
+
+    QJsonDocument doc(obj);
+
+    return QString(doc.toJson(QJsonDocument::Compact));
+}
+
 NavDataDecoder::NavDataDecoder()
 {
 }
@@ -75,26 +108,16 @@ void NavDataDecoder::reset()
     m_data.clear();
 }
 
-bool NavDataDecoder::isGPSDataValid(const QString lat_str, const QString lon_str)
+bool NavDataDecoder::isGPSDataValid(const double lat, const double lon)
 {
-    bool ok;
-    double lat = lat_str.toDouble(&ok);
-    if(!ok) return false;
-    double lon = lon_str.toDouble(&ok);
-    if(!ok) return false;
-
     if(fabs(lat) > 90.) return false;
     if(fabs(lon) > 180.) return false;
 
     return true;
 }
 
-bool NavDataDecoder::isHDGDataValid(const QString hdg_str)
+bool NavDataDecoder::isHDGDataValid(const double hdg)
 {
-    bool ok;
-    double hdg = hdg_str.toDouble(&ok);
-    if(!ok) return false;
-
     if(hdg >= 0. && hdg <= 360.) return true;
     else return false;
 }
@@ -125,8 +148,8 @@ NavDataModel NavDataDecoderNMEA::decode()
     NavDataModel result;
     const QString NMEA_HEADER = "%"; //temp
     const QString NMEA_TAIL1 = "#"; //temp for test
-//    const QString NMEA_HEADER = "$"; //not work in mqtt. why ???
-//    const QString NMEA_TAIL1 = "\r";
+    //    const QString NMEA_HEADER = "$"; //not work in mqtt. why ???
+    //    const QString NMEA_TAIL1 = "\r";
     //    const QString NMEA_TAIL2 = "\n";
 
     if (msg.contains("gps"+MQTT_MESSAGE_SEPARATOR))
@@ -143,17 +166,17 @@ NavDataModel NavDataDecoderNMEA::decode()
                 if(index_end > index_hdr)
                 {
                     m_append_data_osd = m_append_data_osd.mid(index_hdr,index_end-index_hdr);
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                     logger()->trace()<<Q_FUNC_INFO<<"filter: "<<m_append_data_osd;
-    #else
+#else
                     qDebug()<<Q_FUNC_INFO<<"filter: "<<m_append_data_osd;
-    #endif
+#endif
 
-    #if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
                     QStringList msg_list = m_append_data_osd.split(",", Qt::SkipEmptyParts);
-    #else
+#else
                     QStringList msg_list = m_append_data_osd.split(",",QString::SkipEmptyParts);
-    #endif
+#endif
                     if(m_append_data_osd.contains("GGA") && msg_list.size() > 8)
                     {
                         bool ok;
@@ -161,36 +184,39 @@ NavDataModel NavDataDecoderNMEA::decode()
                         result.lat = msg_list.at(2).toDouble(&ok);
                         if(!ok)
                         {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                             logger()->warn()<<Q_FUNC_INFO<<" invalid latitude: "<<msg_list.at(2);
-    #else
+#else
                             qDebug()<<Q_FUNC_INFO<<" invalid latitude: "<<msg_list.at(2);
-    #endif
+#endif
                             result.status_gps = 2; //data not valid
-
-//                            return result;
                         }
-                        result.lon = msg_list.at(2).toDouble(&ok);
-                        if(!ok)
+                        else
                         {
+                            result.lon = msg_list.at(4).toDouble(&ok);
+                            if(!ok)
+                            {
     #ifdef USE_LOG4QT
-                            logger()->warn()<<Q_FUNC_INFO<<" invalid longitude: "<<msg_list.at(2);
+                                logger()->warn()<<Q_FUNC_INFO<<" invalid longitude: "<<msg_list.at(4);
     #else
-                            qDebug()<<Q_FUNC_INFO<<" invalid latitude: "<<msg_list.at(2);
+                                qDebug()<<Q_FUNC_INFO<<" invalid latitude: "<<msg_list.at(2);
     #endif
-                            result.status_gps = 2; //data not valid
+                                result.status_gps = 2; //data not valid
+                            }
+                            else
+                            {
+                                result.lat /= 100.;
+                                result.lon /= 100.;
+                                if(msg_list.at(3) == "S") result.lat = -result.lat;
+                                if(msg_list.at(5) == "W") result.lon = -result.lon;
 
-//                            return result;
+                                if (isGPSDataValid(result.lat, result.lon)) {
+                                    result.status_gps = 3; //data valid
+                                } else {
+                                    result.status_gps = 2; //data not valid
+                                }
+                            }
                         }
-
-                        result.lat /= 100.;
-                        result.lon /= 100.;
-                        result.status_gps = 3; //data valid
-
-                        if(msg_list.at(3) == "S") result.lat = -result.lat;
-                        if(msg_list.at(5) == "W") result.lon = -result.lon;
-
-//                        return result;
                     }
                     else if(m_append_data_osd.contains("HDT") && msg_list.size() > 2)
                     {
@@ -199,30 +225,31 @@ NavDataModel NavDataDecoderNMEA::decode()
                         result.hdg = msg_list.at(1).toDouble(&ok);
                         if(!ok)
                         {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                             logger()->warn()<<Q_FUNC_INFO<<" invalid heading: "<<msg_list.at(1);
-    #else
+#else
                             qDebug()<<Q_FUNC_INFO<<" invalid heading: "<<msg_list.at(2);
-    #endif
+#endif
                             result.status_hdg = 2; //data not valid
-
-//                            return result;
                         }
-                        result.status_hdg = 3; //data valid
-
-//                        return result;
+                        else
+                        {
+                            if (isHDGDataValid(result.hdg)) {
+                                result.status_hdg = 3; //data valid
+                            } else {
+                                result.status_hdg = 2; //data not valid
+                            }
+                        }
                     }
                     else
                     {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                         logger()->warn()<<Q_FUNC_INFO<<" osd invalid";
-    #else
+#else
                         qDebug()<<Q_FUNC_INFO<<"osd invalid";
-    #endif
+#endif
                         result.status_gps = 2; //data not valid
                         result.status_hdg = 2; //data not valid
-
-//                        return result;
                     }
 
                     //                reset();
@@ -234,11 +261,11 @@ NavDataModel NavDataDecoderNMEA::decode()
                     m_append_data_osd.remove(0,index_hdr);
                 }
             }
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
             logger()->trace()<<Q_FUNC_INFO<<"index_end"<<index_end;
-    #else
+#else
             qDebug()<<Q_FUNC_INFO<<index_end;
-    #endif
+#endif
         }
     }
     return result;
@@ -282,7 +309,7 @@ NavDataModel NavDataDecoderCustom::decode()
 
                     if(msg_list.size() == 3)
                     {
-                        if(isGPSDataValid(msg_list.at(0),msg_list.at(1)))
+                        if(isGPSDataValid(msg_list.at(0).toDouble(),msg_list.at(1).toDouble()))
                         {
                             result.lat = msg_list.at(0).toDouble();
                             result.lon = msg_list.at(1).toDouble();
@@ -292,7 +319,7 @@ NavDataModel NavDataDecoderCustom::decode()
                         {
                             result.status_gps = 2; //data not valid
                         }
-                        if(isHDGDataValid(msg_list.at(2)))
+                        if(isHDGDataValid(msg_list.at(2).toDouble()))
                         {
                             result.hdg = msg_list.at(2).toDouble();
                             result.status_hdg = 3; //data valid

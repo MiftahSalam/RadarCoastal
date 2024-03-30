@@ -162,6 +162,7 @@ void MqttDeviceWrapper::Write(const QString data)
     {
         QMQTT::Message message(m_idCounter,format.at(0),format.at(1).toUtf8());
         m_publisher->PublishData(message);
+        return;
     }
 #ifdef USE_LOG4QT
     logger()->warn()<<Q_FUNC_INFO<<"invalid mqtt data"<<data;

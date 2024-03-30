@@ -31,8 +31,8 @@ public:
     virtual NavDataModel decode() = 0;
 
     void update(QByteArray data);
-    bool isGPSDataValid(const QString lat_str, const QString lon_str);
-    bool isHDGDataValid(const QString hdg_str);
+    bool isGPSDataValid(const double lat, const double lon);
+    bool isHDGDataValid(const double hdg);
 
 protected:
     virtual void reset();
@@ -101,6 +101,22 @@ public:
                          bool hdg_man
                          );
     NavDataEncoderCustom(NavDataModel data);
+
+    // NavDataEncoder interface
+    QString encode() override;
+};
+
+class NavDataEncoderJson: public NavDataEncoder
+{
+public:
+    NavDataEncoderJson(long long ts,
+                          double lat,
+                          double lon,
+                          double hdg,
+                         bool gps_man,
+                         bool hdg_man
+                         );
+    NavDataEncoderJson(NavDataModel data);
 
     // NavDataEncoder interface
     QString encode() override;
