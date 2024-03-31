@@ -48,6 +48,8 @@ SOURCES += \
     usecase/alarm/alarmmanager.cpp \
     usecase/alarm/gzalarm.cpp \
     usecase/ppi/arpa.cpp \
+    usecase/stream/arpa_sender_model.cpp \
+    usecase/stream/nav_data_model.cpp \
     usecase/stream/sitedatasender.cpp \
     usecase/track/track.cpp \
     usecase/track/trackmodelview.cpp \
@@ -91,7 +93,9 @@ HEADERS += \
     usecase/alarm/alarmmanager.h \
     usecase/alarm/gzalarm.h \
     usecase/ppi/arpa.h \
+    usecase/stream/arpa_sender_model.h \
     usecase/stream/baseresponsejson.h \
+    usecase/stream/nav_data_model.h \
     usecase/stream/sitedatasender.h \
     usecase/track/track.h \
     usecase/track/trackmodelview.h \

@@ -46,9 +46,19 @@ void Stream::SetConfig(const QString& config)
     else m_streamDevice->InitConfig(m_config.config);
 }
 
+void Stream::ChangeConfig(const QString &config)
+{
+    m_streamDevice->ChangeConfig(config);
+}
+
 void Stream::Reconnect()
 {
     m_streamDevice->Reconnect();
+}
+
+void Stream::UpdateTimeStamp()
+{
+    m_streamDevice->UpdateTimeStamp();
 }
 
 void Stream::SendData(const QString &data)
@@ -63,8 +73,8 @@ void Stream::generateConfig(const QString config)
     qDebug()<<Q_FUNC_INFO<<"config"<<config;
 #endif
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
-    QStringList config_list = config.split(";",QString::SkipEmptyParts);
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    QStringList config_list = config.split(";",Qt::SkipEmptyParts);
 #else
     QStringList config_list = config.split(";",QString::SkipEmptyParts);
 #endif

@@ -11,7 +11,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, SiteDataSender)
 #include <QDebug>
 #endif
 
-SiteDataSender::SiteDataSender(QObject *parent) : QObject(parent)
+SiteDataSender::SiteDataSender(QObject *parent) : QObject(parent), m_stream_mqtt{nullptr}
 {
 #ifdef USE_LOG4QT
     logger()->trace()<<Q_FUNC_INFO;
@@ -20,12 +20,37 @@ SiteDataSender::SiteDataSender(QObject *parent) : QObject(parent)
 #endif
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
 
+    initConfigMqtt();
     initConfigWS();
 
     m_site_data_count = 0;
 
     connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,
             this,&SiteDataSender::triggerConfigChange);
+}
+
+void SiteDataSender::initConfigMqtt()
+{
+    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
+    QStringList config_str_list = config_str.split(":");
+
+    if(config_str_list.size() != 3)
+    {
+#ifdef USE_LOG4QT
+        logger()->fatal()<<Q_FUNC_INFO<<"invalid config mqtt"<<config_str;
+#else
+        qDebug()<<Q_FUNC_INFO<<"invalid config mqtt"<<config_str;
+        exit(1);
+#endif
+    }
+
+    m_topic = "site_data";
+    config_str_list.removeLast();
+    config_str_list.append(m_topic);
+    if (!m_stream_mqtt) {
+        m_stream_mqtt = new Stream(this,config_str_list.join(":"));
+    }
+    m_stream_mqtt->ChangeConfig("subsciber:topic-add:"+m_topic);
 }
 
 void SiteDataSender::initConfigWS()
@@ -69,7 +94,7 @@ void SiteDataSender::triggerConfigChange(const QString key, const QVariant val)
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val.toString();
 #endif
-    if(key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_WS) //todo use config
+    if(key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_WS)
     {
         m_stream_ws->SetConfig(val.toString());
     }
@@ -109,15 +134,28 @@ void SiteDataSender::SendSiteData()
 
         BaseResponseJson<QJsonObject> resp(0, "ok", &obj);
 
-        QJsonDocument doc(resp.build());
+        QJsonDocument docWs(resp.build());
+        QJsonDocument docMqtt(obj);
+        auto dataSendWs = docWs.toJson(QJsonDocument::Compact);
+        auto dataSendMqtt = docMqtt.toJson(QJsonDocument::Compact);
 
-        m_stream_ws->SendData(doc.toJson(QJsonDocument::Compact));
+        sendMqtt(dataSendMqtt);
+        m_stream_ws->SendData(dataSendWs);
     }
+}
+
+void SiteDataSender::sendMqtt(QString data)
+{
+    QString mq_data = m_topic+MQTT_MESSAGE_SEPARATOR+data;
+
+    if(m_stream_mqtt->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt->Reconnect();
+    else m_stream_mqtt->SendData(mq_data);
 }
 
 void SiteDataSender::Reconnect()
 {
     if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
+    if(m_stream_mqtt->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt->Reconnect();
 }
 
 int SiteDataSender::navStatusCode(const int status) const

@@ -15,7 +15,7 @@ public:
     virtual void Insert(const TrackModel& TrackModel) = 0;
     virtual TrackModel* FindOne(const int& trackId) = 0;
     virtual std::list<TrackModel*> FindAll() = 0;
-    virtual void Update(const TrackModel& TrackModel) = 0;
+    virtual void Update(TrackModel& TrackModel) = 0;
     virtual void Remove(const int& trackId) = 0;
 
 protected:

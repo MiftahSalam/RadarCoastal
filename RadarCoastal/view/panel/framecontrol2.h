@@ -54,6 +54,8 @@ private slots:
 
     void on_horizontalSliderVRM_valueChanged(int value);
 
+    void triggerConfigChange(const QString key, const QVariant val);
+
 private:
     void initConfig();
 

@@ -33,7 +33,9 @@ public:
     DeviceWrapper::DeviceStatus GetStreamStatus() const;
     void SendData(const QString& data);
     void SetConfig(const QString& config);
+    void ChangeConfig(const QString& config);
     void Reconnect();
+    void UpdateTimeStamp();
 
 protected:
     QString streamError;

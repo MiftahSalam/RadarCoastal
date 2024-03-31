@@ -179,9 +179,6 @@ void FrameOSD::on_timeout()
     updateHDGData();
     sensor->Reconnect();
     sensor->UpdateStatus();
-    if(!ui->checkBoxGPS->isChecked())
-        sensor->SendData(ui->lineEditLat->text(),ui->lineEditLon->text(),ui->lineEditHDG->text());
-
     siteData->SendSiteData();
     siteData->Reconnect();
 }

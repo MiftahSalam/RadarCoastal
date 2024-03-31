@@ -19,6 +19,7 @@ public:
     virtual void Write(const QString data) = 0;
     virtual DeviceStatus GetStatus() = 0;
     virtual void Reconnect() = 0;
+    virtual void UpdateTimeStamp();
     virtual void ChangeConfig(const QString command) = 0;
     virtual bool InitConfig(const QString config) = 0;
 
