@@ -62,6 +62,7 @@ void ArpaSender::SendManyData(QList<TrackModel *> data)
         default:
             break;
         }
+        m->rng *= 1000.;
     }
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder *>(new ArpaSenderDecoderJson(data));
@@ -85,6 +86,7 @@ void ArpaSender::SendOneData(TrackModel data)
     default:
         break;
     }
+    data.rng *= 1000.;
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder *>(new ArpaSenderDecoderJson(data));
 
@@ -115,6 +117,7 @@ void ArpaSender::SendOneData(long long ts,
     default:
         break;
     }
+    rng *= 1000.;
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder *>(new ArpaSenderDecoderJson(
                                                                        ts,
