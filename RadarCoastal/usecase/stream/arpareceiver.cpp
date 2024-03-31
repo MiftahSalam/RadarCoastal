@@ -63,14 +63,14 @@ QList<TrackModel*> ArpaReceiverDecoderJson::decode()
                    TrackModel *trk = new TrackModel();
 
                    trk->timestamp = QDateTime::currentMSecsSinceEpoch();
-                   trk->id = obj["id"].toInt();
-                   trk->lat = obj["lat"].toDouble();
-                   trk->lon = obj["lon"].toDouble();
+                   trk->id = obj["track_id"].toInt();
+                   trk->lat = obj["latitude"].toDouble();
+                   trk->lon = obj["longitude"].toDouble();
                    trk->alt = obj["alt"].toDouble();
-                   trk->rng = obj["rng"].toDouble();
-                   trk->brn = obj["brn"].toDouble();
-                   trk->spd = obj["spd"].toDouble();
-                   trk->crs = obj["crs"].toDouble();
+                   trk->rng = obj["range"].toDouble()/1000.;
+                   trk->brn = obj["bearing"].toDouble();
+                   trk->spd = obj["speed"].toDouble();
+                   trk->crs = obj["course"].toDouble();
 
                    tracks.append(trk);
                }

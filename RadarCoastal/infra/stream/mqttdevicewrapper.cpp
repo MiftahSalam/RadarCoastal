@@ -77,11 +77,14 @@ bool MqttDeviceWrapper::InitConfig(const QString config)
         m_subsciber = new Subscriber(this,m_mqttConfig.host,m_mqttConfig.port, m_defaultTopic);
         connect(m_subsciber,&Subscriber::SignalOnReceived, this, &MqttDeviceWrapper::receiveData);
     }
+    else
+    {
 #ifdef USE_LOG4QT
-    logger()->warn()<<Q_FUNC_INFO<<"invalid config"<<config;
+        logger()->warn()<<Q_FUNC_INFO<<"invalid config"<<config;
 #else
-    else qDebug()<<Q_FUNC_INFO<<"invalid config"<<config;
+        else qDebug()<<Q_FUNC_INFO<<"invalid config"<<config;
 #endif
+    }
 
     return ret_val;
 }
@@ -212,9 +215,9 @@ void MqttClient::AddTopic(const QString topic)
     if(!m_topic_list.contains(topic))
     {
 #ifdef USE_LOG4QT
-    logger()->debug()<<Q_FUNC_INFO<<"topic"<<topic;
+        logger()->debug()<<Q_FUNC_INFO<<"topic"<<topic;
 #else
-    qDebug()<<Q_FUNC_INFO<<"topic"<<topic;
+        qDebug()<<Q_FUNC_INFO<<"topic"<<topic;
 #endif
         m_topic_list.append(topic);
         subscribe(topic);

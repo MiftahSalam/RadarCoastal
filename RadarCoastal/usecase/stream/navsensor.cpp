@@ -194,6 +194,11 @@ void NavSensor::processNavData(QString data)
         m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, model.status_hdg); //data valid
     }
     else if (model.status_hdg == 2) m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
+
+#ifdef DISPLAY_ONLY_MODE
+    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO, !model.gps_man);
+    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO, !model.hdg_man);
+#endif
 }
 
 void NavSensor::triggerReceivedData(QString data)
@@ -205,6 +210,11 @@ void NavSensor::triggerReceivedData(QString data)
 #endif
 
 #ifdef DISPLAY_ONLY_MODE
+    if (!data.contains(SITE_DATA_TOPIC))
+    {
+        return;
+    }
+
     data.remove(SITE_DATA_TOPIC+MQTT_MESSAGE_SEPARATOR);
 #else
     if (data.contains(SITE_DATA_TOPIC))

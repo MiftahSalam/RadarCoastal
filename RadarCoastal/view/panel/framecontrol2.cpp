@@ -41,13 +41,39 @@ FrameControl2::FrameControl2(QWidget *parent) :
     ui->lineEditMTI->setText(QString::number(ui->horizontalSliderMTI->value()));
 
     ui->horizontalSliderVRM->setMinimum(100);
-    ui->horizontalSliderVRM->setMaximum(distanceList.first());
+    switch (Utils::unit) {
+    case 0:
+        ui->horizontalSliderVRM->setMaximum(distanceList.first());
+        break;
+    case 1:
+        ui->horizontalSliderVRM->setMaximum(distanceListNautical.first());
+        break;
+    default:
+        break;
+    }
     ui->horizontalSliderVRM->setSingleStep(10);
     ui->horizontalSliderVRM->setPageStep(10);
+
+    connect(RadarEngine::RadarConfig::getInstance(""), &RadarEngine::RadarConfig::configValueChange,
+            this, &FrameControl2::triggerConfigChange);
 }
 
 void FrameControl2::initConfig()
 {
+//    ui->horizontalSliderVRM->setMinimum(100);
+    switch (Utils::unit) {
+    case 0:
+        ui->horizontalSliderVRM->setMaximum(distanceList.first());
+        break;
+    case 1:
+        ui->horizontalSliderVRM->setMaximum(distanceListNautical.first());
+        break;
+    default:
+        break;
+    }
+//    ui->horizontalSliderVRM->setSingleStep(10);
+//    ui->horizontalSliderVRM->setPageStep(10);
+
     ui->checkBoxMTI->setChecked(m_instance_cfg->getConfig(RadarEngine::VOLATILE_RADAR_PARAMS_FILTER_CONTROL_MTI).toBool());
     ui->checkBoxEBL->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_EBL_MARKER).toBool());
     ui->checkBoxVRM->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_EBL_MARKER).toBool());
@@ -207,7 +233,32 @@ void FrameControl2::on_horizontalSliderVRM_valueChanged(int value)
 #else
     qDebug()<<Q_FUNC_INFO<<ui->horizontalSliderVRM->maximum()<<ui->horizontalSliderVRM->singleStep()<<ui->horizontalSliderVRM->pageStep()<<value;
 #endif
+    /*
+    */
     const int vrm_value = value;
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE,vrm_value);
+    switch (Utils::unit) {
+    case 1:
+        value *= KM_TO_NM;
+        break;
+    }
+    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE,value);
     ui->lineEditVRM->setText(Utils::RangeDisplay(static_cast<double>(vrm_value), Utils::ONE_PRECISION));
+}
+
+void FrameControl2::triggerConfigChange(const QString key, const QVariant val)
+{
+#ifdef USE_LOG4QT
+    logger()->trace() << Q_FUNC_INFO << "key" << key << "val" << val.toString();
+#endif
+    if (key == RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT)
+    {
+        initConfig();
+        int value = ui->horizontalSliderVRM->value();
+        switch (Utils::unit) {
+        case 1:
+            value /= KM_TO_NM;
+            break;
+        }
+        on_horizontalSliderVRM_valueChanged(value);
+    }
 }
