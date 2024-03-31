@@ -53,6 +53,15 @@ void ArpaSender::SendManyData(QList<TrackModel *> data)
 
         m->lat = gpsCorrection.y();
         m->lon = gpsCorrection.x();
+
+        switch (Utils::unit)
+        {
+        case 1:
+            m->rng /= KM_TO_NM;
+            break;
+        default:
+            break;
+        }
     }
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder *>(new ArpaSenderDecoderJson(data));
@@ -68,6 +77,14 @@ void ArpaSender::SendOneData(TrackModel data)
 
     data.lat = gpsCorrection.y();
     data.lon = gpsCorrection.x();
+    switch (Utils::unit)
+    {
+    case 1:
+        data.rng /= KM_TO_NM;
+        break;
+    default:
+        break;
+    }
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder *>(new ArpaSenderDecoderJson(data));
 
@@ -90,6 +107,14 @@ void ArpaSender::SendOneData(long long ts,
 
     lat = gpsCorrection.y();
     lon = gpsCorrection.x();
+    switch (Utils::unit)
+    {
+    case 1:
+        rng /= KM_TO_NM;
+        break;
+    default:
+        break;
+    }
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder *>(new ArpaSenderDecoderJson(
                                                                        ts,
