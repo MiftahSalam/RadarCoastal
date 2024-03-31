@@ -15,7 +15,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, ArpaSender)
 
 
 ArpaSender::ArpaSender(QObject *parent)
-    : QObject{parent}
+    : QObject{parent}, m_stream_mqtt{nullptr}
 {
 #ifdef USE_LOG4QT
     logger()->trace()<<Q_FUNC_INFO;
@@ -67,6 +67,15 @@ void ArpaSender::SendManyData(QList<TrackModel *> data)
 
         m->lat = gpsCorrection.y();
         m->lon = gpsCorrection.x();
+        switch (Utils::unit)
+        {
+        case 1:
+            m->rng /= KM_TO_NM;
+            break;
+        default:
+            break;
+        }
+        m->rng *= 1000.;
     }
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder*>(new ArpaSenderDecoderJson(data));
@@ -82,6 +91,15 @@ void ArpaSender::SendOneData(TrackModel data)
 
     data.lat = gpsCorrection.y();
     data.lon = gpsCorrection.x();
+    switch (Utils::unit)
+    {
+    case 1:
+        data.rng /= KM_TO_NM;
+        break;
+    default:
+        break;
+    }
+    data.rng *= 1000.;
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder*>(new ArpaSenderDecoderJson(data));
     sendMqtt(decoder);
@@ -105,6 +123,15 @@ void ArpaSender::SendOneData(long long ts,
 
     lat = gpsCorrection.y();
     lon = gpsCorrection.x();
+    switch (Utils::unit)
+    {
+    case 1:
+        rng /= KM_TO_NM;
+        break;
+    default:
+        break;
+    }
+    rng *= 1000.;
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder*>(new ArpaSenderDecoderJson(
                                                                       ts,
@@ -162,9 +189,11 @@ void ArpaSender::initConfigMqtt()
     }
 
     m_topic = config_str_list.last();
-    m_stream_mqtt = new Stream(this,config_str);
-    connect(RadarEngine::RadarConfig::getInstance(""),&RadarEngine::RadarConfig::configValueChange,
-            this,&ArpaSender::triggerConfigChange);
+    if (!m_stream_mqtt) {
+        m_stream_mqtt = new Stream(this,config_str);
+        connect(RadarEngine::RadarConfig::getInstance(""),&RadarEngine::RadarConfig::configValueChange,
+                this,&ArpaSender::triggerConfigChange);
+    }
 }
 
 void ArpaSender::triggerConfigChange(const QString key, const QVariant val)
@@ -175,6 +204,7 @@ void ArpaSender::triggerConfigChange(const QString key, const QVariant val)
 #endif
     if(key == RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG)
     {
+        initConfigMqtt();
         m_stream_mqtt->SetConfig(val.toString());
     }
 }

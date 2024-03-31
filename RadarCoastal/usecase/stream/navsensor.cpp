@@ -13,7 +13,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, NavSensor)
 #include <QDebug>
 #endif
 
-NavSensor::NavSensor(QObject *parent) : QObject(parent)
+NavSensor::NavSensor(QObject *parent) : QObject(parent), m_stream_mqtt{nullptr}
 {
 #ifdef USE_LOG4QT
     logger()->trace()<<Q_FUNC_INFO;
@@ -27,7 +27,6 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
     decoder = new NavDataDecoderNMEA();
 //    decoder = new NavDataDecoderCustom();
 
-    m_append_data_osd = "";
     m_no_osd_count = 11;
 
     connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,
@@ -49,6 +48,7 @@ void NavSensor::initConfigMqtt()
 #endif
     }
 
+    /*
     bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
     if(!gps_auto)
     {
@@ -58,10 +58,20 @@ void NavSensor::initConfigMqtt()
     }
     else
         m_topic = nav_config_str_list.last();
+    */
 
-    m_stream_mqtt = new Stream(this,nav_config_str_list.join(":"));
+    m_no_osd_count = 11;
 
-    connect(m_stream_mqtt,&Stream::SignalReceiveData,this,&NavSensor::triggerReceivedData);
+    if (!m_stream_mqtt) {
+        m_stream_mqtt = new Stream(this,nav_config_str_list.join(":"));
+
+        connect(m_stream_mqtt, &Stream::SignalReceiveData, this, &NavSensor::triggerReceivedData);
+    }
+    else m_stream_mqtt->ChangeConfig("subsciber:topic-rm:"+m_topic);
+
+    m_topic = nav_config_str_list.last();
+    m_stream_mqtt->ChangeConfig("subsciber:topic-add:"+m_topic);
+
 }
 
 void NavSensor::triggerConfigChange(const QString key, const QVariant val)
@@ -72,56 +82,9 @@ void NavSensor::triggerConfigChange(const QString key, const QVariant val)
 #endif
     if(key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG)
     {
+        initConfigMqtt();
         m_stream_mqtt->SetConfig(val.toString());
     }
-    else if(key == RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO)
-    {
-        if(val.toBool())
-        {
-            QString nav_config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
-            QStringList nav_config_str_list = nav_config_str.split(":");
-
-            if(nav_config_str_list.size() != 3)
-            {
-#ifdef USE_LOG4QT
-                logger()->warn()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
-#else
-                qDebug()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
-#endif
-                return;
-            }
-
-            m_topic = nav_config_str_list.last();
-            m_stream_mqtt->SetConfig(nav_config_str);
-        }
-        else
-        {
-            QString nav_config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
-            QStringList nav_config_str_list = nav_config_str.split(":");
-
-            if(nav_config_str_list.size() != 3)
-            {
-#ifdef USE_LOG4QT
-                logger()->warn()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
-#else
-                qDebug()<<Q_FUNC_INFO<<"invalid config"<<nav_config_str;
-#endif
-                return;
-            }
-
-            nav_config_str_list.removeLast();
-            m_topic = "gps_man";
-            nav_config_str_list.append(m_topic);
-
-            m_stream_mqtt->SetConfig(nav_config_str_list.join(":"));
-        }
-    }
-}
-
-void NavSensor::SendData(QString lat, QString lon, QString hdt)
-{
-    QString m_data = m_topic+":"+"?"+lat+"#"+lon+"#"+hdt+"!";
-    m_stream_mqtt->SendData(m_data);
 }
 
 void NavSensor::UpdateStatus()
@@ -144,13 +107,8 @@ void NavSensor::UpdateStatus()
     }
 }
 
-void NavSensor::triggerReceivedData(const QString data)
+void NavSensor::triggerReceivedData(QString data)
 {
-#ifdef USE_LOG4QT
-    logger()->debug()<<Q_FUNC_INFO<<"data: "<<data;
-#else
-    qDebug()<<Q_FUNC_INFO<<data;
-#endif
     decoder->update(data.toUtf8());
 
     NavDataModel model = decoder->decode();
@@ -160,6 +118,7 @@ void NavSensor::triggerReceivedData(const QString data)
     }
 
     m_no_osd_count = 0;
+    m_stream_mqtt->UpdateTimeStamp();
 
     if (model.status_gps == 3)
     {

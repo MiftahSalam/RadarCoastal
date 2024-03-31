@@ -25,9 +25,14 @@ private slots:
 private:
     RadarEngine::RadarConfig* m_instance_cfg;
     Stream *m_stream_ws;
+    Stream *m_stream_mqtt;
     int m_site_data_count, max_site_data_count;
 
+    QString m_topic;
+
+    void sendMqtt(QString data);
     void initConfigWS();
+    void initConfigMqtt();
     int navStatusCode(const int status) const;
     int radarStatusCode(const RadarEngine::RadarState status) const;
 };
