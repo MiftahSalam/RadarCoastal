@@ -18,13 +18,13 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, EchoSender)
 #endif
 
 EchoSender::EchoSender(QObject *parent)
-    : QObject{parent}
+    : QObject{parent}, m_stream_mqtt_spasi{nullptr}
 {
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     m_re = RadarEngine::RadarEngine::GetInstance();
     m_ppi_grabber = m_re->m_radar_capture;
 
-    initConfigWS();
+    initConfigMqttSpasi();
 
 #ifdef SAVE_CAPTURE
     initFile();
@@ -33,27 +33,30 @@ EchoSender::EchoSender(QObject *parent)
     connect(m_re->m_radar_capture,&RadarEngine::RadarImageCapture::signalSendEcho,this,&EchoSender::triggerSendData);
 }
 
-void EchoSender::initConfigWS()
+void EchoSender::initConfigMqttSpasi()
 {
-    QString config_ws_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ECHO_NET_CONFIG_WS).toString();
-    QStringList config_ws_str_list = config_ws_str.split(";");
+    QString config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ECHO_NET_CONFIG_SPASI).toString();
+    QStringList config_str_list = config_str.split(":");
 
-    if(config_ws_str_list.size() != 3)
+    if(config_str_list.size() != 5)
     {
 #ifdef USE_LOG4QT
-    logger()->fatal()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
+    logger()->fatal()<<Q_FUNC_INFO<<"invalid config mqtt spasi"<<config_str;
 #else
-        qDebug()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
+        qDebug()<<Q_FUNC_INFO<<"invalid config mqtt spasi"<<config_str;
         exit(1);
 #endif
     }
 
-    m_stream_ws = new Stream(this,config_ws_str);
+    m_topic_spasi = config_str_list.last();
+    if (!m_stream_mqtt_spasi) {
+        m_stream_mqtt_spasi = new Stream(this,config_str);
+    }
 }
 
 void EchoSender::Reconnect()
 {
-    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
+    if(m_stream_mqtt_spasi->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt_spasi->Reconnect();
 }
 
 void EchoSender::triggerSendData(const QString echoStr, const int vp_width, const int vp_height)
@@ -63,8 +66,13 @@ void EchoSender::triggerSendData(const QString echoStr, const int vp_width, cons
     auto timestamp = QDateTime::currentMSecsSinceEpoch();
     QJsonDocument json(buildJsonPackage(echoStr, timestamp, box, curRange));
 
-    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::INPUT_AVAIL)
-        m_stream_ws->SendData(json.toJson(QJsonDocument::Compact));
+    if(m_stream_mqtt_spasi->GetStreamStatus() == DeviceWrapper::INPUT_AVAIL)
+    {
+        QString mq_data = m_topic_spasi+MQTT_MESSAGE_SEPARATOR+json.toJson(QJsonDocument::Compact);
+
+        if(m_stream_mqtt_spasi->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt_spasi->Reconnect();
+        m_stream_mqtt_spasi->SendData(mq_data);
+    }
 #ifdef SAVE_CAPTURE
     saveJsonDataToFile(json.toJson());
 #endif

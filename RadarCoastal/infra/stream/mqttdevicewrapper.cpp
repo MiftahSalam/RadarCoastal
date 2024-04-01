@@ -35,7 +35,7 @@ MqttDeviceWrapper* MqttDeviceWrapper::GetInstance(const QString config)
 #else
     qDebug()<<Q_FUNC_INFO<<"config"<<config;
 #endif
-    if(!m_wrappers.contains(config))
+    if(!m_wrappers.contains(extractBrokerUrl(config)))
     {
         MqttDeviceWrapper* wrapper = new MqttDeviceWrapper(nullptr);
         bool wrap_init = wrapper->InitConfig(config);
@@ -57,8 +57,8 @@ MqttDeviceWrapper* MqttDeviceWrapper::GetInstance(const QString config)
 bool MqttDeviceWrapper::InitConfig(const QString config)
 {
     bool ret_val = false;
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
-    QStringList config_list = config.split(":",QString::SkipEmptyParts);
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    QStringList config_list = config.split(":",Qt::SkipEmptyParts);
 #else
     QStringList config_list = config.split(":",QString::SkipEmptyParts);
 #endif
@@ -75,6 +75,29 @@ bool MqttDeviceWrapper::InitConfig(const QString config)
 
         m_publisher = new Publisher(this,m_mqttConfig.host,m_mqttConfig.port, m_defaultTopic);
         m_subsciber = new Subscriber(this,m_mqttConfig.host,m_mqttConfig.port, m_defaultTopic);
+        connect(m_subsciber,&Subscriber::SignalOnReceived, this, &MqttDeviceWrapper::receiveData);
+    }
+    else if(config_list.size() >= 5)
+    {
+        ret_val = true;
+
+        m_mqttConfig.host = QHostAddress(config_list.at(0));
+        m_mqttConfig.port = config_list.at(1).toUShort();
+        m_mqttConfig.user = config_list.at(2);
+        m_mqttConfig.password = config_list.at(3);
+        m_defaultTopic = config_list.at(4);
+
+        if(m_publisher) delete m_publisher;
+        if(m_subsciber) delete m_subsciber;
+
+        m_publisher = new Publisher(this,m_mqttConfig.host,m_mqttConfig.port, m_defaultTopic);
+        m_subsciber = new Subscriber(this,m_mqttConfig.host,m_mqttConfig.port, m_defaultTopic);
+
+        m_publisher->setUsername(m_mqttConfig.user);
+        m_publisher->setPassword(m_mqttConfig.password.toUtf8());
+        m_subsciber->setUsername(m_mqttConfig.user);
+        m_subsciber->setPassword(m_mqttConfig.password.toUtf8());
+
         connect(m_subsciber,&Subscriber::SignalOnReceived, this, &MqttDeviceWrapper::receiveData);
     }
     else
@@ -113,10 +136,26 @@ void MqttDeviceWrapper::receiveData(QMQTT::Message message)
 {
     QString payload = QString::fromUtf8(message.payload());
     QString topic = message.topic();
-    //    _currentData = payload;
-    qWarning()<<Q_FUNC_INFO<<"payload"<<payload<<"topic"<<topic;
+
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" topic: "<<topic<<", payload: "<<payload;
+#else
+    qDebug()<<Q_FUNC_INFO<<"payload"<<payload<<"topic"<<topic;
+#endif
     m_last_data_time = QDateTime::currentSecsSinceEpoch();
     emit ReadyRead(topic+MQTT_MESSAGE_SEPARATOR+payload);
+}
+
+QString MqttDeviceWrapper::extractBrokerUrl(QString config)
+{
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    QStringList config_list = config.split(":",Qt::SkipEmptyParts);
+#else
+    QStringList config_list = config.split(":",QString::SkipEmptyParts);
+#endif
+    QStringList config_list_broker = config_list.mid(0,2);
+
+    return config_list_broker.join(":");
 }
 
 void MqttDeviceWrapper::ChangeConfig(const QString command)

@@ -11,7 +11,8 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, SiteDataSender)
 #include <QDebug>
 #endif
 
-SiteDataSender::SiteDataSender(QObject *parent) : QObject(parent), m_stream_mqtt{nullptr}
+SiteDataSender::SiteDataSender(QObject *parent)
+    : QObject(parent), m_stream_mqtt_spasi{nullptr}, m_stream_mqtt{nullptr}
 {
 #ifdef USE_LOG4QT
     logger()->trace()<<Q_FUNC_INFO;
@@ -21,12 +22,40 @@ SiteDataSender::SiteDataSender(QObject *parent) : QObject(parent), m_stream_mqtt
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
 
     initConfigMqtt();
-    initConfigWS();
+    initConfigMqttSpasi();
 
     m_site_data_count = 0;
 
     connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,
             this,&SiteDataSender::triggerConfigChange);
+}
+
+void SiteDataSender::initConfigMqttSpasi()
+{
+    QString config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_SPASI).toString();
+    QStringList config_str_list = config_str.split(":");
+
+    if(config_str_list.size() != 6)
+    {
+#ifdef USE_LOG4QT
+        logger()->fatal()<<Q_FUNC_INFO<<"invalid config mqtt spasi"<<config_str;
+#else
+        qDebug()<<Q_FUNC_INFO<<"invalid config mqtt spasi"<<config_str;
+        exit(1);
+#endif
+    }
+
+    bool ok;
+    max_site_data_count = config_str_list.last().toInt(&ok);
+    if (!ok) {
+        max_site_data_count = 10;
+        qWarning()<<Q_FUNC_INFO<<"invalid max_site_data_count"<<config_str_list.last()<<". will use default 10";
+    }
+
+    m_topic_spasi = config_str_list.at(4);
+    if (!m_stream_mqtt_spasi) {
+        m_stream_mqtt_spasi = new Stream(this,config_str);
+    }
 }
 
 void SiteDataSender::initConfigMqtt()
@@ -53,50 +82,14 @@ void SiteDataSender::initConfigMqtt()
     m_stream_mqtt->ChangeConfig("subsciber:topic-add:"+m_topic);
 }
 
-void SiteDataSender::initConfigWS()
-{
-    QString config_ws_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_WS).toString();
-    QStringList config_ws_str_list = config_ws_str.split(";");
-
-    if(config_ws_str_list.size() != 3)
-    {
-#ifdef USE_LOG4QT
-    logger()->fatal()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
-#else
-        qDebug()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
-        exit(1);
-#endif
-    }
-
-    QStringList config_ws_str_list$ = config_ws_str.split("$");
-    if(config_ws_str_list$.size() != 2)
-    {
-#ifdef USE_LOG4QT
-    logger()->fatal()<<Q_FUNC_INFO<<"invalid config ws site period"<<config_ws_str;
-#else
-        qDebug()<<Q_FUNC_INFO<<"invalid config ws site period"<<config_ws_str;
-        exit(1);
-#endif
-    }
-
-    bool ok;
-    max_site_data_count = config_ws_str_list$.at(1).toInt(&ok);
-    if (!ok) {
-        max_site_data_count = 10;
-        qWarning()<<Q_FUNC_INFO<<"invalid max_site_data_count"<<config_ws_str_list$.at(1)<<". will use default 10";
-    }
-
-    m_stream_ws = new Stream(this,config_ws_str);
-}
-
 void SiteDataSender::triggerConfigChange(const QString key, const QVariant val)
 {
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val.toString();
 #endif
-    if(key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_WS)
+    if(key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_SPASI)
     {
-        m_stream_ws->SetConfig(val.toString());
+        m_stream_mqtt_spasi->SetConfig(val.toString());
     }
 }
 
@@ -140,8 +133,16 @@ void SiteDataSender::SendSiteData()
         auto dataSendMqtt = docMqtt.toJson(QJsonDocument::Compact);
 
         sendMqtt(dataSendMqtt);
-        m_stream_ws->SendData(dataSendWs);
+        sendMqttSpasi(dataSendWs);
     }
+}
+
+void SiteDataSender::sendMqttSpasi(QString data)
+{
+    QString mq_data = m_topic_spasi+MQTT_MESSAGE_SEPARATOR+data;
+
+    if(m_stream_mqtt_spasi->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt_spasi->Reconnect();
+    m_stream_mqtt_spasi->SendData(mq_data);
 }
 
 void SiteDataSender::sendMqtt(QString data)
@@ -154,8 +155,8 @@ void SiteDataSender::sendMqtt(QString data)
 
 void SiteDataSender::Reconnect()
 {
-    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
     if(m_stream_mqtt->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt->Reconnect();
+    if(m_stream_mqtt_spasi->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt_spasi->Reconnect();
 }
 
 int SiteDataSender::navStatusCode(const int status) const
