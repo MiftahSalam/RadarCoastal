@@ -2,6 +2,7 @@
 
 #include "shared/utils.h"
 
+#include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
 
