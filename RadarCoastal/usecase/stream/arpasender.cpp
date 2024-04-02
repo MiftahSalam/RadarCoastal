@@ -59,7 +59,7 @@ void ArpaSender::sendMqttSpasi(ArpaSenderDecoder *decoder)
     QString mq_data = m_topic_spasi+MQTT_MESSAGE_SEPARATOR+doc.toJson(QJsonDocument::Compact);
 
     if(m_stream_mqtt_spasi->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt_spasi->Reconnect();
-    m_stream_mqtt_spasi->SendData(doc.toJson(QJsonDocument::Compact));
+    m_stream_mqtt_spasi->SendData(mq_data);
 }
 
 void ArpaSender::SendManyData(QList<TrackModel *> data)
