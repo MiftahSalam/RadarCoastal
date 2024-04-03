@@ -98,7 +98,7 @@ void Stream::generateConfig(const QString config)
         m_config.config = config_list.at(2);
     }
 #ifdef USE_LOG4QT
-            logger()->warn()<<Q_FUNC_INFO<<"invalid config"<<config;
+    else logger()->warn()<<Q_FUNC_INFO<<"invalid config"<<config;
 #else
     else qDebug()<<Q_FUNC_INFO<<"invalid config"<<config;
 #endif

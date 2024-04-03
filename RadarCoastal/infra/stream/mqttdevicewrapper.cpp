@@ -35,7 +35,7 @@ MqttDeviceWrapper* MqttDeviceWrapper::GetInstance(const QString config)
 #else
     qDebug()<<Q_FUNC_INFO<<"config"<<config;
 #endif
-    if(!m_wrappers.contains(config))
+    if(!m_wrappers.contains(extractBrokerUrl(config)))
     {
         MqttDeviceWrapper* wrapper = new MqttDeviceWrapper(nullptr);
         bool wrap_init = wrapper->InitConfig(config);
@@ -57,8 +57,8 @@ MqttDeviceWrapper* MqttDeviceWrapper::GetInstance(const QString config)
 bool MqttDeviceWrapper::InitConfig(const QString config)
 {
     bool ret_val = false;
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
-    QStringList config_list = config.split(":",QString::SkipEmptyParts);
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    QStringList config_list = config.split(":",Qt::SkipEmptyParts);
 #else
     QStringList config_list = config.split(":",QString::SkipEmptyParts);
 #endif
@@ -113,8 +113,28 @@ void MqttDeviceWrapper::receiveData(QMQTT::Message message)
 {
     QString payload = QString::fromUtf8(message.payload());
     QString topic = message.topic();
+
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" topic: "<<topic<<", payload: "<<payload;
+#else
     qDebug()<<Q_FUNC_INFO<<"payload"<<payload<<"topic"<<topic;
+#endif
+
+    m_last_data_time = QDateTime::currentSecsSinceEpoch();
     emit ReadyRead(topic+MQTT_MESSAGE_SEPARATOR+payload);
+}
+
+
+QString MqttDeviceWrapper::extractBrokerUrl(QString config)
+{
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    QStringList config_list = config.split(":",Qt::SkipEmptyParts);
+#else
+    QStringList config_list = config.split(":",QString::SkipEmptyParts);
+#endif
+    QStringList config_list_broker = config_list.mid(0,2);
+
+    return config_list_broker.join(":");
 }
 
 void MqttDeviceWrapper::ChangeConfig(const QString command)
@@ -168,7 +188,7 @@ void MqttDeviceWrapper::Write(const QString data)
         return;
     }
 #ifdef USE_LOG4QT
-    logger()->warn()<<Q_FUNC_INFO<<"invalid mqtt data"<<data;
+    else logger()->warn()<<Q_FUNC_INFO<<"invalid mqtt data"<<data;
 #else
     else qDebug()<<Q_FUNC_INFO<<"invalid mqtt data"<<data;
 #endif
