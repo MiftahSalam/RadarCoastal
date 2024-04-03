@@ -38,14 +38,14 @@ private slots:
 private:
     RadarEngine::RadarConfig* m_instance_cfg;
     Stream *m_stream_mqtt;
-    Stream *m_stream_ws;
+    Stream *m_stream_mqtt_spasi;
 
-    QString m_topic;
+    QString m_topic, m_topic_spasi;
 
-    void initConfigWS();
+    void initConfigMqttSpasi();
     void initConfigMqtt();
     void sendMqtt(ArpaSenderDecoder* decoder);
-    void sendWS(ArpaSenderDecoder* data);
+    void sendMqttSpasi(ArpaSenderDecoder* data);
 };
 
 #endif // ARPASENDER_H

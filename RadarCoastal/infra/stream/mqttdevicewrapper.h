@@ -80,6 +80,8 @@ private:
     struct MqttConfig {
         QHostAddress host;
         quint16 port;
+        QString user;
+        QString password;
     } m_mqttConfig;
     quint16 m_idCounter;
     QString m_defaultTopic;
@@ -88,6 +90,7 @@ private:
     Subscriber* m_subsciber;
     static QMap<QString, MqttDeviceWrapper*> m_wrappers;
 
+    static QString extractBrokerUrl(QString config);
 };
 
 

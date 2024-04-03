@@ -27,7 +27,8 @@ private slots:
 
 private:
     RadarEngine::RadarConfig* m_instance_cfg;
-    Stream *m_stream_ws;
+    Stream *m_stream_mqtt_spasi;
+    QString m_topic_spasi;
 
     struct BoundingBoxGps
     {
@@ -47,7 +48,7 @@ private:
     QJsonObject buildJsonPackage(const QString data, const quint64 ts, const BoundingBoxGps box, double curRange);
     void saveJsonDataToFile(QByteArray data);
     void initFile();
-    void initConfigWS();
+    void initConfigMqttSpasi();
 };
 
 #endif // ECHOSENDER_H

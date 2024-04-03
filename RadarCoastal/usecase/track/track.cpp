@@ -260,23 +260,23 @@ void Track::trigger_LostTarget(int id)
 
 void Track::initCfg()
 {
-    QString config_ws_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_WS).toString();
-    QStringList config_ws_str_list$ = config_ws_str.split("$");
-    if(config_ws_str_list$.size() != 2)
+    QString config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_SPASI).toString();
+    QStringList config_str_list$ = config_str.split(":");
+    if(config_str_list$.size() != 6)
     {
 #ifdef USE_LOG4QT
-        logger()->fatal()<<Q_FUNC_INFO<<"invalid config ws arpa max size"<<config_ws_str;
+        logger()->fatal()<<Q_FUNC_INFO<<"invalid config mqtt arpa max size"<<config_str;
 #else
-        qDebug()<<Q_FUNC_INFO<<"invalid config ws arpa max size"<<config_ws_str;
+        qDebug()<<Q_FUNC_INFO<<"invalid config ws arpa max size"<<config_str;
         exit(1);
 #endif
     }
 
     bool ok;
-    m_update_count = config_ws_str_list$.at(1).toInt(&ok);
+    m_update_count = config_str_list$.at(5).toInt(&ok);
     if (!ok) {
         m_update_count = 5;
-        qWarning()<<Q_FUNC_INFO<<"invalid max_arpa_data_count"<<config_ws_str_list$.at(1)<<". will use default 5";
+        qWarning()<<Q_FUNC_INFO<<"invalid max_arpa_data_count"<<config_str_list$.at(1)<<". will use default 5";
     }
 
 }

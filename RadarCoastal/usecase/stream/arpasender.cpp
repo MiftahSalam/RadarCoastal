@@ -15,7 +15,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, ArpaSender)
 
 
 ArpaSender::ArpaSender(QObject *parent)
-    : QObject{parent}, m_stream_mqtt{nullptr}
+    : QObject{parent}, m_stream_mqtt{nullptr}, m_stream_mqtt_spasi{nullptr}
 {
 #ifdef USE_LOG4QT
     logger()->trace()<<Q_FUNC_INFO;
@@ -26,7 +26,7 @@ ArpaSender::ArpaSender(QObject *parent)
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
 
     initConfigMqtt();
-    initConfigWS();
+    initConfigMqttSpasi();
 }
 
 void ArpaSender::sendMqtt(ArpaSenderDecoder *decoder)
@@ -37,7 +37,7 @@ void ArpaSender::sendMqtt(ArpaSenderDecoder *decoder)
     else m_stream_mqtt->SendData(mq_data);
 }
 
-void ArpaSender::sendWS(ArpaSenderDecoder *decoder)
+void ArpaSender::sendMqttSpasi(ArpaSenderDecoder *decoder)
 {
     ArpaSenderDecoderJson *decoderJson = dynamic_cast<ArpaSenderDecoderJson*>(decoder);
     QJsonDocument doc;
@@ -56,8 +56,10 @@ void ArpaSender::sendWS(ArpaSenderDecoder *decoder)
         doc = QJsonDocument(resp.build());
     }
 
-    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
-    m_stream_ws->SendData(doc.toJson(QJsonDocument::Compact));
+    QString mq_data = m_topic_spasi+MQTT_MESSAGE_SEPARATOR+doc.toJson(QJsonDocument::Compact);
+
+    if(m_stream_mqtt_spasi->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt_spasi->Reconnect();
+    m_stream_mqtt_spasi->SendData(mq_data);
 }
 
 void ArpaSender::SendManyData(QList<TrackModel *> data)
@@ -80,7 +82,7 @@ void ArpaSender::SendManyData(QList<TrackModel *> data)
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder*>(new ArpaSenderDecoderJson(data));
     sendMqtt(decoder);
-    sendWS(decoder);
+    sendMqttSpasi(decoder);
 
     delete decoder;
 }
@@ -103,7 +105,7 @@ void ArpaSender::SendOneData(TrackModel data)
 
     ArpaSenderDecoder *decoder = dynamic_cast<ArpaSenderDecoder*>(new ArpaSenderDecoderJson(data));
     sendMqtt(decoder);
-    sendWS(decoder);
+    sendMqttSpasi(decoder);
 
     delete decoder;
 }
@@ -144,7 +146,7 @@ void ArpaSender::SendOneData(long long ts,
                                                                       spd,
                                                                       crs));
     sendMqtt(decoder);
-    sendWS(decoder);
+    sendMqttSpasi(decoder);
 
     delete decoder;
 }
@@ -152,25 +154,28 @@ void ArpaSender::SendOneData(long long ts,
 void ArpaSender::Reconnect()
 {
     if(m_stream_mqtt->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt->Reconnect();
-    if(m_stream_ws->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_ws->Reconnect();
+    if(m_stream_mqtt_spasi->GetStreamStatus() == DeviceWrapper::NOT_AVAIL) m_stream_mqtt_spasi->Reconnect();
 }
 
-void ArpaSender::initConfigWS()
+void ArpaSender::initConfigMqttSpasi()
 {
-    QString config_ws_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_WS).toString();
-    QStringList config_ws_str_list = config_ws_str.split(";");
+    QString config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_SPASI).toString();
+    QStringList config_str_list = config_str.split(":");
 
-    if(config_ws_str_list.size() != 3)
+    if(config_str_list.size() != 6)
     {
 #ifdef USE_LOG4QT
-        logger()->fatal()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
+        logger()->fatal()<<Q_FUNC_INFO<<"invalid config mqtt spasi"<<config_str;
 #else
-        qDebug()<<Q_FUNC_INFO<<"invalid config ws main"<<config_ws_str;
+        qDebug()<<Q_FUNC_INFO<<"invalid config mqtt spasi"<<config_str;
         exit(1);
 #endif
     }
 
-    m_stream_ws = new Stream(this,config_ws_str);
+    m_topic_spasi = config_str_list.at(4);
+    if (!m_stream_mqtt_spasi) {
+        m_stream_mqtt_spasi = new Stream(this,config_str);
+    }
 }
 
 void ArpaSender::initConfigMqtt()
