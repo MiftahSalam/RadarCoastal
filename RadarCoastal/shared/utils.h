@@ -25,6 +25,7 @@ public:
     static QPointF DistancePolar(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
     static qreal DistanceFromCenterInPix(const qreal distance_in_km, const int vp_width, const int vp_height, const double vp_range);
     static QStringList GPSString(const double lon, const double lat);
+    static void GPSDMM2Dec(QString lonStr, QString latStr, double *lon, double *lat);
     static QPointF GpsAbsolute(double lat, double lon);
 
     static QString TickToTime(quint8 tick);
