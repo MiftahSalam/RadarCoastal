@@ -180,11 +180,13 @@ void NavSensor::processNavData(QString data)
     m_no_osd_count = 0;
     m_stream->UpdateTimeStamp();
 
+#ifndef DISPLAY_ONLY_MODE
     const bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
     const bool hdg_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
 
     if (gps_auto)
     {
+#endif
         if (model.status_gps == 3)
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE, model.lat);
@@ -192,17 +194,23 @@ void NavSensor::processNavData(QString data)
             m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, model.status_gps);
         }
         else if (model.status_gps == 2) m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
+#ifndef DISPLAY_ONLY_MODE
     }
+#endif
 
+#ifndef DISPLAY_ONLY_MODE
     if (hdg_auto)
     {
+#endif
         if (model.status_hdg == 3)
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING, model.hdg);
             m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, model.status_hdg); //data valid
         }
         else if (model.status_hdg == 2) m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
+#ifndef DISPLAY_ONLY_MODE
     }
+#endif
 
 #ifdef DISPLAY_ONLY_MODE
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO, !model.gps_man);
