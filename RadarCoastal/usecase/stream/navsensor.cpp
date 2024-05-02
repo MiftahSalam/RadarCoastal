@@ -12,9 +12,14 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, NavSensor)
 #include <QDebug>
 #endif
 
-const QString SITE_DATA_TOPIC = "site_data";
+//const QString SITE_DATA_TOPIC = "site_data";
 
-NavSensor::NavSensor(QObject *parent) : QObject(parent)
+NavSensor::NavSensor(QObject *parent)
+    : QObject(parent),
+      #ifndef DISPLAY_ONLY_MODE
+      m_stream_mqtt_private{nullptr},
+      #endif
+      m_stream_mqtt_public{nullptr}
 {
 #ifdef USE_LOG4QT
     logger()->trace() << Q_FUNC_INFO;
@@ -23,7 +28,10 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
 #endif
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
 
-    initConfig();
+#ifndef DISPLAY_ONLY_MODE
+    initConfigMqttPrivate();
+#endif
+    initConfigMqttPublic();
 
 #ifdef DISPLAY_ONLY_MODE
     decoder = new NavDataDecoderJson();
@@ -33,12 +41,34 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent)
     //    decoder = new NavDataDecoderCustom();
 
     m_no_osd_count = 11;
-
-    connect(m_instance_cfg, &RadarEngine::RadarConfig::configValueChange,
-            this, &NavSensor::triggerConfigChange);
 }
 
-void NavSensor::initConfig()
+void NavSensor::initConfigMqttPublic()
+{
+    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_PUBLIC).toString();
+    QStringList config_str_list = config_str.split(":");
+
+    if(config_str_list.size() != 6)
+    {
+#ifdef USE_LOG4QT
+        logger()->fatal()<<Q_FUNC_INFO<< "invalid config mqtt public: "<<config_str;
+#else
+        qDebug()<<Q_FUNC_INFO<<"invalid config mqtt public"<<config_str;
+        exit(1);
+#endif
+    }
+
+    m_topic_public = config_str_list.at(4);
+    if (!m_stream_mqtt_public) {
+        m_stream_mqtt_public = new Stream(this,config_str);
+#ifdef DISPLAY_ONLY_MODE
+        connect(m_stream_mqtt_public, &Stream::SignalReceiveData, this, &NavSensor::triggerReceivedData);
+#endif
+    }
+}
+
+#ifndef DISPLAY_ONLY_MODE
+void NavSensor::initConfigMqttPrivate()
 {
     QString nav_config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
     QStringList nav_config_str_list = nav_config_str.split(":");
@@ -46,14 +76,14 @@ void NavSensor::initConfig()
     if (nav_config_str_list.size() != 3)
     {
 #ifdef USE_LOG4QT
-        logger()->fatal() << Q_FUNC_INFO << "invalid config mqtt" << nav_config_str;
+        logger()->fatal() << Q_FUNC_INFO << " invalid config mqtt private: " << nav_config_str;
 #else
-        qDebug() << Q_FUNC_INFO << "invalid config" << nav_config_str;
+        qDebug() << Q_FUNC_INFO << "invalid config private:" << nav_config_str;
         exit(1);
 #endif
     }
 
-    m_topic = nav_config_str_list.last();
+    m_topic_private = nav_config_str_list.last();
 
     /*
     bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
@@ -69,37 +99,42 @@ void NavSensor::initConfig()
 
     m_no_osd_count = 11;
 
-    m_stream = new Stream(this, nav_config_str_list.join(":"));
-
-    m_stream->ChangeConfig("subsciber:topic-add:"+SITE_DATA_TOPIC);
-#ifndef DISPLAY_ONLY_MODE
-    m_stream->ChangeConfig("subsciber:topic-add:"+m_topic);
-#endif
-
-    connect(m_stream, &Stream::SignalReceiveData, this, &NavSensor::triggerReceivedData);
-    connect(m_instance_cfg, &RadarEngine::RadarConfig::configValueChange,
-            this, &NavSensor::triggerConfigChange);
+    if (!m_stream_mqtt_private) {
+        m_stream_mqtt_private = new Stream(this,nav_config_str);
+        connect(m_stream_mqtt_private, &Stream::SignalReceiveData, this, &NavSensor::triggerReceivedData);
+        connect(RadarEngine::RadarConfig::getInstance(""),&RadarEngine::RadarConfig::configValueChange,
+                this,&NavSensor::triggerConfigChange);
+    }
 }
+#endif
 
 void NavSensor::triggerConfigChange(const QString key, const QVariant val)
 {
-#ifdef USE_LOG4QT
-    logger()->trace() << Q_FUNC_INFO << "key" << key << "val" << val.toString();
-#endif
     if (key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG)
     {
-        m_stream->SetConfig(val.toString());
+        m_stream_mqtt_private->SetConfig(val.toString());
     }
 }
 
 void NavSensor::sendMqtt(NavDataEncoder *encoder)
 {
-    QString mq_data = SITE_DATA_TOPIC + MQTT_MESSAGE_SEPARATOR + encoder->encode();
+    QString mq_data = m_topic_public + MQTT_MESSAGE_SEPARATOR + encoder->encode();
 
-    if (m_stream->GetStreamStatus() == DeviceWrapper::NOT_AVAIL)
-        m_stream->Reconnect();
+#ifdef USE_LOG4QT
+        logger()->debug()<<Q_FUNC_INFO<<" mq_data: "<<mq_data;
+#else
+    qDebug()<<Q_FUNC_INFO<<" mq_data: "<<mq_data;
+#endif
+
+    if (m_stream_mqtt_public->GetStreamStatus() == DeviceWrapper::NOT_AVAIL)
+        m_stream_mqtt_public->Reconnect();
     else
-        m_stream->SendData(mq_data);
+        m_stream_mqtt_public->SendData(mq_data);
+
+    if (m_stream_mqtt_private->GetStreamStatus() == DeviceWrapper::NOT_AVAIL)
+        m_stream_mqtt_private->Reconnect();
+    else
+        m_stream_mqtt_private->SendData(mq_data);
 }
 
 #ifndef DISPLAY_ONLY_MODE
@@ -153,7 +188,11 @@ void NavSensor::UpdateStatus()
     if (m_no_osd_count < 11)
         return;
 
-    switch (m_stream->GetStreamStatus())
+#ifndef DISPLAY_ONLY_MODE
+    switch (m_stream_mqtt_private->GetStreamStatus())
+#else
+    switch (m_stream_mqtt_public->GetStreamStatus())
+#endif
     {
     case DeviceWrapper::NOT_AVAIL:
         m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 0); // offline
@@ -167,6 +206,7 @@ void NavSensor::UpdateStatus()
         break;
     }
 }
+
 void NavSensor::processNavData(QString data)
 {
     decoder->update(data.toUtf8());
@@ -178,7 +218,12 @@ void NavSensor::processNavData(QString data)
     }
 
     m_no_osd_count = 0;
-    m_stream->UpdateTimeStamp();
+
+#ifndef DISPLAY_ONLY_MODE
+    m_stream_mqtt_private->UpdateTimeStamp();
+#else
+    m_stream_mqtt_public->UpdateTimeStamp();
+#endif
 
 #ifndef DISPLAY_ONLY_MODE
     const bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
@@ -227,24 +272,28 @@ void NavSensor::triggerReceivedData(QString data)
 #endif
 
 #ifdef DISPLAY_ONLY_MODE
-    if (!data.contains(SITE_DATA_TOPIC))
+    if (!data.contains(m_topic_public))
     {
         return;
     }
 
-    data.remove(SITE_DATA_TOPIC+MQTT_MESSAGE_SEPARATOR);
+    data.remove(m_topic_public+MQTT_MESSAGE_SEPARATOR);
 #else
-    if (data.contains(SITE_DATA_TOPIC))
+    if (!data.contains(m_topic_private))
     {
         return;
     }
 
-    data.remove(m_topic+MQTT_MESSAGE_SEPARATOR);
+    data.remove(m_topic_private+MQTT_MESSAGE_SEPARATOR);
 #endif
 
     processNavData(data);
 }
+
 void NavSensor::Reconnect()
 {
-    m_stream->Reconnect();
+#ifndef DISPLAY_ONLY_MODE
+    m_stream_mqtt_private->Reconnect();
+#endif
+    m_stream_mqtt_public->Reconnect();
 }

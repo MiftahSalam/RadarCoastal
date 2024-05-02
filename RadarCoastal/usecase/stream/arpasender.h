@@ -33,11 +33,14 @@ private slots:
     void triggerConfigChange(const QString key, const QVariant val);
 
 private:
-    Stream *m_stream;
-    QString m_topic;
+    Stream *m_stream_mqtt_private;
+    Stream *m_stream_mqtt_public;
 
-    void initConfig();
-    void sendMqtt(ArpaSenderDecoder *decoder);
+    QString m_topic_private, m_topic_public;
+
+    void initConfigMqttPublic();
+    void initConfigMqttPrivate();
+    void sendMqtt(ArpaSenderDecoder* decoder);
 };
 
 #endif // ARPASENDER_H
