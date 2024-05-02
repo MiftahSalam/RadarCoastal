@@ -247,9 +247,6 @@ void FrameControl2::on_horizontalSliderVRM_valueChanged(int value)
 
 void FrameControl2::triggerConfigChange(const QString key, const QVariant val)
 {
-#ifdef USE_LOG4QT
-    logger()->trace() << Q_FUNC_INFO << "key" << key << "val" << val.toString();
-#endif
     if (key == RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT)
     {
         initConfig();
