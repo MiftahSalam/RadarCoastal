@@ -214,6 +214,35 @@ QStringList Utils::GPSString(const double lon, const double lat)
     return QStringList()<<latitude_string<<longitude_string;
 }
 
+void Utils::GPSDMM2Dec(QString lonStr, QString latStr, double *lon, double *lat)
+{
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    auto lonList = lonStr.split(",", Qt::SkipEmptyParts);
+    auto latList = latStr.split(",", Qt::SkipEmptyParts);
+#else
+    auto lonList = lonStr.split(",", QString::SkipEmptyParts);
+    auto latList = latStr.split(",", QString::SkipEmptyParts);
+#endif
+    *lon = lonList.at(0).toDouble()/100.;
+    *lat = latList.at(0).toDouble()/100.;
+
+    auto deg = floor(*lon);
+    auto min = (*lon - deg)*100.;
+    min = min / 60;
+    *lon = deg + min;
+
+    deg = floor(*lat);
+    min = (*lat - deg)*100.;
+    min = min / 60;
+    *lat = deg + min;
+
+    if (lonList.at(1) == "W")
+        *lon *= -1;
+
+    if (latList.at(1) == "S")
+        *lat *= -1;
+}
+
 QString Utils::TickToTime(quint8 tick)
 {
     //    qDebug()<<Q_FUNC_INFO<<"tick"<<tick;
