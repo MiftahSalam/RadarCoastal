@@ -318,7 +318,7 @@
     </message>
     <message>
         <source>Clear trails</source>
-        <translation>Clear trailsk</translation>
+        <translation>Clear trails</translation>
     </message>
 </context>
 </TS>
