@@ -214,6 +214,100 @@ QStringList Utils::GPSString(const double lon, const double lat)
     return QStringList()<<latitude_string<<longitude_string;
 }
 
+void Utils::GPSDMM2Dec(QString lonStr, QString latStr, double *lon, double *lat)
+{
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    auto lonList = lonStr.split(",", Qt::SkipEmptyParts);
+    auto latList = latStr.split(",", Qt::SkipEmptyParts);
+    bool ok;
+#else
+    auto lonList = lonStr.split(",", QString::SkipEmptyParts);
+    auto latList = latStr.split(",", QString::SkipEmptyParts);
+#endif
+    if (lonList.size() != 2)
+    {
+#ifdef USE_LOG4QT
+        logger()->error() << Q_FUNC_INFO << " invalid longitude format: " << lonStr;
+#else
+        qDebug() << Q_FUNC_INFO << " invalid longitude format: " << lonStr;
+#endif
+        *lon = -181;
+        return;
+    }
+    if (latList.size() != 2)
+    {
+#ifdef USE_LOG4QT
+        logger()->error() << Q_FUNC_INFO << " invalid latitude format: " << latStr;
+#else
+        qDebug() << Q_FUNC_INFO << " invalid latitude format: " << latStr;
+#endif
+        *lat = -91;
+        return;
+    }
+
+    *lon = lonList.at(0).toDouble(&ok);
+    if (!ok)
+    {
+#ifdef USE_LOG4QT
+        logger()->error() << Q_FUNC_INFO << " invalid longitude value: " << lonList.at(0);
+#else
+        qDebug() << Q_FUNC_INFO << " invalid longitude value: " << lonList.at(0);
+#endif
+        *lon = -181;
+        return;
+    }
+    *lon = *lon/100.;
+
+    *lat = latList.at(0).toDouble(&ok);
+    if (!ok)
+    {
+#ifdef USE_LOG4QT
+        logger()->error() << Q_FUNC_INFO << " invalid latitude value: " << latList.at(0);
+#else
+        qDebug() << Q_FUNC_INFO << " invalid latitude value: " << latList.at(0);
+#endif
+        *lat = -91;
+        return;
+    }
+    *lat = *lat/100.;
+
+    auto deg = floor(*lon);
+    auto min = (*lon - deg)*100.;
+    min = min / 60;
+    *lon = deg + min;
+
+    deg = floor(*lat);
+    min = (*lat - deg)*100.;
+    min = min / 60;
+    *lat = deg + min;
+
+    if (lonList.at(1) == "W")
+        *lon *= -1;
+    else if (lonList.at(1) != "E")
+    {
+#ifdef USE_LOG4QT
+        logger()->error() << Q_FUNC_INFO << " invalid longitude sign: " << lonList.at(1);
+#else
+        qDebug() << Q_FUNC_INFO << " invalid longitude sign: " << lonList.at(1);
+#endif
+        *lon = -181;
+        return;
+    }
+
+    if (latList.at(1) == "S")
+        *lat *= -1;
+    else if (latList.at(1) != "N")
+    {
+#ifdef USE_LOG4QT
+        logger()->error() << Q_FUNC_INFO << " invalid latitude sign: " << latList.at(1);
+#else
+        qDebug() << Q_FUNC_INFO << " invalid latitude sign: " << latList.at(1);
+#endif
+        *lat = -91;
+        return;
+    }
+}
+
 QString Utils::TickToTime(quint8 tick)
 {
     //    qDebug()<<Q_FUNC_INFO<<"tick"<<tick;
