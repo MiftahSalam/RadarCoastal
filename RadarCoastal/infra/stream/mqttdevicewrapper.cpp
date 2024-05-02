@@ -142,7 +142,7 @@ void MqttDeviceWrapper::receiveData(QMQTT::Message message)
 #else
     qDebug()<<Q_FUNC_INFO<<"payload"<<payload<<"topic"<<topic;
 #endif
-    m_last_data_time = QDateTime::currentSecsSinceEpoch();
+//    m_last_data_time = QDateTime::currentSecsSinceEpoch();
     emit ReadyRead(topic+MQTT_MESSAGE_SEPARATOR+payload);
 }
 
