@@ -51,7 +51,7 @@ void AlarmManager::Confirm(const QString id)
 void AlarmManager::TriggerAlarm(const QString id, const QString message)
 {
 #ifdef USE_LOG4QT
-    logger()->debug()<<Q_FUNC_INFO<<id<<message;
+    logger()->debug()<<Q_FUNC_INFO<<" id: "<<id<<", msg: "<<message;
 #else
     qDebug()<<Q_FUNC_INFO<<id<<message;
 #endif

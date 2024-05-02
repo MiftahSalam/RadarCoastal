@@ -60,7 +60,7 @@ void GZAlarm::checkAlarm()
             int bogey = m_re->guardZones[m_id]->GetBogeyCount();
 
 #ifdef USE_LOG4QT
-    logger()->debug()<<Q_FUNC_INFO<<m_id<<gz_settings_notif_thr<<bogey<<gz_settings_time-now;
+    logger()->debug()<<Q_FUNC_INFO<<" id: "<<m_id<<", notif: "<<gz_settings_notif_thr<<", bogey: "<<bogey<<", timeout: "<<gz_settings_time-now;
 #else
             qDebug()<<Q_FUNC_INFO<<m_id<<gz_settings_notif_thr<<bogey<<gz_settings_time-now;
 #endif
@@ -70,14 +70,14 @@ void GZAlarm::checkAlarm()
                 if(!gz_settings_confirmed || (gz_settings_confirmed && TIMED_OUT(now,(gz_settings_time))))
                 {
 #ifdef USE_LOG4QT
-    logger()->debug()<<Q_FUNC_INFO<<m_id<<gz_settings_confirmed<<gz_settings_time;
+                    logger()->debug()<<Q_FUNC_INFO<<" id: "<<m_id<<", confirmed: "<<gz_settings_confirmed<<", time: "<<gz_settings_time;
 #else
                     qDebug()<<Q_FUNC_INFO<<m_id<<gz_settings_confirmed<<gz_settings_time;
 #endif
                     if(TIMED_OUT(now,(gz_settings_time)))
                     {
 #ifdef USE_LOG4QT
-    logger()->debug()<<Q_FUNC_INFO<<m_id<<"timeout";
+    logger()->debug()<<Q_FUNC_INFO<<" id: "<<m_id<<" timeout";
 #else
                         qDebug()<<Q_FUNC_INFO<<m_id<<"timeout";
 #endif
