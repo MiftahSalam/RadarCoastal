@@ -16,6 +16,9 @@ public:
     explicit MqttClient(QObject *parent = nullptr,
                        const QHostAddress& host = QHostAddress::LocalHost,
                        const quint16 port = 1883, QString topic = "");
+    explicit MqttClient(QObject *parent = nullptr,
+                       const QString& hostname = "",
+                       const quint16 port = 1883, QString topic = "");
 
     void AddTopic(const QString topic);
     void RemoveTopic(const QString topic);
@@ -38,6 +41,9 @@ public:
     explicit Publisher(QObject *parent = nullptr,
                        const QHostAddress& host = QHostAddress::LocalHost,
                        const quint16 port = 1883, QString topic = "");
+    explicit Publisher(QObject *parent = nullptr,
+                       const QString& hostname = "",
+                       const quint16 port = 1883, QString topic = "");
 
     void PublishData(QMQTT::Message message);
 };
@@ -48,6 +54,9 @@ class Subscriber : public MqttClient
 public:
     explicit Subscriber(QObject *parent = nullptr,
                        const QHostAddress& host = QHostAddress::LocalHost,
+                       const quint16 port = 1883, QString topic = "");
+    explicit Subscriber(QObject *parent = nullptr,
+                       const QString& hostname = "",
                        const quint16 port = 1883, QString topic = "");
 
 signals:
