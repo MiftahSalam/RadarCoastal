@@ -10,7 +10,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, ArpaSender)
 #endif
 
 ArpaSender::ArpaSender(QObject *parent)
-    : QObject{parent}, m_stream{nullptr}
+    : QObject{parent}, m_stream_mqtt_private{nullptr}, m_stream_mqtt_public{nullptr}
 {
 #ifdef USE_LOG4QT
     logger()->trace() << Q_FUNC_INFO;
@@ -18,32 +18,54 @@ ArpaSender::ArpaSender(QObject *parent)
     qDebug() << Q_FUNC_INFO;
 #endif
 
-    initConfig();
-
-    connect(RadarEngine::RadarConfig::getInstance(""), &RadarEngine::RadarConfig::configValueChange,
-            this, &ArpaSender::triggerConfigChange);
+    initConfigMqttPrivate();
+    initConfigMqttPublic();
 }
 
-void ArpaSender::initConfig()
+void ArpaSender::initConfigMqttPublic()
 {
-    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG).toString();
+    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_PUBLIC).toString();
     QStringList config_str_list = config_str.split(":");
 
-    if (config_str_list.size() != 3)
+    if(config_str_list.size() != 6)
     {
 #ifdef USE_LOG4QT
-        logger()->fatal() << Q_FUNC_INFO << " invalid config " << config_str;
+        logger()->fatal()<<Q_FUNC_INFO<< "invalid config mqtt public: "<<config_str;
 #else
-        qDebug() << Q_FUNC_INFO << "invalid config" << config_str;
+        qDebug()<<Q_FUNC_INFO<<"invalid config mqtt public"<<config_str;
         exit(1);
 #endif
     }
 
-    m_topic = config_str_list.last();
-    if (!m_stream) {
-        m_stream = new Stream(this, config_str);
+    m_topic_public = config_str_list.at(4);
+    if (!m_stream_mqtt_public) {
+        m_stream_mqtt_public = new Stream(this,config_str);
     }
 }
+
+void ArpaSender::initConfigMqttPrivate()
+{
+    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG).toString();
+    QStringList config_str_list = config_str.split(":");
+
+    if(config_str_list.size() != 3)
+    {
+#ifdef USE_LOG4QT
+        logger()->fatal() << Q_FUNC_INFO << " invalid config private: " << config_str;
+#else
+        qDebug()<<Q_FUNC_INFO<<"invalid config mqtt private:"<<config_str;
+        exit(1);
+#endif
+    }
+
+    m_topic_private = config_str_list.last();
+    if (!m_stream_mqtt_private) {
+        m_stream_mqtt_private = new Stream(this,config_str);
+        connect(RadarEngine::RadarConfig::getInstance(""),&RadarEngine::RadarConfig::configValueChange,
+                this,&ArpaSender::triggerConfigChange);
+    }
+
+ }
 
 void ArpaSender::SendManyData(QList<TrackModel *> data)
 {
@@ -135,24 +157,34 @@ void ArpaSender::SendOneData(long long ts,
 
 void ArpaSender::sendMqtt(ArpaSenderDecoder *decoder)
 {
-    QString mq_data = m_topic + MQTT_MESSAGE_SEPARATOR + decoder->decode();
+    QString mq_data_pub = m_topic_public + MQTT_MESSAGE_SEPARATOR + decoder->decode();
+    QString mq_data_prv = m_topic_private + MQTT_MESSAGE_SEPARATOR + decoder->decode();
 
-    qDebug()<<Q_FUNC_INFO<<" mq_data: "<<mq_data;
+#ifdef USE_LOG4QT
+        logger()->debug()<<Q_FUNC_INFO<<" mq_data_pub: "<<mq_data_pub;
+        logger()->debug()<<Q_FUNC_INFO<<" mq_data_prv: "<<mq_data_prv;
+#else
+    qDebug()<<Q_FUNC_INFO<<" mq_data_pub: "<<mq_data_pub;
+    qDebug()<<Q_FUNC_INFO<<" mq_data_prv: "<<mq_data_prv;
+#endif
 
-    if (m_stream->GetStreamStatus() == DeviceWrapper::NOT_AVAIL)
-        m_stream->Reconnect();
+    if (m_stream_mqtt_public->GetStreamStatus() == DeviceWrapper::NOT_AVAIL)
+        m_stream_mqtt_public->Reconnect();
     else
-        m_stream->SendData(mq_data);
+        m_stream_mqtt_public->SendData(mq_data_pub);
+
+    if (m_stream_mqtt_private->GetStreamStatus() == DeviceWrapper::NOT_AVAIL)
+
+        m_stream_mqtt_private->Reconnect();
+    else
+        m_stream_mqtt_private->SendData(mq_data_prv);
 }
 
 void ArpaSender::triggerConfigChange(const QString key, const QVariant val)
 {
-#ifdef USE_LOG4QT
-    logger()->trace() << Q_FUNC_INFO << "key" << key << "val" << val.toString();
-#endif
     if (key == RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG)
     {
-        initConfig();
-        m_stream->SetConfig(val.toString());
+        initConfigMqttPrivate();
+        m_stream_mqtt_private->SetConfig(val.toString());
     }
 }

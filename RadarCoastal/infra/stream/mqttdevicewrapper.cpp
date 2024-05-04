@@ -77,14 +77,61 @@ bool MqttDeviceWrapper::InitConfig(const QString config)
         m_subsciber = new Subscriber(this,m_mqttConfig.host,m_mqttConfig.port, m_defaultTopic);
         connect(m_subsciber,&Subscriber::SignalOnReceived, this, &MqttDeviceWrapper::receiveData);
     }
+    else if(config_list.size() >= 5)
+    {
+        ret_val = true;
+
+        m_mqttConfig.host = QHostAddress(config_list.at(0));
+        m_mqttConfig.port = config_list.at(1).toUShort();
+        m_mqttConfig.user = config_list.at(2);
+        m_mqttConfig.password = config_list.at(3);
+        m_defaultTopic = config_list.at(4);
+
+        if(m_publisher) delete m_publisher;
+        if(m_subsciber) delete m_subsciber;
+
+        if (m_mqttConfig.host.toString().isEmpty())
+        {
+            m_publisher = new Publisher(this,config_list.at(0),m_mqttConfig.port, m_defaultTopic);
+            m_subsciber = new Subscriber(this,config_list.at(0),m_mqttConfig.port, m_defaultTopic);
+        }
+        else
+        {
+            m_publisher = new Publisher(this,m_mqttConfig.host,m_mqttConfig.port, m_defaultTopic);
+            m_subsciber = new Subscriber(this,m_mqttConfig.host,m_mqttConfig.port, m_defaultTopic);
+        }
+
+        m_publisher->setUsername(m_mqttConfig.user);
+        m_publisher->setPassword(m_mqttConfig.password.toUtf8());
+        m_subsciber->setUsername(m_mqttConfig.user);
+        m_subsciber->setPassword(m_mqttConfig.password.toUtf8());
+
+    #ifdef USE_LOG4QT
+            logger()->info()<<Q_FUNC_INFO<<" mqtt config -> user: "<<m_mqttConfig.user;
+            logger()->info()<<Q_FUNC_INFO<<" mqtt config -> password: "<<m_mqttConfig.password;
+    #else
+            qInfo()<<Q_FUNC_INFO<<" mqtt config -> user: "<<m_mqttConfig.user;
+            qInfo()<<Q_FUNC_INFO<<" mqtt config -> password: "<<m_mqttConfig.password;
+    #endif
+
+        connect(m_subsciber,&Subscriber::SignalOnReceived, this, &MqttDeviceWrapper::receiveData);
+    }
     else
     {
 #ifdef USE_LOG4QT
-        logger()->warn()<<Q_FUNC_INFO<<"invalid config"<<config;
+        logger()->warn()<<Q_FUNC_INFO<<" invalid config: "<<config;
 #else
         else qDebug()<<Q_FUNC_INFO<<"invalid config"<<config;
 #endif
     }
+
+#ifdef USE_LOG4QT
+        logger()->info()<<Q_FUNC_INFO<<" mqtt config -> host: "<<m_mqttConfig.host.toString();
+        logger()->info()<<Q_FUNC_INFO<<" mqtt config -> port: "<<m_mqttConfig.port;
+#else
+        qInfo()<<Q_FUNC_INFO<<" mqtt config -> host: "<<m_mqttConfig.host;
+        qInfo()<<Q_FUNC_INFO<<" mqtt config -> port: "<<m_mqttConfig.port;
+#endif
 
     return ret_val;
 }
@@ -200,8 +247,19 @@ Subscriber::Subscriber(QObject *parent, const QHostAddress& host, const quint16 
     connect(this,&Subscriber::received,this,&Subscriber::SignalOnReceived);
 }
 
+Subscriber::Subscriber(QObject *parent, const QString& hostname, const quint16 port, QString topic) :
+    MqttClient(parent,hostname,port,topic)
+{
+    connect(this,&Subscriber::received,this,&Subscriber::SignalOnReceived);
+}
+
 Publisher::Publisher(QObject *parent, const QHostAddress& host, const quint16 port, QString topic) :
     MqttClient (parent,host,port,topic)
+{
+}
+
+Publisher::Publisher(QObject *parent, const QString& hostname, const quint16 port, QString topic) :
+    MqttClient(parent,hostname,port,topic)
 {
 }
 
@@ -211,10 +269,30 @@ void Publisher::PublishData(QMQTT::Message message)
 }
 
 MqttClient::MqttClient(QObject *parent,
+                       const QString& hostname,
+                       const quint16 port, QString topic) :
+    QMQTT::Client(hostname,port,false,true,parent)
+{    
+    connect(this,&MqttClient::connected,this,&MqttClient::onConnected);
+    connect(this,&MqttClient::disconnected,this,&MqttClient::onDisconnected);
+    connect(this,&MqttClient::subscribed,this,&MqttClient::onSubscribed);
+
+    connectToHost();
+
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<"topic"<<topic;
+#else
+    qDebug()<<Q_FUNC_INFO<<"topic"<<topic;
+#endif
+    if(!topic.isEmpty()) AddTopic(topic);
+    else m_topic_list.clear();
+}
+
+MqttClient::MqttClient(QObject *parent,
                        const QHostAddress& host,
                        const quint16 port, QString topic) :
     QMQTT::Client(host,port,parent), m_host(host), m_port(port)
-{    
+{
     connect(this,&MqttClient::connected,this,&MqttClient::onConnected);
     connect(this,&MqttClient::disconnected,this,&MqttClient::onDisconnected);
     connect(this,&MqttClient::subscribed,this,&MqttClient::onSubscribed);

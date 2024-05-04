@@ -26,13 +26,18 @@ private slots:
 
 private:
     RadarEngine::RadarConfig *m_instance_cfg;
-    Stream *m_stream;
+#ifndef DISPLAY_ONLY_MODE
+    Stream *m_stream_mqtt_private;
+    QString m_topic_private;
+    void initConfigMqttPrivate();
+#endif
+    Stream *m_stream_mqtt_public;
     NavDataDecoder *decoder;
-    QString m_topic;
+    QString m_topic_public;
     int m_no_osd_count;
 
     void sendMqtt(NavDataEncoder *encoder);
-    void initConfig();
+    void initConfigMqttPublic();
     void processNavData(QString data);
 };
 

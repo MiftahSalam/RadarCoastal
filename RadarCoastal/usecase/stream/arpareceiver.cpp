@@ -102,7 +102,7 @@ ArpaReceiver::ArpaReceiver(QObject *parent)
 
 void ArpaReceiver::initConfig()
 {
-    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG).toString();
+    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_PUBLIC).toString();
     QStringList config_str_list = config_str.split(":");
 
     if(config_str_list.size() != 3)
@@ -124,9 +124,9 @@ void ArpaReceiver::triggerReceivedData(const QString data)
 {
     qDebug()<<Q_FUNC_INFO<<data;
     QString msg = data;
-    if(msg.contains("radar"))
+    if(msg.contains(m_topic))
     {
-        msg.remove("radar@");
+        msg.remove(m_topic+"@");
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" arpa raw data: "<<msg;
