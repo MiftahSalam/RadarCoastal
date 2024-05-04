@@ -219,7 +219,6 @@ void Utils::GPSDMM2Dec(QString lonStr, QString latStr, double *lon, double *lat)
 #if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
     auto lonList = lonStr.split(",", Qt::SkipEmptyParts);
     auto latList = latStr.split(",", Qt::SkipEmptyParts);
-    bool ok;
 #else
     auto lonList = lonStr.split(",", QString::SkipEmptyParts);
     auto latList = latStr.split(",", QString::SkipEmptyParts);
@@ -245,6 +244,7 @@ void Utils::GPSDMM2Dec(QString lonStr, QString latStr, double *lon, double *lat)
         return;
     }
 
+    bool ok;
     *lon = lonList.at(0).toDouble(&ok);
     if (!ok)
     {
