@@ -147,10 +147,10 @@ TRANSLATIONS += \
     translantions/i18n_id.ts
 
 unix: {
-    LIBS += -L/usr/lib/hypernet-2024/RadarEngine -lRadarEngine
+    LIBS += -L/usr/lib/RadarEngine/v3 -lRadarEngine
 
-    INCLUDEPATH += /usr/include/hypernet-2024
-    DEPENDPATH += /usr/include/hypernet-2024
+    INCLUDEPATH += /usr/include/RadarEngine/v3
+    DEPENDPATH += /usr/include/RadarEngine/v3
 
     contains(DEFINES, USE_LOG4QT) {
         message(Using log4qt...)
@@ -161,8 +161,8 @@ unix: {
 } else:win32 {
     LIBS += -lOpenGL32
 
-    INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2024\hypernet\v2
-    DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\hypernet\v2
+    INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2024\v3
+    DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\v3
 #    INCLUDEPATH +=C:\Users\ms_tensai\RadarEngineLib\include\2024\hypernet\v2
 #    DEPENDPATH += C:\Users\ms_tensai\RadarEngineLib\lib\include\2024\hypernet\v2
 
@@ -175,8 +175,8 @@ unix: {
 
 }
 
-win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\hypernet\v2 -lRadarEngine
-else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\hypernet\v2 -lRadarEngine
+win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\v3 -lRadarEngine
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\v3 -lRadarEngine
 #win32:CONFIG(release, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2024\hypernet\v2 -lRadarEngine
 #else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\ms_tensai\RadarEngineLib\lib\2024\hypernet\v2 -lRadarEngine
 
