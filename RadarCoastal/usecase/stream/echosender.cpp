@@ -9,6 +9,7 @@
 #include "echosender.h"
 #include "shared/utils.h"
 #include "usecase/stream/baseresponsejson.h"
+#include "shared/config/applicationconfig.h"
 
 #ifdef USE_LOG4QT
 #include <log4qt/logger.h>
@@ -21,6 +22,7 @@ EchoSender::EchoSender(QObject *parent)
     : QObject{parent}, m_stream_mqtt_spasi{nullptr}
 {
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    echoConfig = ApplicationConfig::getInstance()->getEchoConfig();
     m_re = RadarEngine::RadarEngine::GetInstance();
     m_ppi_grabber = m_re->m_radar_capture;
 
@@ -35,7 +37,7 @@ EchoSender::EchoSender(QObject *parent)
 
 void EchoSender::initConfigMqttSpasi()
 {
-    QString config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ECHO_NET_CONFIG_SPASI).toString();
+    QString config_str = echoConfig->getMqttSpasi();
     QStringList config_str_list = config_str.split(":");
 
     if(config_str_list.size() != 5)
@@ -167,7 +169,7 @@ EchoSender::BoundingBoxGps EchoSender::calculateBoundingBox(const int vp_width, 
     double const curLat = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
     double const curLon = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
     double curRange = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toDouble();
-    const quint8 unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+    const quint8 unit = ApplicationConfig::getInstance()->getUnit();
 
     switch (unit) {
     case 1:

@@ -1,6 +1,7 @@
 #include "shared/utils.h"
 #include "framestatus.h"
 #include "ui_framestatus.h"
+#include "shared/config/applicationconfig.h"
 
 #ifdef USE_LOG4QT
 #include <log4qt/logger.h>
@@ -18,9 +19,12 @@ FrameStatus::FrameStatus(QWidget *parent) :
 
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     m_instance_re = RadarEngine::RadarEngine::GetInstance(this);
+    navConfig = ApplicationConfig::getInstance()->getNavConfig();
     m_alarm_manager = AlarmManager::GetInstance(m_instance_re);
 
     m_alarm_toggle = true;
+
+    navConfig->attach(this);
 
     connect(m_instance_cfg, &RadarEngine::RadarConfig::configValueChange, this, &FrameStatus::trigger_statusChange);
     connect(m_alarm_manager, &AlarmManager::SignalAlarm, this, &FrameStatus::trigger_Alarm);
@@ -122,15 +126,19 @@ void FrameStatus::trigger_statusChange(const QString& key, const QVariant& val)
         RadarEngine::RadarState status = static_cast<RadarEngine::RadarState>(val.toInt());
         updateRadarStatus(status);
     }
-    else if(key == RadarEngine::VOLATILE_NAV_STATUS_GPS || key == RadarEngine::VOLATILE_NAV_STATUS_HEADING)
-    {
-        updateNavStatus(val.toInt());
-    }
 }
 
 FrameStatus::~FrameStatus()
 {
     delete ui;
+}
+
+void FrameStatus::configChange(const QString key, const QVariant val)
+{
+    if(key == NAV_STATUS_GPS || key == NAV_STATUS_HEADING)
+    {
+        updateNavStatus(val.toInt());
+    }
 }
 
 void FrameStatus::on_alarmStatus_clicked(const QPoint &p)

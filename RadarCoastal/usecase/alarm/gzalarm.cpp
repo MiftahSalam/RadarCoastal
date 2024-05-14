@@ -1,4 +1,5 @@
 #include "usecase/alarm/gzalarm.h"
+#include "shared/config/applicationconfig.h"
 
 #include <RadarEngine/radarconfig.h>
 
@@ -25,20 +26,10 @@ GZAlarm::GZAlarm(QObject *parent, QString id, RadarEngine::RadarEngine *re): Ala
     if(id == "GZ 1")
     {
         m_shown_key = RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ;
-        m_enable_alarm_key = RadarEngine::NON_VOLATILE_GZ_ENABLE_ALARM;
-        m_alarm_trhold_key = RadarEngine::NON_VOLATILE_GZ_NOTIF_THRESHOLD;
-        m_confirmed_alarm_key = RadarEngine::VOLATILE_GZ_CONFIRMED;
-        m_time_key = RadarEngine::VOLATILE_GZ_TIME;
-        m_timeout_key = RadarEngine::NON_VOLATILE_GZ_TIMEOUT;
     }
     else if(id == "GZ 2")
     {
         m_shown_key = RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ1;
-        m_enable_alarm_key = RadarEngine::NON_VOLATILE_GZ_ENABLE_ALARM1;
-        m_alarm_trhold_key = RadarEngine::NON_VOLATILE_GZ_NOTIF_THRESHOLD1;
-        m_confirmed_alarm_key = RadarEngine::VOLATILE_GZ_CONFIRMED1;
-        m_time_key = RadarEngine::VOLATILE_GZ_TIME1;
-        m_timeout_key = RadarEngine::NON_VOLATILE_GZ_TIMEOUT1;
 
     }
     init(1000);
@@ -47,10 +38,24 @@ GZAlarm::GZAlarm(QObject *parent, QString id, RadarEngine::RadarEngine *re): Ala
 void GZAlarm::checkAlarm()
 {
     const bool gz_settings_show = RadarEngine::RadarConfig::getInstance("")->getConfig(m_shown_key).toBool();
-    const bool gz_settings_enable_alarm = RadarEngine::RadarConfig::getInstance("")->getConfig(m_enable_alarm_key).toBool();
-    const bool gz_settings_confirmed = RadarEngine::RadarConfig::getInstance("")->getConfig(m_confirmed_alarm_key).toBool();
-    const int gz_settings_notif_thr = RadarEngine::RadarConfig::getInstance("")->getConfig(m_alarm_trhold_key).toInt();
-    const int gz_settings_time = RadarEngine::RadarConfig::getInstance("")->getConfig(m_time_key).toInt(); //s
+    bool gz_settings_enable_alarm;
+    bool gz_settings_confirmed;
+    int gz_settings_notif_thr;
+    int gz_settings_time; //s
+    if(m_id == "GZ 1")
+    {
+        gz_settings_enable_alarm = gzConfig->getEnableAlarm();
+        gz_settings_confirmed = gzConfig->getConfirmed();
+        gz_settings_notif_thr = gzConfig->getNotifThreshold();
+        gz_settings_time = gzConfig->getTime();
+    }
+    else if(m_id == "GZ 2")
+    {
+        gz_settings_enable_alarm = gzConfig->getEnableAlarm1();
+        gz_settings_confirmed = gzConfig->getConfirmed1();
+        gz_settings_notif_thr = gzConfig->getNotifThreshold1();
+        gz_settings_time = gzConfig->getTime1();
+    }
 
     if(gz_settings_show)
     {
@@ -81,10 +86,19 @@ void GZAlarm::checkAlarm()
 #else
                         qDebug()<<Q_FUNC_INFO<<m_id<<"timeout";
 #endif
-
-                        const int gz_settings_timeout = RadarEngine::RadarConfig::getInstance("")->getConfig(m_timeout_key).toInt(); //s
-                        RadarEngine::RadarConfig::getInstance("")->setConfig(m_time_key,gz_settings_timeout+now);
-                        RadarEngine::RadarConfig::getInstance("")->setConfig(m_confirmed_alarm_key,false);
+                        int gz_settings_timeout; //s
+                        if(m_id == "GZ 1")
+                        {
+                            gz_settings_timeout = gzConfig->getTimeout(); //s
+                            gzConfig->setTimeout(gz_settings_timeout+now);
+                            gzConfig->setConfirmed(false);
+                        }
+                        else if(m_id == "GZ 2")
+                        {
+                            gz_settings_timeout = gzConfig->getTimeout1(); //s
+                            gzConfig->setTimeout1(gz_settings_timeout+now);
+                            gzConfig->setConfirmed1(false);
+                        }
                     }
 
                     SetCurrentMessage(QString("%1 alarm").arg(m_id));
@@ -97,7 +111,14 @@ void GZAlarm::checkAlarm()
             if(m_re->guardZones[m_id]->GetBogeyCount()>0)
                 m_re->guardZones[m_id]->ResetBogeys();
 
-            RadarEngine::RadarConfig::getInstance("")->setConfig(m_confirmed_alarm_key,false);
+            if(m_id == "GZ 1")
+            {
+                gzConfig->setConfirmed(false);
+            }
+            else if(m_id == "GZ 2")
+            {
+                gzConfig->setConfirmed1(false);
+            }
         }
     }
     else
@@ -105,33 +126,66 @@ void GZAlarm::checkAlarm()
         if(m_re->guardZones[m_id]->GetBogeyCount()>0)
             m_re->guardZones[m_id]->ResetBogeys();
 
-        RadarEngine::RadarConfig::getInstance("")->setConfig(m_confirmed_alarm_key,false);
+        if(m_id == "GZ 1")
+        {
+            gzConfig->setConfirmed(false);
+        }
+        else if(m_id == "GZ 2")
+        {
+            gzConfig->setConfirmed1(false);
+        }
     }
-
 }
 
 bool GZAlarm::IsConfirmed()
 {
     const bool gz_settings_show = RadarEngine::RadarConfig::getInstance("")->getConfig(m_shown_key).toBool();
-    const bool gz_settings_enable_alarm = RadarEngine::RadarConfig::getInstance("")->getConfig(m_enable_alarm_key).toBool();
+    bool gz_settings_enable_alarm;
+    if(m_id == "GZ 1")
+    {
+        gz_settings_enable_alarm = gzConfig->getEnableAlarm();
+        if(gz_settings_show && gz_settings_enable_alarm) return gzConfig->getConfirmed();
+        else return false;
+    }
+    else if(m_id == "GZ 2")
+    {
+        gz_settings_enable_alarm = gzConfig->getEnableAlarm1();
+        if(gz_settings_show && gz_settings_enable_alarm) return gzConfig->getConfirmed1();
+        else return false;
+    }
 
-    if(gz_settings_show && gz_settings_enable_alarm) return RadarEngine::RadarConfig::getInstance("")->getConfig(m_confirmed_alarm_key).toBool();
-    else return false;
+    return false;
 }
 
 void GZAlarm::Confirm()
 {
     const bool gz_settings_show = RadarEngine::RadarConfig::getInstance("")->getConfig(m_shown_key).toBool();
-    const bool gz_settings_enable_alarm = RadarEngine::RadarConfig::getInstance("")->getConfig(m_enable_alarm_key).toBool();
+    bool gz_settings_enable_alarm;
+    const int now = static_cast<int>(QDateTime::currentSecsSinceEpoch());
 
-    if(gz_settings_show && gz_settings_enable_alarm)
+    if(m_id == "GZ 1")
     {
-        const int now = static_cast<int>(QDateTime::currentSecsSinceEpoch());
-        const int gz_settings_timeout = RadarEngine::RadarConfig::getInstance("")->getConfig(m_timeout_key).toInt(); //s
-        const int gz_settings_time = gz_settings_timeout+now; //s
+        gz_settings_enable_alarm = gzConfig->getEnableAlarm();
+        if(gz_settings_show && gz_settings_enable_alarm)
+        {
+            const int gz_settings_timeout = gzConfig->getTimeout(); //s
+            const int gz_settings_time = gz_settings_timeout+now; //s
 
-        RadarEngine::RadarConfig::getInstance("")->setConfig(m_time_key,gz_settings_time);
-        RadarEngine::RadarConfig::getInstance("")->setConfig(m_confirmed_alarm_key,true);
+            gzConfig->setTime(gz_settings_time);
+            gzConfig->setConfirmed(true);
+        }
+    }
+    else if(m_id == "GZ 2")
+    {
+        gz_settings_enable_alarm = gzConfig->getEnableAlarm1();
+        if(gz_settings_show && gz_settings_enable_alarm)
+        {
+            const int gz_settings_timeout = gzConfig->getTimeout1(); //s
+            const int gz_settings_time = gz_settings_timeout+now; //s
+
+            gzConfig->setTime1(gz_settings_time);
+            gzConfig->setConfirmed1(true);
+        }
     }
 }
 

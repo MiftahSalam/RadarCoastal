@@ -2,6 +2,7 @@
 #define ECHOSENDER_H
 
 #include "infra/stream/stream.h"
+#include "shared/config/echo_sender_config.h"
 #include <QObject>
 
 #include <RadarEngine/radarconfig.h>
@@ -27,6 +28,7 @@ private slots:
 
 private:
     RadarEngine::RadarConfig* m_instance_cfg;
+    EchoSenderConfig *echoConfig;
     Stream *m_stream_mqtt_spasi;
     QString m_topic_spasi;
 

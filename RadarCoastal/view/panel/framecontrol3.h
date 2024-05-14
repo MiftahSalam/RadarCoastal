@@ -1,6 +1,7 @@
 #ifndef FRAMECONTROL3_H
 #define FRAMECONTROL3_H
 
+#include "shared/config/ppi_config.h"
 #include <QFrame>
 
 #include <RadarEngine/radarconfig.h>
@@ -39,6 +40,7 @@ private:
     Ui::FrameControl3 *ui;
 
     RadarEngine::RadarConfig* m_instance_cfg;
+    PPIConfig *ppiConfig;
     int prev_unit_idx;
 };
 

@@ -1,4 +1,5 @@
 #include "view/mainwindow.h"
+#include "shared/config/applicationconfig.h"
 
 #include <RadarEngine/radarconfig.h>
 
@@ -28,7 +29,7 @@ int main(int argc, char *argv[])
     RadarEngine::RadarConfig *instance = RadarEngine::RadarConfig::getInstance(QDir::homePath()+QDir::separator()+".hypernet"+QDir::separator()+".radar.conf");
     if(!instance) qFatal("Cannot provide config service");
 
-    if(instance->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_USE_OPENGL_SOFTWARE).toBool())
+    if(ApplicationConfig::getInstance()->getOpenGLSoftware())
         QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL); //tiap pc beda.why??
 
     QApplication a(argc, argv);
@@ -49,7 +50,7 @@ int main(int argc, char *argv[])
     QTranslator translator;
     QString lng;
 
-    lng = instance->getConfig(RadarEngine::NON_VOLATILE_APP_DISPLAY_LANGUAGE).toString();
+    lng = ApplicationConfig::getInstance()->getLanguage();
     translator.load(selectQmFile(lng));
     qApp->installTranslator(&translator);
 

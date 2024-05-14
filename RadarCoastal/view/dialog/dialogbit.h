@@ -1,6 +1,7 @@
 #ifndef DIALOGBIT_H
 #define DIALOGBIT_H
 
+#include "shared/config/navigation_config.h"
 #include <QDialog>
 
 #include <RadarEngine/radarconfig.h>
@@ -30,6 +31,7 @@ private:
     Ui::DialogBIT *ui;
 
     RadarEngine::RadarConfig* m_instance_cfg;
+    NavigationConfig *navConfig;
 
 };
 

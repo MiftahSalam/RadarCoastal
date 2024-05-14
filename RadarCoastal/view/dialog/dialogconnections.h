@@ -1,6 +1,7 @@
 #ifndef DIALOGCONNECTIONS_H
 #define DIALOGCONNECTIONS_H
 
+#include "shared/config/applicationconfig.h"
 #include <QDialog>
 
 #include <RadarEngine/radarconfig.h>
@@ -35,6 +36,7 @@ private:
     Ui::DialogConnections *ui;
 
     RadarEngine::RadarConfig* m_instance_cfg;
+    ApplicationConfig *appConfig;
 };
 
 #endif // DIALOGCONNECTIONS_H

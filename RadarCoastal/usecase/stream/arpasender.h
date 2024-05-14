@@ -8,8 +8,9 @@
 #include "domain/track/trackmodel.h"
 #include "infra/stream/stream.h"
 #include "arpa_sender_model.h"
+#include "shared/config/arpa_config.h"
 
-class ArpaSender : public QObject
+class ArpaSender : public QObject, public ConfigListener
 {
     Q_OBJECT
 public:
@@ -30,13 +31,12 @@ public:
             );
     void Reconnect();
 
-signals:
-
-private slots:
-    void triggerConfigChange(const QString key, const QVariant val);
+    // ConfigListener interface
+    void configChange(const QString key, const QVariant val) override;
 
 private:
     RadarEngine::RadarConfig* m_instance_cfg;
+    ArpaConfig *arpaConfig;
     Stream *m_stream_mqtt;
     Stream *m_stream_mqtt_spasi;
 

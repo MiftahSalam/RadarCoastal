@@ -1,6 +1,7 @@
 #include "framecontrol3.h"
 #include "ui_framecontrol3.h"
 #include "shared/utils.h"
+#include "shared/config/applicationconfig.h"
 
 #include <RadarEngine/global.h>
 
@@ -19,6 +20,7 @@ FrameControl3::FrameControl3(QWidget *parent) :
     ui(new Ui::FrameControl3)
 {
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    ppiConfig = ApplicationConfig::getInstance()->getPpiConfig();
 
     ui->setupUi(this);
 //    ui->label->hide();
@@ -32,12 +34,12 @@ FrameControl3::FrameControl3(QWidget *parent) :
 void FrameControl3::initConfig()
 {
     ui->comboBoxMotion->setCurrentIndex(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool() ? 1 : 0);
-    ui->checkBoxShowCompass->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_COMPASS).toBool());
-    ui->checkBoxShowHM->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_HEADING_MARKER).toBool());
-    ui->checkBoxShowRSweep->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP).toBool());
+    ui->checkBoxShowCompass->setChecked(ppiConfig->getShowCompass());
+    ui->checkBoxShowHM->setChecked(ppiConfig->getShowHM());
+    ui->checkBoxShowRSweep->setChecked(ppiConfig->getShowSweep());
 
     int cur_idx = ui->comboBoxDisplayUnit->currentIndex();
-    int cfg_idx = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toInt();
+    int cfg_idx = ApplicationConfig::getInstance()->getUnit();
 
     prev_unit_idx = cfg_idx;
 
@@ -58,17 +60,17 @@ void FrameControl3::on_comboBoxMotion_currentIndexChanged(int index)
 
 void FrameControl3::on_checkBoxShowCompass_clicked(bool checked)
 {
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_COMPASS,checked);
+    ppiConfig->setShowCompass(checked);
 }
 
 void FrameControl3::on_checkBoxShowHM_clicked(bool checked)
 {
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_HEADING_MARKER,checked);
+    ppiConfig->setShowHM(checked);
 }
 
 void FrameControl3::on_checkBoxShowRSweep_clicked(bool checked)
 {
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP,checked);
+    ppiConfig->setShowSweep(checked);
 }
 
 void FrameControl3::on_comboBoxDisplayMode_currentIndexChanged(int index)
@@ -110,7 +112,7 @@ void FrameControl3::on_comboBoxDisplayMode_currentIndexChanged(int index)
 void FrameControl3::on_comboBoxDisplayUnit_currentIndexChanged(int index)
 {
     Utils::unit = static_cast<quint8>(index);
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT,index);
+    ApplicationConfig::getInstance()->setUnit(index);
 
     const int cur_range = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_LAST_SCALE).toInt();
     int cur_zoom_lvl = distanceList.indexOf(cur_range);

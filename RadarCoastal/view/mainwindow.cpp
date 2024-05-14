@@ -21,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    Utils::unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+    appConfig = ApplicationConfig::getInstance();
+    Utils::unit = appConfig->getUnit();
     m_re = RadarEngine::RadarEngine::GetInstance(this);
     m_cfg = RadarEngine::RadarConfig::getInstance("");
 

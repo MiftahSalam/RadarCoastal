@@ -4,10 +4,11 @@
 #include <QObject>
 
 #include "infra/stream/stream.h"
+#include "shared/config/navigation_config.h"
 #include "usecase/stream/nav_data_model.h"
 #include <RadarEngine/radarconfig.h>
 
-class NavSensor : public QObject
+class NavSensor : public QObject, ConfigListener
 {
     Q_OBJECT
 public:
@@ -15,14 +16,15 @@ public:
     void Reconnect();
     void UpdateStatus();
 
-signals:
+    // ConfigListener interface
+    void configChange(const QString key, const QVariant val) override;
 
 private slots:
     void triggerReceivedData(QString data);
-    void triggerConfigChange(const QString key, const QVariant val);
 
 private:
     RadarEngine::RadarConfig* m_instance_cfg;
+    NavigationConfig *navConfig;
     Stream *m_stream_mqtt;
     NavDataDecoder *decoder;
     QString m_topic;
@@ -30,6 +32,7 @@ private:
 
     void sendMqtt(NavDataEncoder *encoder);
     void initConfigMqtt();
+
 };
 
 #endif // NAVSENSOR_H

@@ -12,6 +12,7 @@ DialogConnections::DialogConnections(QWidget *parent) :
     ui(new Ui::DialogConnections)
 {    
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    appConfig = ApplicationConfig::getInstance();
 
     ui->setupUi(this);
 
@@ -23,7 +24,7 @@ DialogConnections::DialogConnections(QWidget *parent) :
 
 void DialogConnections::initConfig()
 {
-    ui->checkBoxShowARPA->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_ARPA).toBool());
+    ui->checkBoxShowARPA->setChecked(appConfig->getPpiConfig()->getShowArpa());
 
     ui->lineEditIPData->setValidator(new QIntValidator(0,255,ui->lineEditIPData));
     ui->lineEditPortData->setValidator(new QIntValidator(3000,65536,ui->lineEditPortData));
@@ -40,8 +41,12 @@ void DialogConnections::initConfig()
     ui->lineEditPortcmd->setText(QString::number(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_RADAR_NET_PORT_CMD).toInt()));
 
 
-    QString arpa_conf = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG).toString();
+    QString arpa_conf = appConfig->getArpaConfig()->getMqttInternal();
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    QStringList arpa_conf_list = arpa_conf.split(";", Qt::SkipEmptyParts);
+#else
     QStringList arpa_conf_list = arpa_conf.split(";",QString::SkipEmptyParts);
+#endif
 
     if(arpa_conf_list.size() != 3)
     {
@@ -50,7 +55,11 @@ void DialogConnections::initConfig()
     }
     else
     {
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+        arpa_conf_list = arpa_conf_list.at(2).split(":", Qt::SkipEmptyParts);
+#else
         arpa_conf_list = arpa_conf_list.at(2).split(":",QString::SkipEmptyParts);
+#endif
         if(arpa_conf_list.size() != 3)
         {
             ui->lineEditIPARPA->setText("invalid config "+arpa_conf);
@@ -63,8 +72,12 @@ void DialogConnections::initConfig()
         }
     }
 
-    QString nav_conf = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
+    QString nav_conf = appConfig->getNavConfig()->getMqttInternal();
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    QStringList nav_conf_list = nav_conf.split(";", Qt::SkipEmptyParts);
+#else
     QStringList nav_conf_list = nav_conf.split(";",QString::SkipEmptyParts);
+#endif
 
     if(nav_conf_list.size() != 3)
     {
@@ -73,7 +86,11 @@ void DialogConnections::initConfig()
     }
     else
     {
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+        nav_conf_list = nav_conf_list.at(2).split(":", Qt::SkipEmptyParts);
+#else
         nav_conf_list = nav_conf_list.at(2).split(":",QString::SkipEmptyParts);
+#endif
         if(nav_conf_list.size() != 3)
         {
             ui->lineEditNavMqttServer->setText("invalid config "+nav_conf);
@@ -99,7 +116,7 @@ void DialogConnections::upateOpTIme(QString elapsed)
 
 void DialogConnections::on_checkBoxShow_clicked(bool checked)
 {
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_ARPA,checked);
+    appConfig->getPpiConfig()->setShowArpa(checked);
 }
 
 
@@ -113,7 +130,11 @@ void DialogConnections::on_pushButtonApply_clicked()
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_RADAR_NET_PORT_CMD,ui->lineEditPortcmd->text().toUInt());
 
     QString arpa_conf = ui->lineEditIPARPA->text();
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    QStringList arpa_conf_list = arpa_conf.split(":", Qt::SkipEmptyParts);
+#else
     QStringList arpa_conf_list = arpa_conf.split(":",QString::SkipEmptyParts);
+#endif
 
     if(arpa_conf_list.size() != 2)
     {
@@ -151,7 +172,7 @@ void DialogConnections::on_pushButtonApply_clicked()
                 }
                 else
                 {
-                    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG,"mqtt;InOut;"+ui->lineEditIPARPA->text()+":"+ui->lineEditPortARPA->text());
+                    appConfig->getArpaConfig()->setMqttInternal("mqtt;InOut;"+ui->lineEditIPARPA->text()+":"+ui->lineEditPortARPA->text());
                 }
             }
         }
@@ -161,7 +182,11 @@ void DialogConnections::on_pushButtonApply_clicked()
 void DialogConnections::on_pushButtonApplyNav_clicked()
 {
     QString nav_conf = ui->lineEditNavMqttServer->text();
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+    QStringList nav_conf_list = nav_conf.split(":", Qt::SkipEmptyParts);
+#else
     QStringList nav_conf_list = nav_conf.split(":",QString::SkipEmptyParts);
+#endif
 
     if(nav_conf_list.size() != 2)
     {
@@ -199,7 +224,7 @@ void DialogConnections::on_pushButtonApplyNav_clicked()
                 }
                 else
                 {
-                    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG,"mqtt;InOut;"+ui->lineEditNavMqttServer->text()+":"+ui->lineEditNavMqttTopic->text());
+                    appConfig->getNavConfig()->setMqttInternal("mqtt;InOut;"+ui->lineEditNavMqttServer->text()+":"+ui->lineEditNavMqttTopic->text());
                 }
             }
         }

@@ -1,6 +1,7 @@
 #ifndef FRAMECONTROL2_H
 #define FRAMECONTROL2_H
 
+#include "shared/config/ppi_config.h"
 #include <QFrame>
 
 #include <RadarEngine/radarengine.h>
@@ -10,13 +11,16 @@ namespace Ui {
 class FrameControl2;
 }
 
-class FrameControl2 : public QFrame
+class FrameControl2 : public QFrame, public ConfigListener
 {
     Q_OBJECT
 
 public:
     explicit FrameControl2(QWidget *parent = nullptr);
     ~FrameControl2();
+
+    // ConfigListener interface
+    void configChange(const QString key, const QVariant val) override;
 
 signals:
     void signal_change_gain_req(int value);
@@ -54,8 +58,6 @@ private slots:
 
     void on_horizontalSliderVRM_valueChanged(int value);
 
-    void triggerConfigChange(const QString key, const QVariant val);
-
 private:
     void initConfig();
 
@@ -63,6 +65,7 @@ private:
 
     RadarEngine::RadarConfig* m_instance_cfg;
     RadarEngine::RadarEngine* m_instance_re;
+    PPIConfig *ppiConfig;
 };
 
 #endif // FRAMECONTROL2_H

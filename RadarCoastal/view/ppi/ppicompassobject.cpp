@@ -1,4 +1,5 @@
 #include "ppicompassobject.h"
+#include "shared/config/applicationconfig.h"
 
 #include <qmath.h>
 
@@ -10,7 +11,7 @@ void PPICompassObject::Draw(QPainter* painter, const int &side, const int &width
 {
     QPoint center_point = QPoint(width/2,height/2);
 
-    const bool show_compass = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_COMPASS).toBool();
+    const bool show_compass = ApplicationConfig::getInstance()->getPpiConfig()->getShowCompass();
     if(show_compass)
     {
         painter->translate(-off_center);

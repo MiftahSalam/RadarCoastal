@@ -1,5 +1,6 @@
 #include "baseresponsejson.h"
 #include "sitedatasender.h"
+#include "shared/config/applicationconfig.h"
 
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -20,19 +21,19 @@ SiteDataSender::SiteDataSender(QObject *parent)
     qDebug()<<Q_FUNC_INFO;
 #endif
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    navConfig = ApplicationConfig::getInstance()->getNavConfig();
 
     initConfigMqtt();
     initConfigMqttSpasi();
 
     m_site_data_count = 0;
 
-    connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,
-            this,&SiteDataSender::triggerConfigChange);
+    navConfig->attach(this);
 }
 
 void SiteDataSender::initConfigMqttSpasi()
 {
-    QString config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_SPASI).toString();
+    QString config_str = navConfig->getMqttSpasi();
     QStringList config_str_list = config_str.split(":");
 
     if(config_str_list.size() != 6)
@@ -60,7 +61,7 @@ void SiteDataSender::initConfigMqttSpasi()
 
 void SiteDataSender::initConfigMqtt()
 {
-    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
+    QString config_str = navConfig->getMqttInternal();
     QStringList config_str_list = config_str.split(":");
 
     if(config_str_list.size() != 3)
@@ -82,12 +83,12 @@ void SiteDataSender::initConfigMqtt()
     m_stream_mqtt->ChangeConfig("subsciber:topic-add:"+m_topic);
 }
 
-void SiteDataSender::triggerConfigChange(const QString key, const QVariant val)
+void SiteDataSender::configChange(const QString key, const QVariant val)
 {
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val.toString();
 #endif
-    if(key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_SPASI)
+    if(key == NAV_SPASI_MQTT)
     {
         m_stream_mqtt_spasi->SetConfig(val.toString());
     }
@@ -95,8 +96,8 @@ void SiteDataSender::triggerConfigChange(const QString key, const QVariant val)
 
 void SiteDataSender::SendSiteData()
 {
-    const bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
-    const bool hdt_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
+    const bool gps_auto = navConfig->getGPSModeAuto();
+    const bool hdt_auto = navConfig->getHeadingModeAuto();
 
     m_site_data_count++;
     if(m_site_data_count >= max_site_data_count)
@@ -113,12 +114,12 @@ void SiteDataSender::SendSiteData()
         objRadar["status"] = radarStatusCode(static_cast<RadarEngine::RadarState>(m_instance_cfg->getConfig(RadarEngine::VOLATILE_RADAR_STATUS).toInt()));
 
         objPos["mode"] = gps_auto ? "auto" : "manual";
-        objPos["status"] = navStatusCode(m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt());
+        objPos["status"] = navStatusCode(navConfig->getGPSStatus());
         objPos["latitude"] = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
         objPos["longitude"] = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
 
         objHdt["mode"] = hdt_auto ? "auto" : "manual";
-        objHdt["status"] = navStatusCode(m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt());
+        objHdt["status"] = navStatusCode(navConfig->getHeadingStatus());
         objHdt["heading"] = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
 
         obj["position"] = objPos;

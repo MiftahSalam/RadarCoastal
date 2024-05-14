@@ -1,5 +1,6 @@
 #include "navsensor.h"
 #include "usecase/stream/nav_data_model.h"
+#include "shared/config/applicationconfig.h"
 
 #include <RadarEngine/constants.h>
 
@@ -21,6 +22,7 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent), m_stream_mqtt{nullptr}
     qDebug()<<Q_FUNC_INFO;
 #endif
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    navConfig = ApplicationConfig::getInstance()->getNavConfig();
 
     initConfigMqtt();
 
@@ -29,13 +31,12 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent), m_stream_mqtt{nullptr}
 
     m_no_osd_count = 11;
 
-    connect(m_instance_cfg,&RadarEngine::RadarConfig::configValueChange,
-            this,&NavSensor::triggerConfigChange);
+    navConfig->attach(this);
 }
 
 void NavSensor::initConfigMqtt()
 {
-    QString nav_config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
+    QString nav_config_str = navConfig->getMqttInternal();
     QStringList nav_config_str_list = nav_config_str.split(":");
 
     if(nav_config_str_list.size() != 3)
@@ -74,13 +75,13 @@ void NavSensor::initConfigMqtt()
 
 }
 
-void NavSensor::triggerConfigChange(const QString key, const QVariant val)
+void NavSensor::configChange(const QString key, const QVariant val)
 {
     //    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
 #ifdef USE_LOG4QT
     logger()->trace()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val.toString();
 #endif
-    if(key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG)
+    if(key == NAV_INTERNAL_MQTT)
     {
         initConfigMqtt();
         m_stream_mqtt->SetConfig(val.toString());
@@ -95,12 +96,12 @@ void NavSensor::UpdateStatus()
 
     switch (m_stream_mqtt->GetStreamStatus()) {
     case DeviceWrapper::NOT_AVAIL:
-        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 0); //offline
-        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 0); //offline
+        navConfig->setGpsStatus(0); //offline
+        navConfig->setHeadingStatus(0); //offline
         break;
     case DeviceWrapper::NO_INPUT_DATA:
-        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 1); //no data
-        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 1); //no data
+        navConfig->setGpsStatus(1); //no data
+        navConfig->setHeadingStatus(1); //no data
         break;
     default:
         break;
@@ -120,8 +121,8 @@ void NavSensor::triggerReceivedData(QString data)
     m_no_osd_count = 0;
     m_stream_mqtt->UpdateTimeStamp();
 
-    const bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
-    const bool hdg_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
+    const bool gps_auto = navConfig->getGPSModeAuto();
+    const bool hdg_auto = navConfig->getHeadingModeAuto();
 
     if (gps_auto)
     {
@@ -129,9 +130,9 @@ void NavSensor::triggerReceivedData(QString data)
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE, model.lat);
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE, model.lon);
-            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, model.status_gps);
+            navConfig->setGpsStatus(model.status_gps);
         }
-        else if (model.status_gps == 2) m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
+        else if (model.status_gps == 2) navConfig->setGpsStatus(2); //data not valid
     }
 
     if (hdg_auto)
@@ -139,9 +140,9 @@ void NavSensor::triggerReceivedData(QString data)
         if (model.status_hdg == 3)
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING, model.hdg);
-            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, model.status_hdg); //data valid
+            navConfig->setGpsStatus(model.status_hdg);  //data valid
         }
-        else if (model.status_hdg == 2) m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
+        else if (model.status_hdg == 2) navConfig->setHeadingStatus(2); //data not valid
     }
 }
 

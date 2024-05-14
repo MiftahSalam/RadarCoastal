@@ -25,6 +25,20 @@ public:
     quint16 getNotifThreshold1() const;
     void setNotifThreshold1(quint16 newNotifThreshold1);
 
+    bool getConfirmed() const;
+    void setConfirmed(bool newConfirmed);
+    bool getConfirmed1() const;
+    void setConfirmed1(bool newConfirmed1);
+    int getTime() const;
+    void setTime(int newTime);
+    int getTime1() const;
+    void setTime1(int newTime1);
+
+    int getTimeout() const;
+    void setTimeout(int newTimeout);
+    int getTimeout1() const;
+    void setTimeout1(int newTimeout1);
+
 protected:
     GZConfig();
 
@@ -32,6 +46,12 @@ private:
     static GZConfig *config;
     bool enableAlarm;
     bool enableAlarm1;
+    bool confirmed;
+    bool confirmed1;
+    int time;
+    int time1;
+    int timeout;
+    int timeout1;
     quint16 notifThreshold;
     quint16 notifThreshold1;
 

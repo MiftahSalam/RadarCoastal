@@ -6,12 +6,108 @@
 #include <QSettings>
 
 const QString PPI_ARPA_SHOW = "ppi/arpa/show";
+const QString PPI_RINGS_SHOW = "ppi/rings/show";
+const QString PPI_EBL_SHOW = "ppi/ebl/show";
+const QString PPI_VRM_SHOW = "ppi/vrm/show";
+const QString PPI_EBL_VALUE = "ppi/ebl/value";
+const QString PPI_VRM_VALUE = "ppi/vrm/value";
 
 PPIConfig* PPIConfig::config = nullptr;
 
 PPIConfig::PPIConfig()
+    : BaseConfig()
 {
 
+}
+
+bool PPIConfig::getShowOffCenter() const
+{
+    return showOffCenter;
+}
+
+void PPIConfig::setShowOffCenter(bool newShowOffCenter)
+{
+    showOffCenter = newShowOffCenter;
+}
+
+bool PPIConfig::getShowSweep() const
+{
+    return showSweep;
+}
+
+void PPIConfig::setShowSweep(bool newShowSweep)
+{
+    showSweep = newShowSweep;
+}
+
+bool PPIConfig::getShowHM() const
+{
+    return showHM;
+}
+
+void PPIConfig::setShowHM(bool newShowHM)
+{
+    showHM = newShowHM;
+}
+
+bool PPIConfig::getShowCompass() const
+{
+    return showCompass;
+}
+
+void PPIConfig::setShowCompass(bool newShowCompass)
+{
+    showCompass = newShowCompass;
+}
+
+void PPIConfig::setEblValue(double newEblValue)
+{
+    eblValue = newEblValue;
+}
+
+void PPIConfig::setVrmValue(double newVrmValue)
+{
+    vrmValue = newVrmValue;
+}
+
+double PPIConfig::getEblValue() const
+{
+    return eblValue;
+}
+
+double PPIConfig::getVrmValue() const
+{
+    return vrmValue;
+}
+
+bool PPIConfig::getShowEBL() const
+{
+    return showEBL;
+}
+
+void PPIConfig::setShowEBL(bool newShowEBL)
+{
+    showEBL = newShowEBL;
+}
+
+bool PPIConfig::getShowVRM() const
+{
+    return showVRM;
+}
+
+void PPIConfig::setShowVRM(bool newShowVRM)
+{
+    showVRM = newShowVRM;
+}
+
+bool PPIConfig::getShowRings() const
+{
+    return showRings;
+}
+
+void PPIConfig::setShowRings(bool newShowRings)
+{
+    showRings = newShowRings;
 }
 
 bool PPIConfig::getShowArpa() const
@@ -51,6 +147,11 @@ void PPIConfig::setup(const QString path)
     QSettings configFile(path,QSettings::IniFormat);
 
     showArpa = configFile.value(PPI_ARPA_SHOW, true).toBool();
+    showRings = configFile.value(PPI_RINGS_SHOW, true).toBool();
+    showEBL = configFile.value(PPI_EBL_SHOW, true).toBool();
+    showVRM = configFile.value(PPI_VRM_SHOW, true).toBool();
+    eblValue = configFile.value(PPI_EBL_VALUE, 0).toInt();
+    vrmValue = configFile.value(PPI_VRM_VALUE, 10).toInt();
 }
 
 

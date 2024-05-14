@@ -3,6 +3,9 @@
 
 #include "base_config.h"
 
+const QString ARPA_SPASI_MQTT = "arpa/spasi/mqtt";
+const QString ARPA_INTERNAL_MQTT = "arpa/internal/mqtt";
+
 class ArpaConfig: public BaseConfig
 {
 public:    

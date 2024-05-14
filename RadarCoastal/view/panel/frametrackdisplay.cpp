@@ -1,5 +1,6 @@
 #include "frametrackdisplay.h"
 #include "ui_frametrackdisplay.h"
+#include "shared/config/applicationconfig.h"
 
 #include <QDateTime>
 #include <QMenu>
@@ -31,7 +32,7 @@ FrameTrackDisplay::FrameTrackDisplay(QWidget *parent) :
 
 void FrameTrackDisplay::timerTimeout()
 {
-    const quint8 unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+    const quint8 unit = ApplicationConfig::getInstance()->getUnit();
 
     switch (unit) {
     case 0:

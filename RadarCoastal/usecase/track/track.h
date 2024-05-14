@@ -8,6 +8,7 @@
 #include <RadarEngine/radarconfig.h>
 
 #include "domain/track/trackrepository.h"
+#include "shared/config/applicationconfig.h"
 #include "usecase/stream/arpasender.h"
 #include "usecase/track/trackmodelview.h"
 
@@ -40,6 +41,7 @@ private:
     ArpaSender *m_arpa_sender;
     RadarEngine::RadarEngine* m_instance_re;
     RadarEngine::RadarConfig* m_instance_cfg;
+    ApplicationConfig *appConfig;
     TrackRepository* m_track_repo;
     QStandardItemModel* m_model;
     TrackModelView* m_model_view;

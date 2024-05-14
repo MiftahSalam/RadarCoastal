@@ -1,5 +1,6 @@
 #include "arpasender.h"
 #include "baseresponsejson.h"
+#include "shared/config/applicationconfig.h"
 
 #include "qjsonarray.h"
 #include "qjsondocument.h"
@@ -24,6 +25,7 @@ ArpaSender::ArpaSender(QObject *parent)
 #endif
 
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    arpaConfig = ApplicationConfig::getInstance()->getArpaConfig();
 
     initConfigMqtt();
     initConfigMqttSpasi();
@@ -159,7 +161,7 @@ void ArpaSender::Reconnect()
 
 void ArpaSender::initConfigMqttSpasi()
 {
-    QString config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_SPASI).toString();
+    QString config_str = arpaConfig->getMqttSpasi();
     QStringList config_str_list = config_str.split(":");
 
     if(config_str_list.size() != 6)
@@ -180,7 +182,7 @@ void ArpaSender::initConfigMqttSpasi()
 
 void ArpaSender::initConfigMqtt()
 {
-    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG).toString();
+    QString config_str = arpaConfig->getMqttInternal();
     QStringList config_str_list = config_str.split(":");
 
     if(config_str_list.size() != 3)
@@ -196,18 +198,17 @@ void ArpaSender::initConfigMqtt()
     m_topic = config_str_list.last();
     if (!m_stream_mqtt) {
         m_stream_mqtt = new Stream(this,config_str);
-        connect(RadarEngine::RadarConfig::getInstance(""),&RadarEngine::RadarConfig::configValueChange,
-                this,&ArpaSender::triggerConfigChange);
+        arpaConfig->attach(this);
     }
 }
 
-void ArpaSender::triggerConfigChange(const QString key, const QVariant val)
+void ArpaSender::configChange(const QString key, const QVariant val)
 {
     //    qDebug()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val;
 #ifdef USE_LOG4QT
     logger()->trace()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val.toString();
 #endif
-    if(key == RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG)
+    if(key == ARPA_INTERNAL_MQTT)
     {
         initConfigMqtt();
         m_stream_mqtt->SetConfig(val.toString());

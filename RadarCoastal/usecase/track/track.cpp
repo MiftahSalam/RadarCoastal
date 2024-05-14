@@ -17,6 +17,7 @@ Track::Track(QObject *parent)
     m_track_repo = TrackRepository::Create();
     m_instance_re = RadarEngine::RadarEngine::GetInstance();
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    appConfig = ApplicationConfig::getInstance();
     m_arpa_sender = new ArpaSender(this);
     m_model = new QStandardItemModel(this);
     m_model_view = new TrackModelView(m_model);
@@ -210,7 +211,7 @@ TrackModel Track::arpaToTrackModel(const RadarEngine::ARPATarget *target)
 
     range = static_cast<double>(curRange*pol.r/RETURNS_PER_LINE)/1000.;
 
-    const quint8 unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+    const quint8 unit = static_cast<quint8>(appConfig->getUnit());
     switch (unit) {
     case 1:
         range *= KM_TO_NM;
@@ -260,7 +261,7 @@ void Track::trigger_LostTarget(int id)
 
 void Track::initCfg()
 {
-    QString config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_SPASI).toString();
+    QString config_str = appConfig->getArpaConfig()->getMqttSpasi();
     QStringList config_str_list$ = config_str.split(":");
     if(config_str_list$.size() != 6)
     {

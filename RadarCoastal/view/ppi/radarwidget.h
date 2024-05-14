@@ -15,6 +15,7 @@
 #include <RadarEngine/radarengine.h>
 
 #include "infra/filterevent.h"
+#include "shared/config/ppi_config.h"
 #include "usecase/ppi/arpa.h"
 #include "usecase/stream/echosender.h"
 #include "view/ppi/ppiobject.h"
@@ -61,6 +62,7 @@ private:
     FilterEvent *ppiEvent;
     RadarEngine::RadarEngine *m_re;
     RadarEngine::RadarConfig *m_instance_cfg;
+    PPIConfig *ppiConfig;
     EchoSender *echoSender;
     QFutureWatcher<RadarEngine::CaptureResult> watcherCapture;
     PPIArpa *m_ppi_arpa;
