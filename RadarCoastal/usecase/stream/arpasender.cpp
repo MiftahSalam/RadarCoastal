@@ -208,7 +208,7 @@ void ArpaSender::configChange(const QString key, const QVariant val)
 #ifdef USE_LOG4QT
     logger()->trace()<<Q_FUNC_INFO<<"key"<<key<<"val"<<val.toString();
 #endif
-    if(key == ARPA_INTERNAL_MQTT)
+    if(key == ARPA_NET_INTERNAL)
     {
         initConfigMqtt();
         m_stream_mqtt->SetConfig(val.toString());

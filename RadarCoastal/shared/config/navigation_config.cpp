@@ -44,7 +44,7 @@ QString NavigationConfig::getMqttInternal() const
 void NavigationConfig::setMqttInternal(const QString &newMqttInternal)
 {
     mqttInternal = newMqttInternal;
-    changeConfig(NAV_INTERNAL_MQTT, newMqttInternal);
+    changeConfig(NAV_INTERNAL_NET, newMqttInternal);
 }
 
 QString NavigationConfig::getMqttSpasi() const
@@ -102,8 +102,8 @@ void NavigationConfig::setup(const QString path)
     gpsStatus = 0; //offline
     gpsModeAuto = configFile.value(NAV_MODE_GPS, true).toBool();
     headingModeAuto = configFile.value(NAV_MODE_HEADING, true).toBool();
-    mqttSpasi = configFile.value(NAV_SPASI_MQTT, "mqtt;InOut;127.0.0.1:1883:user:pass:site_data").toString();
-    mqttInternal = configFile.value(NAV_SPASI_MQTT, "mqtt;InOut;127.0.0.1:1883:gps").toString();
+    mqttSpasi = configFile.value(NAV_SPASI_NET, "mqtt;InOut;127.0.0.1:1883:user:pass:site_data").toString();
+    mqttInternal = configFile.value(NAV_INTERNAL_NET, "mqtt;InOut;127.0.0.1:1883:gps").toString();
 }
 
 void NavigationConfig::save(const QString path)

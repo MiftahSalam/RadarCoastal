@@ -30,6 +30,7 @@ quint8 ApplicationConfig::getUnit() const
 void ApplicationConfig::setUnit(quint8 newUnit)
 {
     unit = newUnit;
+    changeConfig(APP_UNIT, newUnit);
 }
 
 NavigationConfig *ApplicationConfig::getNavConfig() const
@@ -73,6 +74,7 @@ void ApplicationConfig::setup(const QString path)
     arpaConfig = ArpaConfig::getInstance(path);
     gzConfig = GZConfig::getInstance(path);
     ppiConfig = PPIConfig::getInstance(path);
+    echoConfig = EchoSenderConfig::getInstance(path);
 
     QSettings configFile(path, QSettings::IniFormat);
 

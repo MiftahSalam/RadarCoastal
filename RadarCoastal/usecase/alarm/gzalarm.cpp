@@ -23,6 +23,8 @@ GZAlarm::GZAlarm(QObject *parent, QString id, RadarEngine::RadarEngine *re): Ala
 #endif
     }
 
+    gzConfig = ApplicationConfig::getInstance()->getGzConfig();
+
     if(id == "GZ 1")
     {
         m_shown_key = RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ;

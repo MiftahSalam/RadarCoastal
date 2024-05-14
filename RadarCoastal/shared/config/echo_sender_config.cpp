@@ -5,7 +5,7 @@
 
 #include "echo_sender_config.h"
 
-const QString ECHO_SPASI_MQTT = "echo/spasi/mqtt";
+const QString ECHO_SPASI_NET = "Echo/spasi/net";
 
 EchoSenderConfig* EchoSenderConfig::config = nullptr;
 
@@ -41,7 +41,7 @@ void EchoSenderConfig::setup(const QString path)
 {
     QSettings configFile(path,QSettings::IniFormat);
 
-    mqttSpasi = configFile.value(ECHO_SPASI_MQTT, "mqtt;InOut;127.0.0.1:1883:user:pass:echo").toString();
+    mqttSpasi = configFile.value(ECHO_SPASI_NET, "mqtt;InOut;127.0.0.1:1883:user:pass:echo").toString();
 }
 
 void EchoSenderConfig::save(const QString path)

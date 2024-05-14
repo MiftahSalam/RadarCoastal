@@ -21,7 +21,7 @@ QString ArpaConfig::getMqttInternal() const
 void ArpaConfig::setMqttInternal(const QString &newMqttInternal)
 {
     mqttInternal = newMqttInternal;
-    changeConfig(ARPA_INTERNAL_MQTT, newMqttInternal);
+    changeConfig(ARPA_NET_INTERNAL, newMqttInternal);
 }
 
 QString ArpaConfig::getMqttSpasi() const
@@ -50,8 +50,8 @@ void ArpaConfig::setup(const QString path)
 {
     QSettings configFile(path,QSettings::IniFormat);
 
-    mqttSpasi = configFile.value(ARPA_SPASI_MQTT, "mqtt;InOut;127.0.0.1:1883:user:pass:arpa:5").toString();
-    mqttInternal = configFile.value(ARPA_INTERNAL_MQTT, "mqtt;InOut;127.0.0.1:1883:radar").toString();
+    mqttSpasi = configFile.value(ARPA_NET_SPASI, "mqtt;InOut;127.0.0.1:1883:user:pass:arpa:5").toString();
+    mqttInternal = configFile.value(ARPA_NET_INTERNAL, "mqtt;InOut;127.0.0.1:1883:radar").toString();
 }
 
 void ArpaConfig::save(const QString path)

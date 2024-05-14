@@ -7,9 +7,9 @@
 #include "ppi_config.h"
 #include "shared/config/echo_sender_config.h"
 
-const QString APP_UNIT = "app/unit";
-const QString APP_LANGUAGE = "app/language";
-const QString APP_USE_OPENGL_SOFTWARE = "app/use_opengl_software";
+const QString APP_UNIT = "App/unit";
+const QString APP_LANGUAGE = "App/language";
+const QString APP_USE_OPENGL_SOFTWARE = "App/use_opengl_software";
 
 class ApplicationConfig: public BaseConfig
 {

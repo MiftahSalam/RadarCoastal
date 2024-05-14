@@ -5,12 +5,12 @@
 
 #include "base_config.h"
 
-const QString NAV_MODE_GPS = "nav/mode/gps";
-const QString NAV_MODE_HEADING = "nav/mode/heading";
-const QString NAV_STATUS_GPS = "nav/status/gps";
-const QString NAV_STATUS_HEADING = "nav/status/heading";
-const QString NAV_SPASI_MQTT = "nav/spasi/mqtt";
-const QString NAV_INTERNAL_MQTT = "nav/internal/mqtt";
+const QString NAV_MODE_GPS = "Nav/gps/mode";
+const QString NAV_MODE_HEADING = "Nav/heading/mode";
+const QString NAV_STATUS_GPS = "Nav/gps/status";
+const QString NAV_STATUS_HEADING = "Nav/heading/status";
+const QString NAV_SPASI_NET = "Nav/spasi/net";
+const QString NAV_INTERNAL_NET = "Nav/internal/net";
 
 class NavigationConfig: public BaseConfig
 {
