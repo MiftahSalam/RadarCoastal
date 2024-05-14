@@ -122,11 +122,6 @@ PPIConfig* PPIConfig::getInstance(const QString path) {
     qDebug()<<Q_FUNC_INFO<<"path"<<path;
 
     if(config == nullptr) {
-        if (!QFile::exists(path)) {
-//            throw ErrFileNotFound();
-            qFatal("file not found: %s", path.toUtf8().constData());
-        }
-
         config = new PPIConfig();
         config->setup(path);
     }
