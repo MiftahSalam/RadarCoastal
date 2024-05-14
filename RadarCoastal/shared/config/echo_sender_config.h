@@ -3,6 +3,8 @@
 
 #include "base_config.h"
 
+const QString ECHO_SPASI_NET = "Echo/spasi/net";
+
 class EchoSenderConfig: public BaseConfig
 {
 public:

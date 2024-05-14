@@ -4,7 +4,7 @@
 #include "base_config.h"
 
 const QString ARPA_NET_SPASI = "Arpa/spasi/net";
-const QString ARPA_NET_INTERNAL = "Arpa/internal/mqtt";
+const QString ARPA_NET_INTERNAL = "Arpa/internal/net";
 const QString ARPA_CREATE_ARPA_BY_CLICK = "Arpa/control/create_arpa_by_click";
 
 class ArpaConfig: public BaseConfig

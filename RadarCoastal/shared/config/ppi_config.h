@@ -3,6 +3,17 @@
 
 #include "base_config.h"
 
+const QString PPI_ARPA_SHOW = "PPI/Display/arpa/show";
+const QString PPI_COMPASS_SHOW = "PPI/Display/compass/show";
+const QString PPI_HM_SHOW = "PPI/Display/heading_marker/show";
+const QString PPI_SWEEP_SHOW = "PPI/Display/sweep/show";
+const QString PPI_RINGS_SHOW = "PPI/Display/rings/show";
+const QString PPI_EBL_SHOW = "PPI/Display/ebl/show";
+const QString PPI_VRM_SHOW = "PPI/Display/vrm/show";
+const QString PPI_EBL_VALUE = "PPI/Display/ebl/value";
+const QString PPI_VRM_VALUE = "PPI/Display/vrm/value";
+const QString PPI_OFFCENTER_ENABLE= "PPI/Display/offcenter/enable";
+
 class PPIConfig: public BaseConfig
 {
 public:    

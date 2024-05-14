@@ -49,6 +49,8 @@ private:
     QString language;
     uint unit;
     bool openGLSoftware;
+
+    void checkConfig();
 };
 
 #endif // APPLICATIONCONFIG_H

@@ -5,8 +5,6 @@
 
 #include "echo_sender_config.h"
 
-const QString ECHO_SPASI_NET = "Echo/spasi/net";
-
 EchoSenderConfig* EchoSenderConfig::config = nullptr;
 
 EchoSenderConfig::EchoSenderConfig()

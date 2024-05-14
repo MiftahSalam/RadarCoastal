@@ -6,13 +6,6 @@
 #include <QSettings>
 #include <QDateTime>
 
-const QString GZ_ALARM_ENABLE = "GZ/alarm/enable";
-const QString GZ1_ALARM_ENABLE = "GZ1/alarm/enable";
-const QString GZ_NOTIF_THRESHOLD = "GZ/notif/threshold";
-const QString GZ1_NOTIF_THRESHOLD = "GZ1/notif/threshold";
-const QString GZ_TIMEOUT = "GZ/timeout";
-const QString GZ1_TIMEOUT = "GZ1/timeout";
-
 GZConfig* GZConfig::config = nullptr;
 
 GZConfig::GZConfig()
