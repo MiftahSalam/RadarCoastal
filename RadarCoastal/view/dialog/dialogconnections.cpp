@@ -122,6 +122,8 @@ void DialogConnections::on_checkBoxShow_clicked(bool checked)
 
 void DialogConnections::on_pushButtonApply_clicked()
 {
+    appConfig->getPpiConfig()->setShowArpa(ui->checkBoxShowARPA->isChecked());
+
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_RADAR_NET_IP_DATA,ui->lineEditIPData->text().remove(" "));
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_RADAR_NET_PORT_DATA,ui->lineEditPortData->text().toUInt());
     m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_RADAR_NET_IP_REPORT,ui->lineEditIPReport->text().remove(" "));

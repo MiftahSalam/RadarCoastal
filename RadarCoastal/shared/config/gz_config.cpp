@@ -147,7 +147,16 @@ void GZConfig::setup(const QString path)
 
 void GZConfig::save(const QString path)
 {
+    qDebug() << Q_FUNC_INFO << path;
 
+    QSettings config(path, QSettings::IniFormat);
+
+    config.setValue(GZ_ALARM_ENABLE, enableAlarm);
+    config.setValue(GZ1_ALARM_ENABLE, enableAlarm1);
+    config.setValue(GZ_NOTIF_THRESHOLD, notifThreshold);
+    config.setValue(GZ1_NOTIF_THRESHOLD, notifThreshold1);
+    config.setValue(GZ_TIMEOUT, timeout);
+    config.setValue(GZ1_TIMEOUT, timeout1);
 }
 
 GZConfig::~GZConfig()

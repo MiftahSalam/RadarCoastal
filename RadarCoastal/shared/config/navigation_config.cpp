@@ -108,5 +108,11 @@ void NavigationConfig::setup(const QString path)
 
 void NavigationConfig::save(const QString path)
 {
+    qDebug() << Q_FUNC_INFO << path;
 
+    QSettings config(path, QSettings::IniFormat);
+
+    config.setValue(NAV_MODE_GPS, gpsModeAuto);
+    config.setValue(NAV_MODE_HEADING, headingModeAuto);
+    config.setValue(NAV_INTERNAL_NET, mqttInternal);
 }

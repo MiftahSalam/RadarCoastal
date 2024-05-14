@@ -101,6 +101,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     RadarEngine::RadarConfig *instance = RadarEngine::RadarConfig::getInstance("");
     if(!instance) qFatal("Cannot provide config service");
     instance->saveConfig();
+    appConfig->save(COMMON_CONFIG_PATH);
 
     event->accept();
 }

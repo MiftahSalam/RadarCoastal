@@ -52,11 +52,17 @@ void ArpaConfig::setup(const QString path)
 
     mqttSpasi = configFile.value(ARPA_NET_SPASI, "mqtt;InOut;127.0.0.1:1883:user:pass:arpa:5").toString();
     mqttInternal = configFile.value(ARPA_NET_INTERNAL, "mqtt;InOut;127.0.0.1:1883:radar").toString();
+    createArpaByClick = configFile.value(ARPA_CREATE_ARPA_BY_CLICK, true).toBool();
 }
 
 void ArpaConfig::save(const QString path)
 {
+    qDebug() << Q_FUNC_INFO << path;
 
+    QSettings config(path, QSettings::IniFormat);
+
+    config.setValue(ARPA_NET_INTERNAL, mqttInternal);
+    config.setValue(ARPA_CREATE_ARPA_BY_CLICK, createArpaByClick);
 }
 
 ArpaConfig::~ArpaConfig()

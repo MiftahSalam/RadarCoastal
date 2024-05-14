@@ -1,10 +1,7 @@
 #include "applicationconfig.h"
 #include "qsettings.h"
 
-#include <QDir>
 #include <QDebug>
-
-const QString COMMON_CONFIG_PATH = QDir::homePath()+QDir::separator()+".hypernet"+QDir::separator()+"app.conf";
 
 ApplicationConfig* ApplicationConfig::config = nullptr;
 
@@ -45,7 +42,6 @@ void ApplicationConfig::checkConfig()
     <<PPI_VRM_SHOW
     <<PPI_EBL_VALUE
     <<PPI_VRM_VALUE
-    <<PPI_OFFCENTER_ENABLE
       ;
 
     foreach (QString key, config.allKeys())
@@ -145,6 +141,17 @@ void ApplicationConfig::setup(const QString path)
 
 void ApplicationConfig::save(const QString path)
 {
+    qDebug() << Q_FUNC_INFO << path;
+
+    QSettings config(path, QSettings::IniFormat);
+
+    config.setValue(APP_UNIT, unit);
+    config.setValue(APP_LANGUAGE, language);
+
+    navConfig->save(path);
+    arpaConfig->save(path);
+    gzConfig->save(path);
+    ppiConfig->save(path);
 }
 
 ApplicationConfig::~ApplicationConfig()
