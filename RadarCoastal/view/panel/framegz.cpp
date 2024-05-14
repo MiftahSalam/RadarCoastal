@@ -1,5 +1,6 @@
 #include "framegz.h"
 #include "ui_framegz.h"
+#include "shared/config/applicationconfig.h"
 
 #include <RadarEngine/radarconfig.h>
 
@@ -12,6 +13,7 @@ FrameGZ::FrameGZ(QWidget *parent) :
     ui->setupUi(this);
 
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    gzConfig = ApplicationConfig::getInstance()->getGzConfig();
 
     initConfig();
 }
@@ -22,9 +24,9 @@ void FrameGZ::initConfig()
     int mode1 = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_GZ_MODE1).toInt();
 
     ui->checkBoxShowGZ->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ).toBool());
-    ui->checkBoxAlarmGZ->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_GZ_ENABLE_ALARM).toBool());
+    ui->checkBoxAlarmGZ->setChecked(gzConfig->getEnableAlarm());
     ui->checkBoxShowGZ2->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_GZ1).toBool());
-    ui->checkBoxAlarmGZ2->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_GZ_ENABLE_ALARM1).toBool());
+    ui->checkBoxAlarmGZ2->setChecked(gzConfig->getEnableAlarm1());
 
     if(mode == 0) ui->radioButtonArc->setChecked(true);
     else ui->radioButtonCircle->setChecked(true);
@@ -51,7 +53,7 @@ void FrameGZ::initConfig()
     ui->lineEditStart2->setText(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_GZ_START_BEARING1).toString());
     ui->lineEditEnd2->setText(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_GZ_END_BEARING1).toString());
 
-    ui->lineEditNotifTHR->setText(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_GZ_NOTIF_THRESHOLD).toString());
+    ui->lineEditNotifTHR->setText(gzConfig->getNotifThreshold());
 }
 
 FrameGZ::~FrameGZ()

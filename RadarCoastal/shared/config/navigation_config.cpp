@@ -94,7 +94,6 @@ NavigationConfig* NavigationConfig::getInstance(const QString path) {
     return config;
 }
 
-
 void NavigationConfig::setup(const QString path)
 {
     QSettings configFile(path,QSettings::IniFormat);
