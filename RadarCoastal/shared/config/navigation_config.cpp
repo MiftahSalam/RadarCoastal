@@ -110,4 +110,5 @@ void NavigationConfig::save(const QString path)
     config.setValue(NAV_MODE_GPS, gpsModeAuto);
     config.setValue(NAV_MODE_HEADING, headingModeAuto);
     config.setValue(NAV_INTERNAL_NET, mqttInternal);
+    config.setValue(NAV_SPASI_NET, mqttSpasi);
 }

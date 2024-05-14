@@ -39,7 +39,11 @@ void EchoSenderConfig::setup(const QString path)
 
 void EchoSenderConfig::save(const QString path)
 {
+    qDebug() << Q_FUNC_INFO << path;
 
+    QSettings config(path, QSettings::IniFormat);
+
+    config.setValue(ECHO_SPASI_NET, mqttSpasi);
 }
 
 EchoSenderConfig::~EchoSenderConfig()

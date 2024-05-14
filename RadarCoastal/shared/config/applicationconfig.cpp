@@ -31,8 +31,8 @@ void ApplicationConfig::checkConfig()
              <<GZ1_TIMEOUT
             <<NAV_MODE_GPS
            <<NAV_MODE_HEADING
-        <<NAV_INTERNAL_NET
-       <<NAV_SPASI_NET
+          <<NAV_INTERNAL_NET
+         <<NAV_SPASI_NET
        <<PPI_ARPA_SHOW
       <<PPI_COMPASS_SHOW
      <<PPI_HM_SHOW
@@ -147,11 +147,13 @@ void ApplicationConfig::save(const QString path)
 
     config.setValue(APP_UNIT, unit);
     config.setValue(APP_LANGUAGE, language);
+    config.setValue(APP_USE_OPENGL_SOFTWARE, openGLSoftware);
 
     navConfig->save(path);
     arpaConfig->save(path);
     gzConfig->save(path);
     ppiConfig->save(path);
+    echoConfig->save(path);
 }
 
 ApplicationConfig::~ApplicationConfig()

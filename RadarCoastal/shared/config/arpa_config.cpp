@@ -56,6 +56,7 @@ void ArpaConfig::save(const QString path)
 
     QSettings config(path, QSettings::IniFormat);
 
+    config.setValue(ARPA_NET_SPASI, mqttSpasi);
     config.setValue(ARPA_NET_INTERNAL, mqttInternal);
     config.setValue(ARPA_CREATE_ARPA_BY_CLICK, createArpaByClick);
 }
