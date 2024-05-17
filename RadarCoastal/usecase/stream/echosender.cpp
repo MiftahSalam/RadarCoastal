@@ -68,7 +68,7 @@ void EchoSender::triggerSendData(const QString echoStr, const int vp_width, cons
     auto timestamp = QDateTime::currentMSecsSinceEpoch();
     QJsonDocument json(buildJsonPackage(echoStr, timestamp, box, curRange));
 
-    if(m_stream_mqtt_spasi->GetStreamStatus() == DeviceWrapper::INPUT_AVAIL)
+    if(m_stream_mqtt_spasi->GetStreamStatus() != DeviceWrapper::NOT_AVAIL)
     {
         QString mq_data = m_topic_spasi+MQTT_MESSAGE_SEPARATOR+json.toJson(QJsonDocument::Compact);
 
