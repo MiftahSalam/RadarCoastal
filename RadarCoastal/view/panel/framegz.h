@@ -1,6 +1,7 @@
 #ifndef FRAMEGZ_H
 #define FRAMEGZ_H
 
+#include "shared/config/gz_config.h"
 #include <QFrame>
 
 #include <RadarEngine/radarconfig.h>
@@ -60,6 +61,7 @@ private:
     Ui::FrameGZ *ui;
 
     RadarEngine::RadarConfig* m_instance_cfg;
+    GZConfig *gzConfig;
 };
 
 #endif // FRAMEGZ_H

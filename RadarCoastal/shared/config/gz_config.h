@@ -16,8 +16,14 @@ public:
     void setup(const QString path) override;
     void save(const QString path) override;
 
-    quint8 getGPSStatus() const;
-    void setGpsStatus(quint8 newGpsStatus);
+    bool getEnableAlarm() const;
+    void setEnableAlarm(bool newEnableAlarm);
+    bool getEnableAlarm1() const;
+    void setEnableAlarm1(bool newEnableAlarm1);
+    quint16 getNotifThreshold() const;
+    void setNotifThreshold(quint16 newNotifThreshold);
+    quint16 getNotifThreshold1() const;
+    void setNotifThreshold1(quint16 newNotifThreshold1);
 
 protected:
     GZConfig();
