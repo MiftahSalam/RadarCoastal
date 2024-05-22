@@ -5,6 +5,7 @@
 
 #include <RadarEngine/radarengine.h>
 #include "alarm.h"
+#include "shared/config/gz_config.h"
 
 class GZAlarm : public Alarm
 {
@@ -21,13 +22,14 @@ protected:
 
 private:
     RadarEngine::RadarEngine* m_re;
+    GZConfig *gzConfig;
     QString m_id;
-    QString m_time_key;
-    QString m_timeout_key;
+//    QString m_time_key;
+//    QString m_timeout_key;
     QString m_shown_key;
-    QString m_enable_alarm_key;
-    QString m_confirmed_alarm_key;
-    QString m_alarm_trhold_key;
+//    QString m_enable_alarm_key;
+//    QString m_confirmed_alarm_key;
+//    QString m_alarm_trhold_key;
 };
 
 #endif // GZALARM_H

@@ -1,4 +1,5 @@
 #include "navsensor.h"
+#include "shared/config/applicationconfig.h"
 
 #include <RadarEngine/constants.h>
 
@@ -27,6 +28,7 @@ NavSensor::NavSensor(QObject *parent)
     qDebug() << Q_FUNC_INFO;
 #endif
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    navConfig = ApplicationConfig::getInstance()->getNavConfig();
 
 #ifndef DISPLAY_ONLY_MODE
     initConfigMqttPrivate();
@@ -45,7 +47,7 @@ NavSensor::NavSensor(QObject *parent)
 
 void NavSensor::initConfigMqttPublic()
 {
-    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG_PUBLIC).toString();
+    QString config_str = navConfig->getMqttPublic();
     QStringList config_str_list = config_str.split(":");
 
     if(config_str_list.size() != 6)
@@ -70,7 +72,7 @@ void NavSensor::initConfigMqttPublic()
 #ifndef DISPLAY_ONLY_MODE
 void NavSensor::initConfigMqttPrivate()
 {
-    QString nav_config_str = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_NET_CONFIG).toString();
+    QString nav_config_str = navConfig->getMqttInternal();
     QStringList nav_config_str_list = nav_config_str.split(":");
 
     if (nav_config_str_list.size() != 3)
@@ -102,16 +104,16 @@ void NavSensor::initConfigMqttPrivate()
     if (!m_stream_mqtt_private) {
         m_stream_mqtt_private = new Stream(this,nav_config_str);
         connect(m_stream_mqtt_private, &Stream::SignalReceiveData, this, &NavSensor::triggerReceivedData);
-        connect(RadarEngine::RadarConfig::getInstance(""),&RadarEngine::RadarConfig::configValueChange,
-                this,&NavSensor::triggerConfigChange);
+        navConfig->attach(this);
     }
 }
 #endif
 
-void NavSensor::triggerConfigChange(const QString key, const QVariant val)
+void NavSensor::configChange(const QString key, const QVariant val)
 {
-    if (key == RadarEngine::NON_VOLATILE_NAV_NET_CONFIG)
+    if(key == NAV_INTERNAL_MQTT)
     {
+        initConfigMqttPrivate();
         m_stream_mqtt_private->SetConfig(val.toString());
     }
 }
@@ -146,10 +148,10 @@ void NavSensor::SendData()
     double lat = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
     double lon = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
     double hdt = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
-    double gps_man = !m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
-    double hdt_man = !m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
-    quint8 gps_status = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt();
-    quint8 hdt_status = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt();
+    double gps_man = !navConfig->getGPSModeAuto();
+    double hdt_man = !navConfig->getHeadingModeAuto();
+    quint8 gps_status = navConfig->getGPSStatus();
+    quint8 hdt_status = navConfig->getHeadingStatus();
 
     /*
     NavDataEncoder *encoder = dynamic_cast<NavDataEncoder *>(new NavDataEncoderCustom(
@@ -195,12 +197,12 @@ void NavSensor::UpdateStatus()
 #endif
     {
     case DeviceWrapper::NOT_AVAIL:
-        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 0); // offline
-        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 0);     // offline
+        navConfig->setGpsStatus(0); //offline
+        navConfig->setHeadingStatus(0); //offline
         break;
     case DeviceWrapper::NO_INPUT_DATA:
-        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 1); // no data
-        m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 1);     // no data
+        navConfig->setGpsStatus(1); //no data
+        navConfig->setHeadingStatus(1); //no data
         break;
     default:
         break;
@@ -226,8 +228,8 @@ void NavSensor::processNavData(QString data)
 #endif
 
 #ifndef DISPLAY_ONLY_MODE
-    const bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
-    const bool hdg_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
+    const bool gps_auto = navConfig->getGPSModeAuto();
+    const bool hdg_auto = navConfig->getHeadingModeAuto();
 
     if (gps_auto)
     {
@@ -236,9 +238,9 @@ void NavSensor::processNavData(QString data)
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE, model.lat);
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE, model.lon);
-            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, model.status_gps);
+            navConfig->setGpsStatus(model.status_gps);
         }
-        else if (model.status_gps == 2) m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS, 2); //data not valid
+        else if (model.status_gps == 2) navConfig->setGpsStatus(2); //data not valid
 #ifndef DISPLAY_ONLY_MODE
     }
 #endif
@@ -250,16 +252,16 @@ void NavSensor::processNavData(QString data)
         if (model.status_hdg == 3)
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING, model.hdg);
-            m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, model.status_hdg); //data valid
+            navConfig->setHeadingStatus(model.status_hdg);  //data valid
         }
-        else if (model.status_hdg == 2) m_instance_cfg->setConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING, 2); //data not valid
+        else if (model.status_hdg == 2) navConfig->setHeadingStatus(2); //data not valid
 #ifndef DISPLAY_ONLY_MODE
     }
 #endif
 
 #ifdef DISPLAY_ONLY_MODE
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO, !model.gps_man);
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO, !model.hdg_man);
+    navConfig->getGPSModeAuto(!model.gps_man);
+    navConfig->setHeadingStatus(!model.hdg_man);
 #endif
 }
 

@@ -1,6 +1,7 @@
 #ifndef FRAMECONTROL1_H
 #define FRAMECONTROL1_H
 
+#include "shared/config/ppi_config.h"
 #include <QFrame>
 #include <QVariant>
 
@@ -53,6 +54,7 @@ private:
     QString ringValue;
     RadarEngine::RadarConfig* m_instance_cfg;
     RadarEngine::RadarEngine* m_instance_re;
+    PPIConfig *ppiConfig;
 };
 
 #endif // FRAMECONTROL1_H

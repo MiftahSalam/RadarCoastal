@@ -1,6 +1,7 @@
 #include "shared/utils.h"
 #include "framecontrol1.h"
 #include "ui_framecontrol1.h"
+#include "shared/config/applicationconfig.h"
 
 #include <RadarEngine/constants.h>
 #include <RadarEngine/global.h>
@@ -21,6 +22,7 @@ FrameControl1::FrameControl1(QWidget *parent) :
 
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     m_instance_re = RadarEngine::RadarEngine::GetInstance(this);
+    ppiConfig = ApplicationConfig::getInstance()->getPpiConfig();
 
     initConfig();
     stateChange(RadarEngine::RADAR_OFF);
@@ -30,8 +32,8 @@ FrameControl1::FrameControl1(QWidget *parent) :
 
 void FrameControl1::initConfig()
 {
-    ui->checkBoxShowRing->setChecked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
-    on_checkBoxShowRing_clicked(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool());
+    ui->checkBoxShowRing->setChecked(ppiConfig->getShowRings());
+    on_checkBoxShowRing_clicked(ppiConfig->getShowRings());
 #ifdef DISPLAY_ONLY_MODE
     handleRingRangeChange();
 #endif
@@ -93,7 +95,7 @@ void FrameControl1::handleRingRangeChange()
     }
 
     */
-    if(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool())
+    if(ppiConfig->getShowRings())
         ui->labelRingRange->setText(tr("Rings %1").arg(ringValue));
 }
 
@@ -220,7 +222,7 @@ void FrameControl1::on_pushButtonTxStnb_clicked()
 
 void FrameControl1::on_checkBoxShowRing_clicked(bool checked)
 {
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING,checked);
+    ppiConfig->setShowRings(checked);
     if(checked)
         ui->labelRingRange->setText(tr("Rings %1").arg(ringValue));
     else

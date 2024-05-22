@@ -1,6 +1,7 @@
 #include "arpasender.h"
 #include "qjsonarray.h"
 #include "shared/utils.h"
+#include "shared/config/applicationconfig.h"
 
 #ifdef USE_LOG4QT
 #include <log4qt/logger.h>
@@ -12,6 +13,8 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, ArpaSender)
 ArpaSender::ArpaSender(QObject *parent)
     : QObject{parent}, m_stream_mqtt_private{nullptr}, m_stream_mqtt_public{nullptr}
 {
+    arpaConfig = ApplicationConfig::getInstance()->getArpaConfig();
+
 #ifdef USE_LOG4QT
     logger()->trace() << Q_FUNC_INFO;
 #else
@@ -24,7 +27,7 @@ ArpaSender::ArpaSender(QObject *parent)
 
 void ArpaSender::initConfigMqttPublic()
 {
-    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_PUBLIC).toString();
+    QString config_str = arpaConfig->getMqttPublic();
     QStringList config_str_list = config_str.split(":");
 
     if(config_str_list.size() != 6)
@@ -45,7 +48,7 @@ void ArpaSender::initConfigMqttPublic()
 
 void ArpaSender::initConfigMqttPrivate()
 {
-    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG).toString();
+    QString config_str = arpaConfig->getMqttInternal();
     QStringList config_str_list = config_str.split(":");
 
     if(config_str_list.size() != 3)
@@ -61,8 +64,7 @@ void ArpaSender::initConfigMqttPrivate()
     m_topic_private = config_str_list.last();
     if (!m_stream_mqtt_private) {
         m_stream_mqtt_private = new Stream(this,config_str);
-        connect(RadarEngine::RadarConfig::getInstance(""),&RadarEngine::RadarConfig::configValueChange,
-                this,&ArpaSender::triggerConfigChange);
+        arpaConfig->attach(this);
     }
 
  }
@@ -180,9 +182,9 @@ void ArpaSender::sendMqtt(ArpaSenderDecoder *decoder)
         m_stream_mqtt_private->SendData(mq_data_prv);
 }
 
-void ArpaSender::triggerConfigChange(const QString key, const QVariant val)
+void ArpaSender::configChange(const QString key, const QVariant val)
 {
-    if (key == RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG)
+    if(key == ARPA_INTERNAL_MQTT)
     {
         initConfigMqttPrivate();
         m_stream_mqtt_private->SetConfig(val.toString());

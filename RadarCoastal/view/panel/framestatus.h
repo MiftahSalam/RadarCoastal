@@ -7,19 +7,23 @@
 #include <RadarEngine/radarconfig.h>
 
 #include "infra/filterevent.h"
+#include "shared/config/navigation_config.h"
 #include "usecase/alarm/alarmmanager.h"
 
 namespace Ui {
 class FrameStatus;
 }
 
-class FrameStatus : public QFrame
+class FrameStatus : public QFrame, public ConfigListener
 {
     Q_OBJECT
 
 public:
     explicit FrameStatus(QWidget *parent = nullptr);
     ~FrameStatus() override;
+
+    // ConfigListener interface
+    void configChange(const QString key, const QVariant val) override;
 
 private slots:
     void trigger_statusChange(const QString& key, const QVariant& val);
@@ -31,6 +35,7 @@ private:
 
     RadarEngine::RadarConfig* m_instance_cfg;
     RadarEngine::RadarEngine* m_instance_re;
+    NavigationConfig *navConfig;
     FilterEvent *m_alarm_event;
     AlarmManager *m_alarm_manager;
     bool m_alarm_toggle;

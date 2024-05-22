@@ -7,11 +7,28 @@ const QString COMMON_CONFIG_PATH = QDir::homePath()+QDir::separator()+".hypernet
 ApplicationConfig* ApplicationConfig::config = nullptr;
 
 ApplicationConfig::ApplicationConfig()
+    : BaseConfig()
 {
-    navConfig = NavigationConfig::getInstance(COMMON_CONFIG_PATH);
-    arpaConfig = ArpaConfig::getInstance(COMMON_CONFIG_PATH);
-    gzConfig = GZConfig::getInstance(COMMON_CONFIG_PATH);
-    ppiConfig = PPIConfig::getInstance(COMMON_CONFIG_PATH);
+}
+
+bool ApplicationConfig::getOpenGLSoftware() const
+{
+    return openGLSoftware;
+}
+
+QString ApplicationConfig::getLanguage() const
+{
+    return language;
+}
+
+quint8 ApplicationConfig::getUnit() const
+{
+    return unit;
+}
+
+void ApplicationConfig::setUnit(quint8 newUnit)
+{
+    unit = newUnit;
 }
 
 NavigationConfig *ApplicationConfig::getNavConfig() const

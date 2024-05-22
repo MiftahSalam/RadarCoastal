@@ -14,6 +14,7 @@
 #include <RadarEngine/radarengine.h>
 
 #include "infra/filterevent.h"
+#include "shared/config/ppi_config.h"
 #include "ppiarpaobject.h"
 #include "ppigzobject.h"
 #include "ppicompassobject.h"
@@ -58,6 +59,7 @@ private:
     FilterEvent *ppiEvent;
     RadarEngine::RadarEngine* m_re;
     RadarEngine::RadarConfig* m_instance_cfg;
+    PPIConfig *ppiConfig;
 #ifndef DISPLAY_ONLY_MODE
     PPIArpa *m_ppi_arpa;
 #else

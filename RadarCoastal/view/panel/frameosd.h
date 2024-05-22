@@ -31,6 +31,7 @@ private:
     QTimer *timer;
     NavSensor* sensor;
     RadarEngine::RadarConfig* m_instance_cfg;
+    NavigationConfig *navConfig;
 
     quint8 no_hdg_count,no_gps_count;
     quint8 hdg_col_normal,gps_col_normal;

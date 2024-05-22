@@ -10,6 +10,7 @@
 
 #include "shared/utils.h"
 #include "radarwidget.h"
+#include "shared/config/applicationconfig.h"
 
 #ifdef USE_LOG4QT
 #include <log4qt/logger.h>
@@ -35,6 +36,7 @@ RadarWidget::RadarWidget(QWidget *parent)
     timer = new QTimer(this);
 
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    ppiConfig = ApplicationConfig::getInstance()->getPpiConfig();
     m_re = RadarEngine::RadarEngine::GetInstance();
 #ifndef DISPLAY_ONLY_MODE
     m_ppi_arpa = new PPIArpa(this, m_re, m_instance_cfg);
@@ -98,11 +100,11 @@ void RadarWidget::trigger_contextMenu(const QPoint &g_pos, const QPoint &pos)
 
     menu.addAction("Off Center", [this, pos]()
                    {
-        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_PPI_ENABLE_OFF_CENTER, true); //tes offcenter
+        ppiConfig->setShowOffCenter(true); //tes offcenter
         this->m_center_offset = this->m_center_point-pos; });
     menu.addAction("Center", [this]()
                    {
-        RadarEngine::RadarConfig::getInstance("")->setConfig(RadarEngine::VOLATILE_PPI_ENABLE_OFF_CENTER, false); //tes offcenter
+        ppiConfig->setShowOffCenter(false); //tes offcenter
         this->m_center_offset = QPoint(0,0); });
 
     menu.exec(g_pos);
@@ -208,7 +210,7 @@ void RadarWidget::paintEvent(QPaintEvent *event)
 
     m_re->radarDraw->DrawRadarImage();
 
-    const bool show_sweep = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_SWEEP).toBool();
+    const bool show_sweep = ppiConfig->getShowSweep();
     const RadarEngine::RadarState cur_state = static_cast<const RadarEngine::RadarState>(m_instance_cfg->getConfig(RadarEngine::VOLATILE_RADAR_STATUS).toInt());
     if (show_sweep && cur_state == RadarEngine::RADAR_TRANSMIT)
         m_re->radarDraw->DrawRadarSweep(cur_radar_angle_double);
@@ -235,14 +237,14 @@ void RadarWidget::paintEvent(QPaintEvent *event)
     painter.translate(center_point);                        // tes offenter
 
     int side = region.width() / 2;
-    const bool show_heading_marker = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_HEADING_MARKER).toBool();
-    const bool show_rings = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_RING).toBool();
+    const bool show_heading_marker = ppiConfig->getShowHM();
+    const bool show_rings = ppiConfig->getShowRings();
     const bool heading_up = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_HEADING_UP).toBool();
     const double currentHeading = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
-    const bool show_ebl_marker = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_EBL_MARKER).toBool();
-    const double curentEbl = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_EBL_VALUE).toDouble();
-    const bool show_vrm_marker = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_SHOW_VRM_MARKER).toBool();
-    const double curentVrm = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_VRM_VALUE).toDouble();
+    const bool show_ebl_marker = ppiConfig->getShowEBL();
+    const double curentEbl = ppiConfig->getEblValue();
+    const bool show_vrm_marker = ppiConfig->getShowVRM();
+    const double curentVrm = ppiConfig->getVrmValue();
 
     foreach (PPIObject *obj, drawObjects)
     {
@@ -326,7 +328,7 @@ void RadarWidget::setupViewport(const int &width, const int &height, const QPoin
     //    int side = qMin(width, height)*2; //scale 2
     //    int side = qMin(width, height)/2; //scale 0.5
     //    glViewport(0, side / 4, side, side); //tes offcenter
-    bool offset_enabled = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::VOLATILE_PPI_ENABLE_OFF_CENTER).toBool(); // tes offcenter
+    bool offset_enabled = ppiConfig->getShowOffCenter(); // tes offcenter
 
     if (offset_enabled)
         glViewport(-offset.x(), offset.y(), side, side); // tes offcenter

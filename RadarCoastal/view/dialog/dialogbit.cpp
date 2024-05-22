@@ -1,5 +1,6 @@
 #include "dialogbit.h"
 #include "ui_dialogbit.h"
+#include "shared/config/applicationconfig.h"
 
 #include <RadarEngine/global.h>
 
@@ -19,6 +20,8 @@ DialogBIT::DialogBIT(QWidget *parent) :
     ui(new Ui::DialogBIT)
 {
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    navConfig = ApplicationConfig::getInstance()->getNavConfig();
+
     ui->setupUi(this);
     ui->pushButtonBITRadar->setText(tr("Start %1").arg("BiTE Radar"));
     ui->pushButtonBITCamera->setText(tr("Start %1").arg("BiTE Camera"));
@@ -106,8 +109,8 @@ void DialogBIT::on_pushButtonBITLora_clicked()
 
 void DialogBIT::on_pushButtonBITNav_clicked()
 {
-    auto status_gps = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt();
-    auto status_hdt = m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt();
+    auto status_gps = navConfig->getGPSStatus();
+    auto status_hdt = navConfig->getHeadingStatus();
 
 #ifdef USE_LOG4QT
     logger()->trace()<<Q_FUNC_INFO<<status_gps<<status_hdt;

@@ -10,6 +10,7 @@
 #include "view/dialog/dialogconnections.h"
 #include "view/dialog/dialoggz.h"
 #include "view/dialog/dialogbit.h"
+#include "shared/config/applicationconfig.h"
 
 namespace Ui {
 class MainWindow;
@@ -44,6 +45,7 @@ private:
 
     RadarEngine::RadarEngine* m_re;
     RadarEngine::RadarConfig* m_cfg;
+    ApplicationConfig *appConfig;
     RadarWidget* m_ppi;
     DialogConnections* m_dialog_conns;
     DialogGZ *m_dialog_gz;

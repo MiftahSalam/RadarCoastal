@@ -53,7 +53,7 @@ void FrameGZ::initConfig()
     ui->lineEditStart2->setText(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_GZ_START_BEARING1).toString());
     ui->lineEditEnd2->setText(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_GZ_END_BEARING1).toString());
 
-    ui->lineEditNotifTHR->setText(gzConfig->getNotifThreshold());
+    ui->lineEditNotifTHR->setText(QString::number(gzConfig->getNotifThreshold()));
 }
 
 FrameGZ::~FrameGZ()
@@ -68,7 +68,7 @@ void FrameGZ::on_checkBoxShowGZ_clicked(bool checked)
 
 void FrameGZ::on_checkBoxAlarmGZ_clicked(bool checked)
 {
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_GZ_ENABLE_ALARM,checked);
+    gzConfig->setEnableAlarm(checked);
 }
 
 void FrameGZ::on_radioButtonArc_clicked(bool checked)
@@ -113,7 +113,7 @@ void FrameGZ::on_lineEditNotifTHR_textChanged(const QString &arg1)
 {
     bool ok;
     int notif = arg1.toInt(&ok);
-    if(ok) m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_GZ_NOTIF_THRESHOLD,notif);
+    if(ok) gzConfig->setNotifThreshold(notif);
 }
 
 
@@ -125,7 +125,7 @@ void FrameGZ::on_checkBoxShowGZ2_clicked(bool checked)
 
 void FrameGZ::on_checkBoxAlarmGZ2_clicked(bool checked)
 {
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_GZ_ENABLE_ALARM1,checked);
+    gzConfig->setEnableAlarm1(checked);
 }
 
 
@@ -177,6 +177,6 @@ void FrameGZ::on_lineEditNotifTHR2_textChanged(const QString &arg1)
 {
     bool ok;
     int notif = arg1.toInt(&ok);
-    if(ok) m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_GZ_NOTIF_THRESHOLD1,notif);
+    if(ok) gzConfig->setNotifThreshold1(notif);
 }
 

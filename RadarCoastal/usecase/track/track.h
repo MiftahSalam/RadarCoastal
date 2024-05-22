@@ -8,6 +8,7 @@
 #include <RadarEngine/radarconfig.h>
 
 #include "domain/track/trackrepository.h"
+#include "shared/config/applicationconfig.h"
 #ifdef DISPLAY_ONLY_MODE
 #include "usecase/stream/arpareceiver.h"
 #else
@@ -61,6 +62,7 @@ private:
     RadarEngine::RadarEngine* m_instance_re;
 #endif
     RadarEngine::RadarConfig* m_instance_cfg;
+    ApplicationConfig *appConfig;
     TrackRepository* m_track_repo;
     QStandardItemModel* m_model;
     TrackModelView* m_model_view;

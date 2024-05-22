@@ -5,6 +5,13 @@
 
 #include "base_config.h"
 
+const QString NAV_MODE_GPS = "nav/mode/gps";
+const QString NAV_MODE_HEADING = "nav/mode/heading";
+const QString NAV_STATUS_GPS = "nav/status/gps";
+const QString NAV_STATUS_HEADING = "nav/status/heading";
+const QString NAV_PUBLIC_MQTT = "nav/public/mqtt";
+const QString NAV_INTERNAL_MQTT = "nav/internal/mqtt";
+
 class NavigationConfig: public BaseConfig
 {
 public:    
@@ -24,7 +31,7 @@ public:
     bool getGPSModeAuto() const;
     void setGpsModeAuto(bool newGpsModeAuto);
 
-    QString getMqttSpasi() const;
+    QString getMqttPublic() const;
 
     QString getMqttInternal() const;
     void setMqttInternal(const QString &newMqttInternal);
@@ -40,7 +47,7 @@ protected:
 
 private:
     static NavigationConfig *config;
-    QString mqttSpasi;
+    QString mqttPublic;
     QString mqttInternal;
     quint8 gpsStatus;
     quint8 headingStatus;

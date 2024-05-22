@@ -1,5 +1,6 @@
 #include "frameosd.h"
 #include "ui_frameosd.h"
+#include "shared/config/applicationconfig.h"
 
 #include <QTime>
 #include <QDoubleValidator>
@@ -9,6 +10,7 @@ FrameOSD::FrameOSD(QWidget *parent) :
     ui(new Ui::FrameOSD)
 {
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    navConfig = ApplicationConfig::getInstance()->getNavConfig();
 
     ui->setupUi(this);
     ui->label_20->hide();
@@ -32,15 +34,15 @@ FrameOSD::FrameOSD(QWidget *parent) :
 void FrameOSD::initConfig()
 {
     no_hdg_count = 0;
-    hdg_col_normal = static_cast<quint8>(m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt());
-    gps_col_normal = static_cast<quint8>(m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt());
+    hdg_col_normal = navConfig->getHeadingStatus();
+    gps_col_normal = navConfig->getGPSStatus();
     no_gps_count = 0;
 
     const double lat = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
     const double lon = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
     const double hdt = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
-    const bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
-    const bool hdg_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
+    const bool gps_auto = navConfig->getGPSModeAuto();
+    const bool hdg_auto = navConfig->getHeadingModeAuto();
 
     ui->lineEditLat->setValidator(new QDoubleValidator(-90,90,6,ui->lineEditLat));
     ui->lineEditLon->setValidator(new QDoubleValidator(-180,180,6,ui->lineEditLon));
@@ -90,12 +92,12 @@ FrameOSD::~FrameOSD()
 void FrameOSD::updateGPSData()
 {
 #ifndef DISPLAY_ONLY_MODE
-    const bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
+    const bool gps_auto = navConfig->getGPSModeAuto();
 
     if(gps_auto)
     {
 #endif
-        quint8 gps_col_normal_buf = static_cast<quint8>(m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_GPS).toInt());
+        quint8 gps_col_normal_buf = navConfig->getGPSStatus();
         const double lat = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
         const double lon = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE).toDouble();
 
@@ -116,12 +118,12 @@ void FrameOSD::updateGPSData()
 void FrameOSD::updateHDGData()
 {
 #ifndef DISPLAY_ONLY_MODE
-    const bool hdg_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
+    const bool hdg_auto = navConfig->getHeadingModeAuto();
 
     if(hdg_auto)
     {
 #endif
-        quint8 hdg_col_normal_buf = static_cast<quint8>(m_instance_cfg->getConfig(RadarEngine::VOLATILE_NAV_STATUS_HEADING).toInt());
+        quint8 hdg_col_normal_buf =navConfig->getHeadingStatus();
         const double hdg = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING).toDouble();
 
         ui->lineEditHDG->setText(QString::number(hdg,'f',1));
@@ -138,8 +140,8 @@ void FrameOSD::updateHDGData()
 
 void FrameOSD::updateModeControl()
 {
-    const bool gps_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool();
-    const bool hdg_auto = m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool();
+    const bool gps_auto = navConfig->getGPSModeAuto();
+    const bool hdg_auto = navConfig->getHeadingModeAuto();
 
     ui->checkBoxGPS->setChecked(gps_auto);
     ui->checkBoxHDG->setChecked(hdg_auto);
@@ -231,15 +233,15 @@ void FrameOSD::on_pushButtonApply_clicked()
     else
         ui->lineEditLon->setText(QString::number(currentOwnShipLon,'f',6));
 
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO,ui->checkBoxHDG->isChecked());
-    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO,ui->checkBoxGPS->isChecked());
+    navConfig->setHeadingModeAuto(ui->checkBoxHDG->isChecked());
+    navConfig->setGpsModeAuto(ui->checkBoxGPS->isChecked());
 //    cur_hdg_auto = hdg_auto;
 //    gps_auto = ui->checkBoxGPS->isChecked();
 
     no_hdg_count = 0;
     no_gps_count = 0;
 
-    if(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_HEADING_AUTO).toBool())
+    if(navConfig->getHeadingModeAuto())
     {
         ui->lineEditHDG->setEnabled(false);
         updateHDGColor(hdg_col_normal);
@@ -250,7 +252,7 @@ void FrameOSD::on_pushButtonApply_clicked()
         ui->lineEditHDG->setStyleSheet("color: rgb(255,255,255);");
     }
 
-    if(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_NAV_CONTROL_GPS_AUTO).toBool())
+    if(navConfig->getGPSModeAuto())
     {
         ui->lineEditLat->setEnabled(false);
         ui->lineEditLon->setEnabled(false);

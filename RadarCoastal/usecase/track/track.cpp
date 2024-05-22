@@ -16,6 +16,7 @@ Track::Track(QObject *parent)
 {
     m_track_repo = TrackRepository::Create();
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    appConfig = ApplicationConfig::getInstance();
 #ifdef DISPLAY_ONLY_MODE
     m_arpa_receiver = new ArpaReceiver(this);
 #else
@@ -288,7 +289,7 @@ TrackModel Track::arpaToTrackModel(const RadarEngine::ARPATarget *target)
 
     range = static_cast<double>(curRange * pol.r / RETURNS_PER_LINE) / 1000.;
 
-    const quint8 unit = static_cast<quint8>(RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_PPI_DISPLAY_UNIT).toUInt());
+    const quint8 unit = static_cast<quint8>(appConfig->getUnit());
     switch (unit)
     {
     case 1:

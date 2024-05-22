@@ -8,8 +8,9 @@
 #include "domain/track/trackmodel.h"
 #include "infra/stream/stream.h"
 #include "usecase/stream/arpa_sender_model.h"
+#include "shared/config/arpa_config.h"
 
-class ArpaSender : public QObject
+class ArpaSender : public QObject, public ConfigListener
 {
     Q_OBJECT
 public:
@@ -27,12 +28,12 @@ public:
             double brn,
             double spd,
             double crs);
-signals:
 
-private slots:
-    void triggerConfigChange(const QString key, const QVariant val);
+    // ConfigListener interface
+    void configChange(const QString key, const QVariant val) override;
 
 private:
+    ArpaConfig *arpaConfig;
     Stream *m_stream_mqtt_private;
     Stream *m_stream_mqtt_public;
 

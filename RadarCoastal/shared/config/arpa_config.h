@@ -3,6 +3,9 @@
 
 #include "base_config.h"
 
+const QString ARPA_PUBLIC_MQTT = "arpa/public/mqtt";
+const QString ARPA_INTERNAL_MQTT = "arpa/internal/mqtt";
+
 class ArpaConfig: public BaseConfig
 {
 public:    
@@ -12,7 +15,7 @@ public:
 
     static ArpaConfig* getInstance(const QString path);
 
-    QString getMqttSpasi() const;
+    QString getMqttPublic() const;
 
     QString getMqttInternal() const;
     void setMqttInternal(const QString &newMqttInternal);
@@ -26,7 +29,7 @@ protected:
 
 private:
     static ArpaConfig *config;
-    QString mqttSpasi;
+    QString mqttPublic;
     QString mqttInternal;
 
 };
