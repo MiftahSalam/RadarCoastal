@@ -153,10 +153,10 @@ contains(DEFINES, DISPLAY_ONLY_MODE) {
 }
 
 unix: {
-    LIBS += -L/usr/lib/pjs-2024/RadarEngine -lRadarEngine
+    LIBS += -L/usr/lib/RadarEngine/v3 -lRadarEngine
 
-    INCLUDEPATH += /usr/include/pjs-2024
-    DEPENDPATH += /usr/include/pjs-2024
+    INCLUDEPATH += /usr/include/RadarEngine/v3
+    DEPENDPATH += /usr/include/RadarEngine/v3
 
     contains(DEFINES, USE_LOG4QT) {
         message(Using log4qt...)
@@ -167,8 +167,8 @@ unix: {
 } else:win32 {
     LIBS += -lOpenGL32
 
-    INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2024\pjs\v2
-    DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\pjs\v2
+    INCLUDEPATH +=C:\Users\miftah\RadarEngineLib\include\2024\v3
+    DEPENDPATH += C:\Users\miftah\RadarEngineLib\lib\include\2024\v3
 
     contains(DEFINES, USE_LOG4QT) {
         message(Using log4qt...)
