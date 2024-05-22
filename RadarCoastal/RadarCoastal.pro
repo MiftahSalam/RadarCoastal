@@ -42,6 +42,8 @@ SOURCES += \
 #    infra/withradarengine.cpp \
     domain/track/trackmodel.cpp \
     infra/database/track/memory/trackrepository_mem.cpp \
+    shared/config/applicationconfig.cpp \
+    shared/config/navigation_config.cpp \
     usecase/alarm/alarm.cpp \
     usecase/alarm/alarmmanager.cpp \
     usecase/alarm/gzalarm.cpp \
@@ -84,6 +86,9 @@ HEADERS += \
     domain/track/trackmodel.h \
     domain/track/trackrepository.h \
     infra/database/track/memory/trackrepository_mem.h \
+    shared/config/applicationconfig.h \
+    shared/config/base_config.h \
+    shared/config/navigation_config.h \
     usecase/alarm/alarm.h \
     usecase/alarm/alarmmanager.h \
     usecase/alarm/gzalarm.h \
