@@ -7,6 +7,7 @@ class BaseConfig
 {
 public:
     virtual void setup(const QString path) = 0;
+    virtual void save(const QString path) = 0;
 };
 
 #endif // BASE_CONFIG_H
