@@ -4,6 +4,8 @@
 #include <RadarEngine/radarengine.h>
 #include <RadarEngine/radarconfig.h>
 
+#include "shared/config/arpa_config.h"
+
 class PPIArpa : public QObject
 {
     Q_OBJECT
@@ -17,6 +19,7 @@ public slots:
 
 private:
     RadarEngine::RadarConfig* m_config_instance;
+    ArpaConfig *arpaConfig;
 };
 
 #endif // PPIARPA_H

@@ -21,9 +21,12 @@ public:
     QString getMqttInternal() const;
     void setMqttInternal(const QString &newMqttInternal);
 
+    bool getCreateArpaByClick() const;
+
     // BaseConfig interface
     void setup(const QString path) override;
     void save(const QString path) override;
+
 
 protected:
     ArpaConfig();

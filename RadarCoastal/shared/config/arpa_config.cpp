@@ -13,6 +13,11 @@ ArpaConfig::ArpaConfig()
 
 }
 
+bool ArpaConfig::getCreateArpaByClick() const
+{
+    return createArpaByClick;
+}
+
 QString ArpaConfig::getMqttInternal() const
 {
     return mqttInternal;
