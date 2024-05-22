@@ -33,7 +33,7 @@ bool NavigationConfig::getHeadingModeAuto() const
 void NavigationConfig::setHeadingModeAuto(bool newHeadingModeAuto)
 {
     headingModeAuto = newHeadingModeAuto;
-    changeConfig(NAV_MODE_HEADING, newHeadingModeAuto);
+   changeConfig(NAV_MODE_HEADING, newHeadingModeAuto);
 }
 
 QString NavigationConfig::getMqttInternal() const
@@ -44,7 +44,7 @@ QString NavigationConfig::getMqttInternal() const
 void NavigationConfig::setMqttInternal(const QString &newMqttInternal)
 {
     mqttInternal = newMqttInternal;
-    changeConfig(NAV_INTERNAL_MQTT, newMqttInternal);
+    changeConfig(NAV_NET_INTERNAL, newMqttInternal);
 }
 
 QString NavigationConfig::getMqttPublic() const
@@ -55,11 +55,13 @@ QString NavigationConfig::getMqttPublic() const
 void NavigationConfig::setGpsModeAuto(bool newGpsModeAuto)
 {
     gpsModeAuto = newGpsModeAuto;
+    changeConfig(NAV_MODE_GPS, newGpsModeAuto);
 }
 
 void NavigationConfig::setGpsStatus(quint8 newGpsStatus)
 {
     gpsStatus = newGpsStatus;
+    changeConfig(NAV_STATUS_GPS, newGpsStatus);
 }
 
 NavigationConfig::~NavigationConfig()
@@ -81,11 +83,6 @@ NavigationConfig* NavigationConfig::getInstance(const QString path) {
     qDebug()<<Q_FUNC_INFO<<"path"<<path;
 
     if(config == nullptr) {
-        if (!QFile::exists(path)) {
-//            throw ErrFileNotFound();
-            qFatal("file not found: %s", path.toUtf8().constData());
-        }
-
         config = new NavigationConfig();
         config->setup(path);
     }
@@ -100,11 +97,18 @@ void NavigationConfig::setup(const QString path)
     gpsStatus = 0; //offline
     gpsModeAuto = configFile.value(NAV_MODE_GPS, true).toBool();
     headingModeAuto = configFile.value(NAV_MODE_HEADING, true).toBool();
-    mqttPublic = configFile.value(NAV_PUBLIC_MQTT, "mqtt;InOut;127.0.0.1:1883:user:pass:site_data").toString();
-    mqttInternal = configFile.value(NAV_INTERNAL_MQTT, "mqtt;InOut;127.0.0.1:1883:gps").toString();
+    mqttPublic = configFile.value(NAV_NET_PUBIC, "mqtt;InOut;127.0.0.1:1883:user:pass:site_data").toString();
+    mqttInternal = configFile.value(NAV_NET_INTERNAL, "mqtt;InOut;127.0.0.1:1883:gps").toString();
 }
 
 void NavigationConfig::save(const QString path)
 {
+    qDebug() << Q_FUNC_INFO << path;
 
+    QSettings config(path, QSettings::IniFormat);
+
+    config.setValue(NAV_MODE_GPS, gpsModeAuto);
+    config.setValue(NAV_MODE_HEADING, headingModeAuto);
+    config.setValue(NAV_NET_INTERNAL, mqttInternal);
+    config.setValue(NAV_NET_PUBIC, mqttPublic);
 }

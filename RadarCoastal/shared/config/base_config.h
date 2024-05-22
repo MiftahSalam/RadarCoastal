@@ -1,7 +1,7 @@
 #ifndef BASE_CONFIG_H
 #define BASE_CONFIG_H
 
-#include <QVariant>
+#include "qvariant.h"
 #include <QString>
 #include <QList>
 

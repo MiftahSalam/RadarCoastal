@@ -5,21 +5,21 @@
 
 #include "base_config.h"
 
-const QString NAV_MODE_GPS = "nav/mode/gps";
-const QString NAV_MODE_HEADING = "nav/mode/heading";
-const QString NAV_STATUS_GPS = "nav/status/gps";
-const QString NAV_STATUS_HEADING = "nav/status/heading";
-const QString NAV_PUBLIC_MQTT = "nav/public/mqtt";
-const QString NAV_INTERNAL_MQTT = "nav/internal/mqtt";
+const QString NAV_MODE_GPS = "Nav/gps/mode";
+const QString NAV_MODE_HEADING = "Nav/heading/mode";
+const QString NAV_STATUS_GPS = "Nav/gps/status";
+const QString NAV_STATUS_HEADING = "Nav/heading/status";
+const QString NAV_NET_PUBIC = "Nav/net/public";
+const QString NAV_NET_INTERNAL = "Nav/net/internal";
 
-class NavigationConfig: public BaseConfig
+class NavigationConfig : public BaseConfig
 {
-public:    
+public:
     NavigationConfig(NavigationConfig &other) = delete;
-    void operator=(const NavigationConfig&) = delete;
+    void operator=(const NavigationConfig &) = delete;
     ~NavigationConfig();
 
-    static NavigationConfig* getInstance(const QString path);
+    static NavigationConfig *getInstance(const QString path);
 
     // BaseConfig interface
     void setup(const QString path) override;

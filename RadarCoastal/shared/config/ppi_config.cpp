@@ -5,13 +5,6 @@
 #include <QFile>
 #include <QSettings>
 
-const QString PPI_ARPA_SHOW = "ppi/arpa/show";
-const QString PPI_RINGS_SHOW = "ppi/rings/show";
-const QString PPI_EBL_SHOW = "ppi/ebl/show";
-const QString PPI_VRM_SHOW = "ppi/vrm/show";
-const QString PPI_EBL_VALUE = "ppi/ebl/value";
-const QString PPI_VRM_VALUE = "ppi/vrm/value";
-
 PPIConfig* PPIConfig::config = nullptr;
 
 PPIConfig::PPIConfig()
@@ -129,11 +122,6 @@ PPIConfig* PPIConfig::getInstance(const QString path) {
     qDebug()<<Q_FUNC_INFO<<"path"<<path;
 
     if(config == nullptr) {
-        if (!QFile::exists(path)) {
-//            throw ErrFileNotFound();
-            qFatal("file not found: %s", path.toUtf8().constData());
-        }
-
         config = new PPIConfig();
         config->setup(path);
     }
@@ -147,14 +135,31 @@ void PPIConfig::setup(const QString path)
     QSettings configFile(path,QSettings::IniFormat);
 
     showArpa = configFile.value(PPI_ARPA_SHOW, true).toBool();
+    showCompass = configFile.value(PPI_COMPASS_SHOW, true).toBool();
+    showHM = configFile.value(PPI_HM_SHOW, true).toBool();
+    showSweep = configFile.value(PPI_SWEEP_SHOW, true).toBool();
     showRings = configFile.value(PPI_RINGS_SHOW, true).toBool();
     showEBL = configFile.value(PPI_EBL_SHOW, true).toBool();
     showVRM = configFile.value(PPI_VRM_SHOW, true).toBool();
     eblValue = configFile.value(PPI_EBL_VALUE, 0).toInt();
     vrmValue = configFile.value(PPI_VRM_VALUE, 10).toInt();
+    showOffCenter = configFile.value(PPI_OFFCENTER_ENABLE, true).toBool();
 }
 
 
 void PPIConfig::save(const QString path)
 {
+    qDebug() << Q_FUNC_INFO << path;
+
+    QSettings config(path, QSettings::IniFormat);
+
+    config.setValue(PPI_ARPA_SHOW, showArpa);
+    config.setValue(PPI_COMPASS_SHOW, showCompass);
+    config.setValue(PPI_HM_SHOW, showHM);
+    config.setValue(PPI_SWEEP_SHOW, showSweep);
+    config.setValue(PPI_RINGS_SHOW, showRings);
+    config.setValue(PPI_EBL_SHOW, showEBL);
+    config.setValue(PPI_VRM_SHOW, showVRM);
+    config.setValue(PPI_EBL_VALUE, eblValue);
+    config.setValue(PPI_VRM_VALUE, vrmValue);
 }

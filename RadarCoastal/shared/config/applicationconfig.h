@@ -5,13 +5,18 @@
 #include "gz_config.h"
 #include "navigation_config.h"
 #include "ppi_config.h"
-const QString APP_UNIT = "app/unit";
-const QString APP_LANGUAGE = "app/language";
-const QString APP_USE_OPENGL_SOFTWARE = "app/use_opengl_software";
+
+#include <QDir>
+
+const QString COMMON_CONFIG_PATH = QDir::homePath()+QDir::separator()+".pjs"+QDir::separator()+"app.conf";
+
+const QString APP_UNIT = "App/unit";
+const QString APP_LANGUAGE = "App/language";
+const QString APP_USE_OPENGL_SOFTWARE = "App/use_opengl_software";
 
 class ApplicationConfig: public BaseConfig
 {
-public:    
+public:
     ApplicationConfig(ApplicationConfig &other) = delete;
     void operator=(const ApplicationConfig&) = delete;
     ~ApplicationConfig();
@@ -45,6 +50,8 @@ private:
     QString language;
     uint unit;
     bool openGLSoftware;
+
+    void checkConfig();
 };
 
 #endif // APPLICATIONCONFIG_H

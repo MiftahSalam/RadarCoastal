@@ -192,8 +192,8 @@ unix: {
 #win32:!win32-g++: PRE_TARGETDEPS += C:/Qt/Qt5.12.12/5.12.12/mingw73_32/lib/Qt5Qmqttd.lib
 #else:win32-g++: PRE_TARGETDEPS += C:/Qt/Qt5.12.12/5.12.12/mingw73_32/lib/libQt5Qmqttd.a
 
-win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\pjs -lRadarEngine
-else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\pjs -lRadarEngine
+win32:CONFIG(release, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\v3 -lRadarEngine
+else:win32:CONFIG(debug, debug|release): LIBS += -LC:\Users\miftah\RadarEngineLib\lib\2024\v3 -lRadarEngine
 
 
 # Default rules for deployment.

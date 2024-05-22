@@ -4,11 +4,7 @@
 #include <QString>
 #include <QFile>
 #include <QSettings>
-
-const QString GZ_ALARM_ENABLE = "gz/alarm/enable";
-const QString GZ1_ALARM_ENABLE = "gz1/alarm/enable";
-const QString GZ_NOTIF_THRESHOLD = "gz/notif/threshold";
-const QString GZ1_NOTIF_THRESHOLD = "gz1/notif/threshold";
+#include <QDateTime>
 
 GZConfig* GZConfig::config = nullptr;
 
@@ -122,11 +118,6 @@ GZConfig* GZConfig::getInstance(const QString path) {
     qDebug()<<Q_FUNC_INFO<<"path"<<path;
 
     if(config == nullptr) {
-        if (!QFile::exists(path)) {
-//            throw ErrFileNotFound();
-            qFatal("file not found: %s", path.toUtf8().constData());
-        }
-
         config = new GZConfig();
         config->setup(path);
     }
@@ -143,11 +134,24 @@ void GZConfig::setup(const QString path)
     enableAlarm1 = configFile.value(GZ1_ALARM_ENABLE, true).toBool();
     notifThreshold = configFile.value(GZ_NOTIF_THRESHOLD, 10).toUInt();
     notifThreshold1 = configFile.value(GZ1_NOTIF_THRESHOLD, 10).toUInt();
+    timeout = configFile.value(GZ_TIMEOUT, 90).toUInt();
+    timeout1 = configFile.value(GZ1_TIMEOUT, 90).toUInt();
+    time = QDateTime::currentSecsSinceEpoch();
+    time1 = time;
 }
 
 void GZConfig::save(const QString path)
 {
+    qDebug() << Q_FUNC_INFO << path;
 
+    QSettings config(path, QSettings::IniFormat);
+
+    config.setValue(GZ_ALARM_ENABLE, enableAlarm);
+    config.setValue(GZ1_ALARM_ENABLE, enableAlarm1);
+    config.setValue(GZ_NOTIF_THRESHOLD, notifThreshold);
+    config.setValue(GZ1_NOTIF_THRESHOLD, notifThreshold1);
+    config.setValue(GZ_TIMEOUT, timeout);
+    config.setValue(GZ1_TIMEOUT, timeout1);
 }
 
 GZConfig::~GZConfig()

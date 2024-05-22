@@ -10,7 +10,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, TxTimerCounter)
 #include <QDebug>
 #endif
 
-const QString APP = "hypernet";
+const QString APP = "pjs";
 
 TxTimerCounter* TxTimerCounter::m_tx_timer{nullptr};
 QSettings set(QSettings::IniFormat, QSettings::UserScope, "RTI", APP);

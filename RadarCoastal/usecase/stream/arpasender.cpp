@@ -184,7 +184,7 @@ void ArpaSender::sendMqtt(ArpaSenderDecoder *decoder)
 
 void ArpaSender::configChange(const QString key, const QVariant val)
 {
-    if(key == ARPA_INTERNAL_MQTT)
+    if(key == ARPA_NET_INTERNAL)
     {
         initConfigMqttPrivate();
         m_stream_mqtt_private->SetConfig(val.toString());

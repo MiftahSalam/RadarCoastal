@@ -54,6 +54,7 @@ void FrameGZ::initConfig()
     ui->lineEditEnd2->setText(m_instance_cfg->getConfig(RadarEngine::NON_VOLATILE_GZ_END_BEARING1).toString());
 
     ui->lineEditNotifTHR->setText(QString::number(gzConfig->getNotifThreshold()));
+    ui->lineEditNotifTHR2->setText(QString::number(gzConfig->getNotifThreshold1()));
 }
 
 FrameGZ::~FrameGZ()

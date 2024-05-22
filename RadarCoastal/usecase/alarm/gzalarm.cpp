@@ -12,6 +12,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, GZAlarm)
 
 GZAlarm::GZAlarm(QObject *parent, QString id, RadarEngine::RadarEngine *re): Alarm(parent, AlarmType::ALARM_GZ, id),m_id(id)
 {
+    gzConfig = ApplicationConfig::getInstance()->getGzConfig();
     m_re = re;
     if(m_re == nullptr)
     {

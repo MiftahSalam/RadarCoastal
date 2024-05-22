@@ -3,12 +3,13 @@
 
 #include "base_config.h"
 
-const QString ARPA_PUBLIC_MQTT = "arpa/public/mqtt";
-const QString ARPA_INTERNAL_MQTT = "arpa/internal/mqtt";
+const QString ARPA_NET_PUBLIC = "Arpa/public/net";
+const QString ARPA_NET_INTERNAL = "Arpa/internal/net";
+const QString ARPA_CREATE_ARPA_BY_CLICK = "Arpa/control/create_arpa_by_click";
 
 class ArpaConfig: public BaseConfig
 {
-public:    
+public:
     ArpaConfig(ArpaConfig &other) = delete;
     void operator=(const ArpaConfig&) = delete;
     ~ArpaConfig();
@@ -19,6 +20,8 @@ public:
 
     QString getMqttInternal() const;
     void setMqttInternal(const QString &newMqttInternal);
+
+    bool getCreateArpaByClick() const;
 
     // BaseConfig interface
     void setup(const QString path) override;
@@ -31,6 +34,7 @@ private:
     static ArpaConfig *config;
     QString mqttPublic;
     QString mqttInternal;
+    bool createArpaByClick;
 
 };
 

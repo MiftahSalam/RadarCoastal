@@ -111,7 +111,7 @@ void NavSensor::initConfigMqttPrivate()
 
 void NavSensor::configChange(const QString key, const QVariant val)
 {
-    if(key == NAV_INTERNAL_MQTT)
+    if(key == NAV_NET_INTERNAL)
     {
         initConfigMqttPrivate();
         m_stream_mqtt_private->SetConfig(val.toString());

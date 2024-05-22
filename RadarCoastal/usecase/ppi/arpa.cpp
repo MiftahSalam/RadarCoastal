@@ -1,6 +1,7 @@
 #include <qmath.h>
 
 #include "shared/utils.h"
+#include "shared/config/applicationconfig.h"
 #include "usecase/ppi/arpa.h"
 
 #ifdef USE_LOG4QT
@@ -37,6 +38,7 @@ PPIArpa::PPIArpa(QObject *parent, RadarEngine::RadarEngine *re, RadarEngine::Rad
 
     m_re = re;
     m_config_instance = config;
+    arpaConfig = ApplicationConfig::getInstance()->getArpaConfig();
 }
 
 void PPIArpa::createMARPA(const QPoint &pos, const int vp_width, const int vp_height)
@@ -50,7 +52,7 @@ void PPIArpa::createMARPA(const QPoint &pos, const int vp_width, const int vp_he
     qDebug() << Q_FUNC_INFO << pos;
 #endif
 
-    if (!m_config_instance->getConfig(RadarEngine::NON_VOLATILE_ARPA_CONTROL_CREATE_ARPA_BY_CLICK).toBool())
+    if (!arpaConfig->getCreateArpaByClick())
         return;
 
     double const curLat = m_config_instance->getConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE).toDouble();
