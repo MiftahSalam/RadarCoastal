@@ -3,6 +3,7 @@
 
 #include "domain/track/trackmodel.h"
 #include "infra/stream/stream.h"
+#include "shared/config/arpa_config.h"
 
 #include <QObject>
 
@@ -50,6 +51,7 @@ private slots:
 
 private:
     RadarEngine::RadarConfig* m_instance_cfg;
+    ArpaConfig *arpaConfig;
     Stream *m_stream;
     QString m_append_data;
     QString m_topic;

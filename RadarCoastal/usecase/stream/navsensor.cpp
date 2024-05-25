@@ -107,7 +107,6 @@ void NavSensor::initConfigMqttPrivate()
         navConfig->attach(this);
     }
 }
-#endif
 
 void NavSensor::configChange(const QString key, const QVariant val)
 {
@@ -117,7 +116,9 @@ void NavSensor::configChange(const QString key, const QVariant val)
         m_stream_mqtt_private->SetConfig(val.toString());
     }
 }
+#endif
 
+#ifndef DISPLAY_ONLY_MODE
 void NavSensor::sendMqtt(NavDataEncoder *encoder)
 {
     QString mq_data = m_topic_public + MQTT_MESSAGE_SEPARATOR + encoder->encode();
@@ -139,7 +140,6 @@ void NavSensor::sendMqtt(NavDataEncoder *encoder)
         m_stream_mqtt_private->SendData(mq_data);
 }
 
-#ifndef DISPLAY_ONLY_MODE
 void NavSensor::SendData()
 {
     //    QString m_data = m_topic + ":" + "?" + lat + "#" + lon + "#" + hdt + "!";
@@ -260,8 +260,8 @@ void NavSensor::processNavData(QString data)
 #endif
 
 #ifdef DISPLAY_ONLY_MODE
-    navConfig->getGPSModeAuto(!model.gps_man);
-    navConfig->setHeadingStatus(!model.hdg_man);
+    navConfig->setGpsModeAuto(!model.gps_man);
+    navConfig->setHeadingModeAuto(!model.hdg_man);
 #endif
 }
 

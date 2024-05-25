@@ -8,7 +8,11 @@
 #include "usecase/stream/nav_data_model.h"
 #include <RadarEngine/radarconfig.h>
 
+#ifndef DISPLAY_ONLY_MODE
 class NavSensor : public QObject, ConfigListener
+        #else
+class NavSensor : public QObject
+        #endif
 {
     Q_OBJECT
 public:
@@ -17,10 +21,11 @@ public:
     void UpdateStatus();
 #ifndef DISPLAY_ONLY_MODE
     void SendData();
-#endif
 
     // ConfigListener interface
     void configChange(const QString key, const QVariant val) override;
+#endif
+
 
 private slots:
     void triggerReceivedData(QString data);

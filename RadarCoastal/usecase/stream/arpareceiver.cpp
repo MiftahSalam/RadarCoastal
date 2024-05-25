@@ -5,6 +5,8 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
+#include "shared/config/applicationconfig.h"
+
 #ifdef USE_LOG4QT
 #include <log4qt/logger.h>
 LOG4QT_DECLARE_STATIC_LOGGER(logger, GZAlarm)
@@ -96,13 +98,14 @@ ArpaReceiver::ArpaReceiver(QObject *parent)
 {
     qDebug()<<Q_FUNC_INFO;
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
+    arpaConfig = ApplicationConfig::getInstance()->getArpaConfig();
 
     initConfig();
 }
 
 void ArpaReceiver::initConfig()
 {
-    QString config_str = RadarEngine::RadarConfig::getInstance("")->getConfig(RadarEngine::NON_VOLATILE_ARPA_NET_CONFIG_PUBLIC).toString();
+    QString config_str = arpaConfig->getMqttPublic();
     QStringList config_str_list = config_str.split(":");
 
     if(config_str_list.size() != 3)
