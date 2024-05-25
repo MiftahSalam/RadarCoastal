@@ -26,7 +26,7 @@ QString selectQmFile( const QString &lng );
 
 int main(int argc, char *argv[])
 {
-    RadarEngine::RadarConfig *instance = RadarEngine::RadarConfig::getInstance(QDir::homePath()+QDir::separator()+"pjs"+QDir::separator()+".radar.conf");
+    RadarEngine::RadarConfig *instance = RadarEngine::RadarConfig::getInstance(QDir::homePath()+QDir::separator()+".pjs"+QDir::separator()+".radar.conf");
     if(!instance) qFatal("Cannot provide config service");
 
     if(ApplicationConfig::getInstance()->getOpenGLSoftware())
