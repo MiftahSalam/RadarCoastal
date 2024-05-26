@@ -24,8 +24,6 @@ DialogBIT::DialogBIT(QWidget *parent) :
 
     ui->setupUi(this);
     ui->pushButtonBITRadar->setText(tr("Start %1").arg("BiTE Radar"));
-    ui->pushButtonBITCamera->setText(tr("Start %1").arg("BiTE Camera"));
-    ui->pushButtonBITLora->setText(tr("Start %1").arg("BiTE LoRa"));
     ui->pushButtonBITNav->setText(tr("Start %1").arg("BiTE Nav"));
 }
 
@@ -74,37 +72,6 @@ void DialogBIT::on_pushButtonBITRadar_clicked()
         ui->labelRadarOpTest->setText("OK (Transmit)");
         ui->labelRadarOpTest->setStyleSheet("background-color: rgb(78, 154, 6);");
     }
-}
-
-void DialogBIT::on_pushButtonBITLora_clicked()
-{
-    QSettings config(QSettings::IniFormat,QSettings::UserScope,"mpsr_config");
-    QString ip = config.value("lora/ip","192.168.1.11").toString();
-    QString port = config.value("lora/port","8000").toString();
-    QTcpSocket socket;
-
-    qApp->setOverrideCursor(QCursor(Qt::BusyCursor));
-    socket.connectToHost(QHostAddress(ip),static_cast<quint16>(port.toInt()),QIODevice::ReadOnly);
-    if(socket.waitForConnected(3000))
-    {
-        ui->labelLoraPowerTest->setText("OK");
-        ui->labelLoraPowerTest->setStyleSheet("background-color: rgb(78, 154, 6);");
-        ui->labelLoraConTest->setText("OK");
-        ui->labelLoraConTest->setStyleSheet("background-color: rgb(78, 154, 6);");
-        ui->labelLoraOpTest->setText("OK (Online)");
-        ui->labelLoraOpTest->setStyleSheet("background-color: rgb(78, 154, 6);");
-    }
-    else
-    {
-        ui->labelLoraPowerTest->setText("Fail");
-        ui->labelLoraPowerTest->setStyleSheet("background-color: rgb(164,0,0);");
-        ui->labelLoraConTest->setText("Fail");
-        ui->labelLoraConTest->setStyleSheet("background-color: rgb(164,0,0);");
-        ui->labelLoraOpTest->setText("Fail");
-        ui->labelLoraOpTest->setStyleSheet("background-color: rgb(164,0,0);");
-    }
-    qApp->setOverrideCursor(QCursor(Qt::ArrowCursor));
-
 }
 
 void DialogBIT::on_pushButtonBITNav_clicked()
@@ -188,35 +155,3 @@ void DialogBIT::on_pushButtonBITNav_clicked()
     }
 
 }
-
-void DialogBIT::on_pushButtonBITCamera_clicked()
-{
-    QSettings config(QSettings::IniFormat,QSettings::UserScope,"mpsr_config");
-    QString ip = config.value("camera/ip","192.168.1.64").toString();
-    QString port = config.value("camera/port","8000").toString();
-    QTcpSocket socket;
-
-    qApp->setOverrideCursor(QCursor(Qt::BusyCursor));
-    socket.connectToHost(QHostAddress(ip),static_cast<quint16>(port.toInt()),QIODevice::ReadOnly);
-    if(socket.waitForConnected(3000))
-    {
-        ui->labelCameraPowerTest->setText("OK");
-        ui->labelCameraPowerTest->setStyleSheet("background-color: rgb(78, 154, 6);");
-        ui->labelCameraConTest->setText("OK");
-        ui->labelCameraConTest->setStyleSheet("background-color: rgb(78, 154, 6);");
-        ui->labelCameraOpTest->setText("OK (Online)");
-        ui->labelCameraOpTest->setStyleSheet("background-color: rgb(78, 154, 6);");
-    }
-    else
-    {
-        ui->labelCameraPowerTest->setText("Fail");
-        ui->labelCameraPowerTest->setStyleSheet("background-color: rgb(164,0,0);");
-        ui->labelCameraConTest->setText("Fail");
-        ui->labelCameraConTest->setStyleSheet("background-color: rgb(164,0,0);");
-        ui->labelCameraOpTest->setText("Fail");
-        ui->labelCameraOpTest->setStyleSheet("background-color: rgb(164,0,0);");
-    }
-    qApp->setOverrideCursor(QCursor(Qt::ArrowCursor));
-
-}
-
