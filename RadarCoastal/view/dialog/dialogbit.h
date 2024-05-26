@@ -21,11 +21,7 @@ public:
 private slots:
     void on_pushButtonBITRadar_clicked();
 
-    void on_pushButtonBITLora_clicked();
-
     void on_pushButtonBITNav_clicked();
-
-    void on_pushButtonBITCamera_clicked();
 
 private:
     Ui::DialogBIT *ui;
