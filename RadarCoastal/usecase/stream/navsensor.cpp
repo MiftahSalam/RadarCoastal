@@ -124,7 +124,7 @@ void NavSensor::sendMqtt(NavDataEncoder *encoder)
     QString mq_data = m_topic_public + MQTT_MESSAGE_SEPARATOR + encoder->encode();
 
 #ifdef USE_LOG4QT
-        logger()->debug()<<Q_FUNC_INFO<<" mq_data: "<<mq_data;
+    logger()->debug()<<Q_FUNC_INFO<<" mq_data: "<<mq_data;
 #else
     qDebug()<<Q_FUNC_INFO<<" mq_data: "<<mq_data;
 #endif
@@ -227,37 +227,32 @@ void NavSensor::processNavData(QString data)
     m_stream_mqtt_public->UpdateTimeStamp();
 #endif
 
-#ifndef DISPLAY_ONLY_MODE
-    const bool gps_auto = navConfig->getGPSModeAuto();
-    const bool hdg_auto = navConfig->getHeadingModeAuto();
-
-    if (gps_auto)
+    if (model.status_gps == 3)
     {
-#endif
-        if (model.status_gps == 3)
+#ifndef DISPLAY_ONLY_MODE
+        const bool gps_auto = navConfig->getGPSModeAuto();
+        if (gps_auto)
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE, model.lat);
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE, model.lon);
-            navConfig->setGpsStatus(model.status_gps);
         }
-        else if (model.status_gps == 2) navConfig->setGpsStatus(2); //data not valid
-#ifndef DISPLAY_ONLY_MODE
+#endif
+        navConfig->setGpsStatus(model.status_gps);
     }
-#endif
+    else if (model.status_gps == 2) navConfig->setGpsStatus(2); //data not valid
 
-#ifndef DISPLAY_ONLY_MODE
-    if (hdg_auto)
+    if (model.status_hdg == 3)
     {
-#endif
-        if (model.status_hdg == 3)
+#ifndef DISPLAY_ONLY_MODE
+        const bool hdg_auto = navConfig->getHeadingModeAuto();
+        if (hdg_auto)
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING, model.hdg);
-            navConfig->setHeadingStatus(model.status_hdg);  //data valid
         }
-        else if (model.status_hdg == 2) navConfig->setHeadingStatus(2); //data not valid
-#ifndef DISPLAY_ONLY_MODE
-    }
 #endif
+        navConfig->setHeadingStatus(model.status_hdg);  //data valid
+    }
+    else if (model.status_hdg == 2) navConfig->setHeadingStatus(2); //data not valid
 
 #ifdef DISPLAY_ONLY_MODE
     navConfig->setGpsModeAuto(!model.gps_man);
