@@ -140,7 +140,7 @@ void NavSensor::triggerReceivedData(QString data)
         if (model.status_hdg == 3)
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING, model.hdg);
-            navConfig->setGpsStatus(model.status_hdg);  //data valid
+            navConfig->setHeadingStatus(model.status_hdg);  //data valid
         }
         else if (model.status_hdg == 2) navConfig->setHeadingStatus(2); //data not valid
     }
