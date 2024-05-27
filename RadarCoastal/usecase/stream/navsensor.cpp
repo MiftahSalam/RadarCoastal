@@ -27,7 +27,7 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent), m_stream_mqtt{nullptr}
     initConfigMqtt();
 
     decoder = new NavDataDecoderNMEA();
-//    decoder = new NavDataDecoderCustom();
+    //    decoder = new NavDataDecoderCustom();
 
     m_no_osd_count = 11;
 
@@ -124,26 +124,26 @@ void NavSensor::triggerReceivedData(QString data)
     const bool gps_auto = navConfig->getGPSModeAuto();
     const bool hdg_auto = navConfig->getHeadingModeAuto();
 
-    if (gps_auto)
+    if (model.status_gps == 3)
     {
-        if (model.status_gps == 3)
+        if (gps_auto)
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE, model.lat);
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE, model.lon);
-            navConfig->setGpsStatus(model.status_gps);
         }
-        else if (model.status_gps == 2) navConfig->setGpsStatus(2); //data not valid
+        navConfig->setGpsStatus(model.status_gps);
     }
+    else if (model.status_gps == 2) navConfig->setGpsStatus(2); //data not valid
 
-    if (hdg_auto)
+    if (model.status_hdg == 3)
     {
-        if (model.status_hdg == 3)
+        if (hdg_auto)
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING, model.hdg);
-            navConfig->setHeadingStatus(model.status_hdg);  //data valid
         }
-        else if (model.status_hdg == 2) navConfig->setHeadingStatus(2); //data not valid
+        navConfig->setHeadingStatus(model.status_hdg);  //data valid
     }
+    else if (model.status_hdg == 2) navConfig->setHeadingStatus(2); //data not valid
 }
 
 void NavSensor::Reconnect()
