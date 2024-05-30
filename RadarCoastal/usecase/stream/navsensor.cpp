@@ -232,11 +232,11 @@ void NavSensor::processNavData(QString data)
 #ifndef DISPLAY_ONLY_MODE
         const bool gps_auto = navConfig->getGPSModeAuto();
         if (gps_auto)
+#endif
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE, model.lat);
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE, model.lon);
         }
-#endif
         navConfig->setGpsStatus(model.status_gps);
     }
     else if (model.status_gps == 2) navConfig->setGpsStatus(2); //data not valid
@@ -246,10 +246,10 @@ void NavSensor::processNavData(QString data)
 #ifndef DISPLAY_ONLY_MODE
         const bool hdg_auto = navConfig->getHeadingModeAuto();
         if (hdg_auto)
+#endif
         {
             m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING, model.hdg);
         }
-#endif
         navConfig->setHeadingStatus(model.status_hdg);  //data valid
     }
     else if (model.status_hdg == 2) navConfig->setHeadingStatus(2); //data not valid
