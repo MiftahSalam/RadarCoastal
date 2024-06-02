@@ -107,7 +107,6 @@ void NavSensor::UpdateStatus()
         break;
     }
 }
-
 void NavSensor::triggerReceivedData(QString data)
 {
     decoder->update(data.toUtf8());

@@ -42,6 +42,7 @@ private:
 
     void updateRadarStatus(const RadarEngine::RadarState status);
     void updateNavStatus(const int status);
+    void updateCCStatus(const int status);
     void initStatus();
 };
 

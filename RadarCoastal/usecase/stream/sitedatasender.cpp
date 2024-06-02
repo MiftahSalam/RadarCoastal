@@ -13,7 +13,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, SiteDataSender)
 #endif
 
 SiteDataSender::SiteDataSender(QObject *parent)
-    : QObject(parent), m_stream_mqtt_spasi{nullptr}, m_stream_mqtt{nullptr}
+    : QObject(parent), m_stream_mqtt_spasi{nullptr}, m_stream_mqtt{nullptr}, cur_mqtt_spasi_status(2)
 {
 #ifdef USE_LOG4QT
     logger()->trace()<<Q_FUNC_INFO;
@@ -136,6 +136,25 @@ void SiteDataSender::SendSiteData()
         sendMqtt(dataSendMqtt);
         sendMqttSpasi(dataSendWs);
     }
+}
+
+void SiteDataSender::UpdateStatusSpasiNet()
+{
+    quint8 mqttSpasiStatus = m_stream_mqtt_spasi->GetStreamStatus();
+    if (mqttSpasiStatus == cur_mqtt_spasi_status) {
+        return;
+    }
+
+    switch (mqttSpasiStatus) {
+    case DeviceWrapper::NOT_AVAIL:
+        navConfig->setMqttSpasiStatus(0); //offline
+        break;
+    default:
+        navConfig->setMqttSpasiStatus(2); //online
+        break;
+    }
+
+    cur_mqtt_spasi_status = mqttSpasiStatus;
 }
 
 void SiteDataSender::sendMqttSpasi(QString data)

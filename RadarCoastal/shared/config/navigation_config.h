@@ -11,6 +11,7 @@ const QString NAV_STATUS_GPS = "Nav/gps/status";
 const QString NAV_STATUS_HEADING = "Nav/heading/status";
 const QString NAV_SPASI_NET = "Nav/spasi/net";
 const QString NAV_INTERNAL_NET = "Nav/internal/net";
+const QString NAV_SPASI_NET_STATUS = "Nav/spasi/net/status";
 
 class NavigationConfig: public BaseConfig
 {
@@ -42,6 +43,9 @@ public:
     quint8 getHeadingStatus() const;
     void setHeadingStatus(quint8 newHeadingStatus);
 
+    quint8 getMqttSpasiStatus() const;
+    void setMqttSpasiStatus(quint8 newMqttSpasiStatus);
+
 protected:
     NavigationConfig();
 
@@ -51,6 +55,7 @@ private:
     QString mqttInternal;
     quint8 gpsStatus;
     quint8 headingStatus;
+    quint8 mqttSpasiStatus;
     bool gpsModeAuto;
     bool headingModeAuto;
 };

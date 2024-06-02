@@ -119,6 +119,25 @@ void FrameStatus::updateNavStatus(const int status)
     }
 }
 
+void FrameStatus::updateCCStatus(const int status)
+{
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<status;
+#else
+    qDebug()<<Q_FUNC_INFO<<status;
+#endif
+    switch (status) {
+    case 0:
+        ui->labelCCStatus->setText("Offline");
+        ui->labelCCStatus->setStyleSheet("color: rgb(164,0,0);");
+        break;
+    case 2:
+        ui->labelCCStatus->setText("Online");
+        ui->labelCCStatus->setStyleSheet("color: rgb(78, 154, 6);");
+        break;
+    }
+}
+
 void FrameStatus::trigger_statusChange(const QString& key, const QVariant& val)
 {
     if(key == RadarEngine::VOLATILE_RADAR_STATUS)
@@ -139,6 +158,10 @@ void FrameStatus::configChange(const QString key, const QVariant val)
     {
         updateNavStatus(val.toInt());
     }
+    else if(key == NAV_SPASI_NET_STATUS)
+    {
+        updateCCStatus(val.toInt());
+    }
 }
 
 void FrameStatus::on_alarmStatus_clicked(const QPoint &p)
@@ -158,6 +181,8 @@ void FrameStatus::initStatus()
     ui->labelRadarStatus->setStyleSheet("color: rgb(164,0,0);");
     ui->labelNavStatus->setText("Offline");
     ui->labelNavStatus->setStyleSheet("color: rgb(164,0,0);");
+    ui->labelCCStatus->setText("Offline");
+    ui->labelCCStatus->setStyleSheet("color: rgb(164,0,0);");
     ui->labelAlarmStatus->setText("No Alarm");
     ui->labelAlarmStatus->setStyleSheet("background-color: rgb(78, 154, 6);");
 
