@@ -17,6 +17,7 @@ public:
 
     void Reconnect();
     void SendSiteData();
+    void UpdateStatusSpasiNet();
 
     // ConfigListener interface
     void configChange(const QString key, const QVariant val) override;
@@ -27,7 +28,7 @@ private:
     Stream *m_stream_mqtt_spasi;
     Stream *m_stream_mqtt;
     int m_site_data_count, max_site_data_count;
-
+    quint8 cur_mqtt_spasi_status;
     QString m_topic, m_topic_spasi;
 
     void sendMqtt(QString data);

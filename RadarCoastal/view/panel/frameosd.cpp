@@ -181,6 +181,7 @@ void FrameOSD::on_timeout()
     updateHDGData();
     sensor->Reconnect();
     sensor->UpdateStatus();
+    siteData->UpdateStatusSpasiNet();
     siteData->SendSiteData();
     siteData->Reconnect();
 }

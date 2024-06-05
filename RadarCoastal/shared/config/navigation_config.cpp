@@ -14,6 +14,17 @@ NavigationConfig::NavigationConfig()
 
 }
 
+quint8 NavigationConfig::getMqttSpasiStatus() const
+{
+    return mqttSpasiStatus;
+}
+
+void NavigationConfig::setMqttSpasiStatus(quint8 newMqttSpasiStatus)
+{
+    mqttSpasiStatus = newMqttSpasiStatus;
+    changeConfig(NAV_SPASI_NET_STATUS, newMqttSpasiStatus);
+}
+
 quint8 NavigationConfig::getHeadingStatus() const
 {
     return headingStatus;
@@ -94,6 +105,7 @@ void NavigationConfig::setup(const QString path)
 {
     QSettings configFile(path,QSettings::IniFormat);
 
+    mqttSpasiStatus = 0; //offline
     gpsStatus = 0; //offline
     gpsModeAuto = configFile.value(NAV_MODE_GPS, true).toBool();
     headingModeAuto = configFile.value(NAV_MODE_HEADING, true).toBool();
