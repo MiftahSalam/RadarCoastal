@@ -1,28 +1,28 @@
 QMainWindow {
     color: rgb(255, 255, 255);
-    background-color: rgb(0, 5, 83);
+    background-color: rgb(56, 44, 68);
     border: 1px solid white;
 }
 
 QWidget {
     color: rgb(255, 255, 255);
-    background-color: rgb(0, 5, 83);
+    background-color: rgb(56, 44, 68);
 }
 
 QWidget::disabled {
     color:rgb(100, 100, 100);
-    background-color: rgb(0, 0, 63);
+    background-color: rgb(36, 24, 48);
 }
 
 
 QTabWidget::pane {
     color: rgb(255, 255, 255);
-    background-color: rgb(0, 5, 83);
+    background-color: rgb(56, 44, 68);
     border: 1px solid;
 }
 /**/
 QTabBar::tab {
-    background-color: rgb(0, 5, 83);
+    background-color: rgb(56, 44, 68);
     border: 2px solid #C4C4C3;
     border-bottom-color: #C2C7CB;
     border-top-left-radius: 4px;
@@ -34,7 +34,7 @@ QTabBar::tab {
 }
 
 QTabBar::tab:selected, QTabBar::tab:hover {
-    background-color: rgb(0, 0, 63);
+    background-color: rgb(36, 24, 48);
 }
 
 QTabBar::tab:selected {
@@ -48,7 +48,7 @@ QTabBar::tab:!selected {
 }/**/
 
 QSlider::handle:horizontal {
-    background-color: rgb(0, 5, 83);
+    background-color: rgb(56, 44, 68);
     border: 1px solid white;
     width: 18px;
     margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
@@ -65,16 +65,16 @@ QSlider::groove:horizontal {
 
 QSlider::handle:horizontal:disabled {
 /*    background-color: rgb(0, 0, 73);*/
-    border: 1px solid rgb(0, 0, 73);
+    border: 1px solid rgb(46, 34, 58);
     width: 18px;
     margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
     border-radius: 3px;
 }
 
 QSlider::groove:horizontal:disabled {
-    border: 1px solid rgb(0, 0, 73);
+    border: 1px solid rgb(46, 34, 58);
     height: 8px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
-    background: rgb(0, 0, 73);
+    background: rgb(46, 34, 58);
     margin: 2px 0;
 }
 
@@ -87,8 +87,10 @@ QGroupBox {
 /*    border-bottom-right-radius: 15px;*/
 }
 
-/*QLineEdit::disabled {
-    color:rgb(0, 0, 0);
+/*QLineEdit {
+    color: rgb(255, 255, 255);
+    background-color: rgb(56, 44, 68);
+    border: 1px solid white;
 }*/
 
 QGroupBox::title {
