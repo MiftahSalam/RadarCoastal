@@ -2,6 +2,9 @@
 #define NAVSENSOR_H
 
 #include <QObject>
+#ifndef DISPLAY_ONLY_MODE
+#include "qfuturewatcher.h"
+#endif
 
 #include "infra/stream/stream.h"
 #include "shared/config/navigation_config.h"
@@ -29,11 +32,15 @@ public:
 
 private slots:
     void triggerReceivedData(QString data);
+#ifndef DISPLAY_ONLY_MODE
+    void triggerParseData();
+#endif
 
 private:
     RadarEngine::RadarConfig *m_instance_cfg;
     NavigationConfig *navConfig;
 #ifndef DISPLAY_ONLY_MODE
+    QFutureWatcher<NavDataModel> watcherCapture;
     Stream *m_stream_mqtt_private;
     QString m_topic_private;
     void initConfigMqttPrivate();
