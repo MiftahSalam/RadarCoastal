@@ -27,11 +27,11 @@ void TrackModelView::UpdateModel(TrackModel trackModel)
                        QString::number(trackModel.spd,'f',Utils::TWO_PRECISION));
         m_model->setData(m_model->index(row,4,QModelIndex()),
                        QString::number(trackModel.crs,'f',Utils::TWO_PRECISION));
-        m_model->setData(m_model->index(row,4,QModelIndex()),
+        m_model->setData(m_model->index(row,5,QModelIndex()),
                        QString::number(trackModel.lat,'f',Utils::TWO_PRECISION));
-        m_model->setData(m_model->index(row,4,QModelIndex()),
+        m_model->setData(m_model->index(row,6,QModelIndex()),
                        QString::number(trackModel.lon,'f',Utils::TWO_PRECISION));
-        m_model->setData(m_model->index(row,4,QModelIndex()),
+        m_model->setData(m_model->index(row,7,QModelIndex()),
                        QString::number(trackModel.alt,'f',Utils::TWO_PRECISION));
     }
 }
@@ -51,11 +51,11 @@ void TrackModelView::InsertModel(TrackModel trackModel)
                        QString::number(trackModel.spd,'f',Utils::TWO_PRECISION));
         m_model->setData(m_model->index(m_model->rowCount()-1,4,QModelIndex()),
                        QString::number(trackModel.crs,'f',Utils::TWO_PRECISION));
-        m_model->setData(m_model->index(m_model->rowCount()-1,4,QModelIndex()),
+        m_model->setData(m_model->index(m_model->rowCount()-1,5,QModelIndex()),
                        QString::number(trackModel.lat,'f',Utils::TWO_PRECISION));
-        m_model->setData(m_model->index(m_model->rowCount()-1,4,QModelIndex()),
+        m_model->setData(m_model->index(m_model->rowCount()-1,6,QModelIndex()),
                        QString::number(trackModel.lon,'f',Utils::TWO_PRECISION));
-        m_model->setData(m_model->index(m_model->rowCount()-1,4,QModelIndex()),
+        m_model->setData(m_model->index(m_model->rowCount()-1,7,QModelIndex()),
                        QString::number(trackModel.alt,'f',Utils::TWO_PRECISION));
 
 #ifdef USE_LOG4QT
