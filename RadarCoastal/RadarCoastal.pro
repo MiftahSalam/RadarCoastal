@@ -45,6 +45,7 @@ SOURCES += \
     shared/config/applicationconfig.cpp \
     shared/config/arpa_config.cpp \
     shared/config/gz_config.cpp \
+    shared/config/hear_beat_radar_config.cpp \
     shared/config/navigation_config.cpp \
     shared/config/ppi_config.cpp \
     usecase/alarm/alarm.cpp \
@@ -93,6 +94,7 @@ HEADERS += \
     shared/config/arpa_config.h \
     shared/config/base_config.h \
     shared/config/gz_config.h \
+    shared/config/hear_beat_radar_config.h \
     shared/config/navigation_config.h \
     shared/config/ppi_config.h \
     usecase/alarm/alarm.h \
@@ -151,13 +153,15 @@ TRANSLATIONS += \
 
 contains(DEFINES, DISPLAY_ONLY_MODE) {
     HEADERS += \
-        usecase/stream/arpareceiver.h
+        usecase/stream/arpareceiver.h \
+        usecase/stream/heart_beat_radar.h
 
     HEADERS -= \
         usecase/stream/arpasender.h
 
     SOURCES += \
-        usecase/stream/arpareceiver.cpp
+        usecase/stream/arpareceiver.cpp \
+        usecase/stream/heart_beat_radar.cpp
 
     SOURCES -= \
         usecase/stream/arpasender.cpp

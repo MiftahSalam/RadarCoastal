@@ -58,6 +58,7 @@ private:
     void updateManyTarget(const int updateCount);
     void updateOneTarget();
     void updateAllTarget();
+    void initCfg();
     TrackModel arpaToTrackModel(const RadarEngine::ARPATarget* target);
     RadarEngine::RadarEngine* m_instance_re;
 #endif
