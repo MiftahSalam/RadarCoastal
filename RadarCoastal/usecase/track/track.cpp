@@ -34,6 +34,7 @@ Track::Track(QObject *parent)
 #ifdef DISPLAY_ONLY_MODE
     connect(m_arpa_receiver, &ArpaReceiver::signalNewTrack, this, &Track::triggerOnNewTrack);
 #else
+    initCfg();
     connect(m_instance_re->radarArpa, &RadarEngine::RadarArpa::Signal_LostTarget,
             this, &Track::trigger_LostTarget);
 #endif
@@ -90,7 +91,7 @@ void Track::timerTimeout()
 #ifdef DISPLAY_ONLY_MODE
     updateAllTrack();
 #else
-    updateManyTarget(MAX_UPDATE_NUMBER);
+    updateManyTarget(m_update_count);
     //    updateOneTarget();
     //    updateAllTarget();
 #endif
@@ -213,6 +214,31 @@ void Track::updateAllTarget()
             m_cur_arpa_id_count = 0;
     }
 }
+
+#ifndef DISPLAY_ONLY_MODE
+void Track::initCfg()
+{
+    QString config_str = appConfig->getArpaConfig()->getMqttPublic();
+    QStringList config_str_list$ = config_str.split(":");
+    if(config_str_list$.size() != 6)
+    {
+#ifdef USE_LOG4QT
+        logger()->fatal()<<Q_FUNC_INFO<<"invalid config mqtt arpa max size"<<config_str;
+#else
+        qDebug()<<Q_FUNC_INFO<<"invalid config ws arpa max size"<<config_str;
+        exit(1);
+#endif
+    }
+
+    bool ok;
+    m_update_count = config_str_list$.at(5).toInt(&ok);
+    if (!ok) {
+        m_update_count = 5;
+        qWarning()<<Q_FUNC_INFO<<"invalid max_arpa_data_count"<<config_str_list$.at(1)<<". will use default 5";
+    }
+
+}
+#endif
 
 void Track::updateOneTarget()
 {
