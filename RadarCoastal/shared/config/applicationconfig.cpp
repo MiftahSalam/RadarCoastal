@@ -52,14 +52,16 @@ void ApplicationConfig::checkConfig()
     while (i < desired_config_keys.size())
     {
         if (!config_keys.contains(desired_config_keys.at(i)))
-            qWarning() << Q_FUNC_INFO << " undesired key: " << desired_config_keys.at(i);
-        else
-            config_keys.removeOne(desired_config_keys.at(i));
+            qWarning() << Q_FUNC_INFO << " key not found: " << desired_config_keys.at(i);
         i++;
     }
-    foreach (QString key, config_keys)
+
+    i = 0;
+    while (i < config_keys.size())
     {
-        qWarning() << Q_FUNC_INFO << " key not found: " << key;
+        if (!desired_config_keys.contains(config_keys.at(i)))
+            qWarning() << Q_FUNC_INFO << " undesired key: " << config_keys.at(i);
+        i++;
     }
 }
 
