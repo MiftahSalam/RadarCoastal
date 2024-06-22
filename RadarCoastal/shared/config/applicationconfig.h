@@ -5,6 +5,9 @@
 #include "gz_config.h"
 #include "navigation_config.h"
 #include "ppi_config.h"
+#ifdef DISPLAY_ONLY_MODE
+#include "hear_beat_radar_config.h"
+#endif
 
 #include <QDir>
 
@@ -38,12 +41,19 @@ public:
     QString getLanguage() const;
     bool getOpenGLSoftware() const;
 
+#ifdef DISPLAY_ONLY_MODE
+    HearBeatRadarConfig *getHbConfig() const;
+#endif
+
 protected:
     ApplicationConfig();
 
 private:
     static ApplicationConfig *config;
     NavigationConfig *navConfig;
+#ifdef DISPLAY_ONLY_MODE
+    HearBeatRadarConfig *hbConfig;
+#endif
     ArpaConfig *arpaConfig;
     GZConfig *gzConfig;
     PPIConfig *ppiConfig;

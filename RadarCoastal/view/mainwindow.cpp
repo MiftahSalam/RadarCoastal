@@ -40,7 +40,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_dialog_gz = new DialogGZ(this);
     m_dialog_bit = new DialogBIT(this);
     m_radar_timer = TxTimerCounter::GetInstance(this);
-
+#ifdef DISPLAY_ONLY_MODE
+    m_hb_radar = new HeartBeatRadar(this);
+#endif
     connect(ui->frameControl1,SIGNAL(signal_req_shutdown()),this,SLOT(TriggerShutdown()));
 
     connect(m_radar_timer, &TxTimerCounter::signal_updateElapsed, this, &MainWindow::TriggerUpdateFromTxTimer);

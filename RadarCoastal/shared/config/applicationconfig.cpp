@@ -32,6 +32,10 @@ void ApplicationConfig::checkConfig()
                       << NAV_MODE_HEADING
                       << NAV_NET_INTERNAL
                       << NAV_NET_PUBIC
+                     #ifdef DISPLAY_ONLY_MODE
+                      << HEARTBEAT_NET_PUBLIC
+                      << HEARTBEAT_MESSAGE
+                     #endif
                       << PPI_ARPA_SHOW
                       << PPI_COMPASS_SHOW
                       << PPI_HM_SHOW
@@ -106,6 +110,13 @@ PPIConfig *ApplicationConfig::getPpiConfig() const
     return ppiConfig;
 }
 
+#ifdef DISPLAY_ONLY_MODE
+HearBeatRadarConfig *ApplicationConfig::getHbConfig() const
+{
+    return hbConfig;
+}
+#endif
+
 ApplicationConfig *ApplicationConfig::getInstance()
 {
     if (config == nullptr)
@@ -123,6 +134,9 @@ void ApplicationConfig::setup(const QString path)
     arpaConfig = ArpaConfig::getInstance(path);
     gzConfig = GZConfig::getInstance(path);
     ppiConfig = PPIConfig::getInstance(path);
+#ifdef DISPLAY_ONLY_MODE
+    hbConfig = HearBeatRadarConfig::getInstance(path);
+#endif
 
     QSettings configFile(path, QSettings::IniFormat);
 
@@ -147,6 +161,9 @@ void ApplicationConfig::save(const QString path)
     arpaConfig->save(path);
     gzConfig->save(path);
     ppiConfig->save(path);
+#ifdef DISPLAY_ONLY_MODE
+    hbConfig->save(path);
+#endif
 }
 
 ApplicationConfig::~ApplicationConfig()

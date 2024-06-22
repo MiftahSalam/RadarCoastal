@@ -6,6 +6,9 @@
 #include <RadarEngine/radarengine.h>
 
 #include "ppi/radarwidget.h"
+#ifdef DISPLAY_ONLY_MODE
+#include "usecase/stream/heart_beat_radar.h"
+#endif
 #include "usecase/tx_timer/tx_timer_counter.h"
 #include "view/dialog/dialogconnections.h"
 #include "view/dialog/dialoggz.h"
@@ -51,6 +54,9 @@ private:
     DialogGZ *m_dialog_gz;
     DialogBIT *m_dialog_bit;
     TxTimerCounter *m_radar_timer;
+#ifdef DISPLAY_ONLY_MODE
+    HeartBeatRadar *m_hb_radar;
+#endif
 };
 
 #endif // MAINWINDOW_H
