@@ -42,11 +42,19 @@ NavSensor::NavSensor(QObject *parent)
 #ifdef DISPLAY_ONLY_MODE
     decoder = new NavDataDecoderJson();
 #else
-    decoder = new NavDataDecoderNMEA();
-
+    switch (navConfig->getDecoderStrategy())
+    {
+    case NavigationConfig::NMEA:
+        decoder = new NavDataDecoderNMEA();
+        break;
+    case NavigationConfig::CUSTOM1:
+        decoder = new NavDataDecoderCustom();
+        break;
+    default:
+        break;
+    }
     connect(&watcherCapture, &QFutureWatcher<NavDataModel>::finished, this, &NavSensor::triggerParseData);
 #endif
-    //    decoder = new NavDataDecoderCustom();
 
     m_no_osd_count = 11;
 }

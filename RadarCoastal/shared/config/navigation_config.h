@@ -5,6 +5,7 @@
 
 #include "base_config.h"
 
+const QString NAV_DECODER_STRATEGY = "Nav/decoder_strategy";
 const QString NAV_MODE_GPS = "Nav/gps/mode";
 const QString NAV_MODE_HEADING = "Nav/heading/mode";
 const QString NAV_STATUS_GPS = "Nav/gps/status";
@@ -18,6 +19,13 @@ public:
     NavigationConfig(NavigationConfig &other) = delete;
     void operator=(const NavigationConfig &) = delete;
     ~NavigationConfig();
+
+    enum NavDecoderStrategy
+    {
+        NMEA = 0,
+        CUSTOM1,
+        JSON
+    };
 
     static NavigationConfig *getInstance(const QString path);
 
@@ -42,6 +50,8 @@ public:
     quint8 getHeadingStatus() const;
     void setHeadingStatus(quint8 newHeadingStatus);
 
+    NavDecoderStrategy getDecoderStrategy() const;
+
 protected:
     NavigationConfig();
 
@@ -49,10 +59,15 @@ private:
     static NavigationConfig *config;
     QString mqttPublic;
     QString mqttInternal;
+    NavDecoderStrategy decoderStrategy;
     quint8 gpsStatus;
     quint8 headingStatus;
     bool gpsModeAuto;
     bool headingModeAuto;
+
+    void setupStrategy(const QVariant val);
+    NavDecoderStrategy cfgToDecoderStrategy(const quint8 strategy);
+    NavDecoderStrategy cfgToDecoderStrategy(const QString strategy);
 };
 
 #endif // NAVIGATIONCONFIG_H

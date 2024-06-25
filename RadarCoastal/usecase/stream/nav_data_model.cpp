@@ -231,8 +231,8 @@ NavDataModel NavDataDecoderNMEA::decode()
 
     QString msg(m_data);
     NavDataModel result;
-//    const QString NMEA_HEADER = "%"; //temp
-//    const QString NMEA_TAIL1 = "#"; //temp for test
+    //    const QString NMEA_HEADER = "%"; //temp
+    //    const QString NMEA_TAIL1 = "#"; //temp for test
     const QString NMEA_HEADER = "$"; //not work in mqtt. why ???
     const QString NMEA_TAIL1 = "\r";
     const QString NMEA_TAIL2 = "\n";
@@ -260,17 +260,17 @@ NavDataModel NavDataDecoderNMEA::decode()
                 if(index_end > index_hdr)
                 {
                     auto m_append_data_osd_buf = m_append_data_osd.mid(index_hdr,index_end-index_hdr);
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                     logger()->trace()<<Q_FUNC_INFO<<"filter: "<<m_append_data_osd_buf;
-    #else
+#else
                     qDebug()<<Q_FUNC_INFO<<"filter: "<<m_append_data_osd_buf;
-    #endif
+#endif
 
-    #if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
                     QStringList msg_list = m_append_data_osd_buf.split(",", Qt::SkipEmptyParts);
-    #else
+#else
                     QStringList msg_list = m_append_data_osd_buf.split(",",QString::SkipEmptyParts);
-    #endif
+#endif
                     if(m_append_data_osd_buf.contains("GGA") && msg_list.size() > 8)
                     {
                         bool ok;
@@ -278,11 +278,11 @@ NavDataModel NavDataDecoderNMEA::decode()
                         result.lat = msg_list.at(2).toDouble(&ok);
                         if(!ok)
                         {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                             logger()->warn()<<Q_FUNC_INFO<<" invalid latitude: "<<msg_list.at(2);
-    #else
+#else
                             qDebug()<<Q_FUNC_INFO<<" invalid latitude: "<<msg_list.at(2);
-    #endif
+#endif
                             result.status_gps = 2; //data not valid
                         }
                         else
@@ -290,11 +290,11 @@ NavDataModel NavDataDecoderNMEA::decode()
                             result.lon = msg_list.at(4).toDouble(&ok);
                             if(!ok)
                             {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                                 logger()->warn()<<Q_FUNC_INFO<<" invalid longitude: "<<msg_list.at(4);
-    #else
+#else
                                 qDebug()<<Q_FUNC_INFO<<" invalid latitude: "<<msg_list.at(2);
-    #endif
+#endif
                                 result.status_gps = 2; //data not valid
                             }
                             else
@@ -316,11 +316,11 @@ NavDataModel NavDataDecoderNMEA::decode()
                         result.hdg = msg_list.at(1).toDouble(&ok);
                         if(!ok)
                         {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                             logger()->warn()<<Q_FUNC_INFO<<" invalid heading: "<<msg_list.at(1);
-    #else
+#else
                             qDebug()<<Q_FUNC_INFO<<" invalid heading: "<<msg_list.at(2);
-    #endif
+#endif
                             result.status_hdg = 2; //data not valid
                         }
                         else
@@ -346,11 +346,11 @@ NavDataModel NavDataDecoderNMEA::decode()
                         result.hdg = buf_str.toDouble(&ok);
                         if(!ok)
                         {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                             logger()->warn()<<Q_FUNC_INFO<<" invalid heading: "<<buf_str;
-    #else
+#else
                             qDebug()<<Q_FUNC_INFO<<" invalid heading: "<<msg_list.at(2);
-    #endif
+#endif
                             result.status_hdg = 2; //data not valid
                         }
                         else
@@ -364,43 +364,43 @@ NavDataModel NavDataDecoderNMEA::decode()
                     }
                     else if(m_append_data_osd_buf.contains("RMC"))
                     {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                         logger()->debug()<<Q_FUNC_INFO<<"RMC not implemented";
-    #else
+#else
                         qDebug()<<Q_FUNC_INFO<<"osd invalid";
-    #endif
+#endif
                     }
                     else if(m_append_data_osd_buf.contains("GSA"))
                     {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                         logger()->debug()<<Q_FUNC_INFO<<"GSA not implemented";
-    #else
+#else
                         qDebug()<<Q_FUNC_INFO<<"osd invalid";
-    #endif
+#endif
                     }
                     else if(m_append_data_osd_buf.contains("GSV"))
                     {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                         logger()->debug()<<Q_FUNC_INFO<<"GSV not implemented";
-    #else
+#else
                         qDebug()<<Q_FUNC_INFO<<"osd invalid";
-    #endif
+#endif
                     }
                     else if(m_append_data_osd_buf.contains("GLL"))
                     {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                         logger()->debug()<<Q_FUNC_INFO<<"GLL not implemented";
-    #else
+#else
                         qDebug()<<Q_FUNC_INFO<<"osd invalid";
-    #endif
+#endif
                     }
                     else
                     {
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
                         logger()->warn()<<Q_FUNC_INFO<<" osd invalid";
-    #else
+#else
                         qDebug()<<Q_FUNC_INFO<<"osd invalid";
-    #endif
+#endif
                         result.status_gps = 2; //data not valid
                         result.status_hdg = 2; //data not valid
                     }
@@ -416,11 +416,11 @@ NavDataModel NavDataDecoderNMEA::decode()
             } else {
                 m_append_data_osd.clear();
             }
-    #ifdef USE_LOG4QT
+#ifdef USE_LOG4QT
             logger()->trace()<<Q_FUNC_INFO<<"index_end"<<index_end;
-    #else
+#else
             qDebug()<<Q_FUNC_INFO<<index_end;
-    #endif
+#endif
         }
 
     }
@@ -430,92 +430,92 @@ NavDataModel NavDataDecoderNMEA::decode()
 
 NavDataModel NavDataDecoderCustom::decode()
 {
+    qDebug() << Q_FUNC_INFO << "m_data: " << m_data;
+
     QString msg(m_data);
     NavDataModel result;
-    if(msg.contains("gps"+MQTT_MESSAGE_SEPARATOR) )
+    result.timestamp = QDateTime::currentSecsSinceEpoch();
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<"osd data: "<<msg.remove("gps");
+#else
+    qDebug()<<Q_FUNC_INFO<<"osd"<<msg.remove("gps");
+#endif
+    m_append_data_osd.append(msg);
+
+    int index_hdr = m_append_data_osd.indexOf("?");
+    if(index_hdr >= 0)
     {
-        result.timestamp = QDateTime::currentSecsSinceEpoch();
-#ifdef USE_LOG4QT
-        logger()->trace()<<Q_FUNC_INFO<<"osd data: "<<msg.remove("gps");
-#else
-        qDebug()<<Q_FUNC_INFO<<"osd"<<msg.remove("gps");
-#endif
-        m_append_data_osd.append(msg);
-
-        int index_hdr = m_append_data_osd.indexOf("?");
-        if(index_hdr >= 0)
+        int index_end = m_append_data_osd.indexOf("!");
+        if(index_end >= 0)
         {
-            int index_end = m_append_data_osd.indexOf("!");
-            if(index_end >= 0)
+            if(index_end > index_hdr)
             {
-                if(index_end > index_hdr)
-                {
-                    //?-6.939176#107.632770#31!
-                    m_append_data_osd = m_append_data_osd.mid(index_hdr,index_end-index_hdr);
+                //?-6.939176#107.632770#31!
+                m_append_data_osd = m_append_data_osd.mid(index_hdr,index_end-index_hdr);
 #ifdef USE_LOG4QT
-                    logger()->trace()<<Q_FUNC_INFO<<"filter: "<<m_append_data_osd.remove("!").remove("?").remove("\r").remove("\n");
+                logger()->trace()<<Q_FUNC_INFO<<"filter: "<<m_append_data_osd.remove("!").remove("?").remove("\r").remove("\n");
 #else
-                    qDebug()<<Q_FUNC_INFO<<"filter"<<m_append_data_osd.remove("!").remove("?").remove("\r").remove("\n");
+                qDebug()<<Q_FUNC_INFO<<"filter"<<m_append_data_osd.remove("!").remove("?").remove("\r").remove("\n");
 #endif
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
-                    QStringList msg_list = m_append_data_osd.split("#",QString::SkipEmptyParts);
+#if QT_VERSION > QT_VERSION_CHECK(5, 13, 0)
+                QStringList msg_list = m_append_data_osd.split("#", Qt::SkipEmptyParts);
 #else
-                    QStringList msg_list = m_append_data_osd.split("#",QString::SkipEmptyParts);
+                QStringList msg_list = m_append_data_osd.split("#",QString::SkipEmptyParts);
 #endif
 
-                    if(msg_list.size() == 3)
+                if(msg_list.size() == 3)
+                {
+                    if(isGPSDataValid(msg_list.at(0).toDouble(),msg_list.at(1).toDouble()))
                     {
-                        if(isGPSDataValid(msg_list.at(0).toDouble(),msg_list.at(1).toDouble()))
-                        {
-                            result.lat = msg_list.at(0).toDouble();
-                            result.lon = msg_list.at(1).toDouble();
-                            result.status_gps = 3; //data valid
-                        }
-                        else
-                        {
-                            result.status_gps = 2; //data not valid
-                        }
-                        if(isHDGDataValid(msg_list.at(2).toDouble()))
-                        {
-                            result.hdg = msg_list.at(2).toDouble();
-                            result.status_hdg = 3; //data valid
-                        }
-                        else
-                        {
-                            result.status_hdg = 2; //data not valid
-                        }
+                        result.lat = msg_list.at(0).toDouble();
+                        result.lon = msg_list.at(1).toDouble();
+                        result.status_gps = 3; //data valid
                     }
                     else
                     {
-#ifdef USE_LOG4QT
-                        logger()->warn()<<Q_FUNC_INFO<<" osd invalid";
-#else
-                        qDebug()<<Q_FUNC_INFO<<"osd invalid";
-#endif
                         result.status_gps = 2; //data not valid
+                    }
+                    if(isHDGDataValid(msg_list.at(2).toDouble()))
+                    {
+                        result.hdg = msg_list.at(2).toDouble();
+                        result.status_hdg = 3; //data valid
+                    }
+                    else
+                    {
                         result.status_hdg = 2; //data not valid
                     }
-
-                    reset();
                 }
                 else
                 {
-                    m_append_data_osd.remove(0,index_hdr);
-                }
-            }
 #ifdef USE_LOG4QT
-            logger()->trace()<<Q_FUNC_INFO<<"index_end"<<index_end;
+                    logger()->warn()<<Q_FUNC_INFO<<" osd invalid";
 #else
-            qDebug()<<Q_FUNC_INFO<<index_end;
+                    qDebug()<<Q_FUNC_INFO<<"osd invalid";
 #endif
+                    result.status_gps = 2; //data not valid
+                    result.status_hdg = 2; //data not valid
+                }
+
+                reset();
+            }
+            else
+            {
+                m_append_data_osd.remove(0,index_hdr);
+            }
         }
 #ifdef USE_LOG4QT
-        logger()->trace()<<Q_FUNC_INFO<<"index_hdr"<<index_hdr;
+        logger()->trace()<<Q_FUNC_INFO<<"index_end"<<index_end;
 #else
-        qDebug()<<Q_FUNC_INFO<<index_hdr;
+        qDebug()<<Q_FUNC_INFO<<index_end;
 #endif
     }
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<"index_hdr"<<index_hdr;
+#else
+    qDebug()<<Q_FUNC_INFO<<index_hdr;
+#endif
+
 
     return result;
 }
