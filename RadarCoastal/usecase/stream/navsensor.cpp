@@ -1,4 +1,5 @@
 #include "navsensor.h"
+#include "QtConcurrent/qtconcurrentrun.h"
 #include "usecase/stream/nav_data_model.h"
 #include "shared/config/applicationconfig.h"
 
@@ -23,6 +24,8 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent), m_stream_mqtt{nullptr}
 #endif
     m_instance_cfg = RadarEngine::RadarConfig::getInstance("");
     navConfig = ApplicationConfig::getInstance()->getNavConfig();
+
+    connect(&watcherCapture, &QFutureWatcher<NavDataModel>::finished, this, &NavSensor::triggerParseData);
 
     initConfigMqtt();
 
@@ -111,7 +114,17 @@ void NavSensor::triggerReceivedData(QString data)
 {
     decoder->update(data.toUtf8());
 
-    NavDataModel model = decoder->decode();
+    QFuture<NavDataModel> future = QtConcurrent::run(decoder, &NavDataDecoder::decode);
+    watcherCapture.setFuture(future);
+
+//    NavDataModel model = decoder->decode();
+}
+
+void NavSensor::triggerParseData()
+{
+    QFutureWatcher<NavDataModel> *watcher;
+    watcher = reinterpret_cast<QFutureWatcher<NavDataModel> *>(sender());
+    NavDataModel model = watcher->result();
     if(model.timestamp < 0)
     {
         return;
@@ -143,6 +156,7 @@ void NavSensor::triggerReceivedData(QString data)
         navConfig->setHeadingStatus(model.status_hdg);  //data valid
     }
     else if (model.status_hdg == 2) navConfig->setHeadingStatus(2); //data not valid
+
 }
 
 void NavSensor::Reconnect()

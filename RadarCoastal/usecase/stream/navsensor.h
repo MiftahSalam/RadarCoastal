@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "qfuturewatcher.h"
+
 #include "infra/stream/stream.h"
 #include "shared/config/navigation_config.h"
 #include "usecase/stream/nav_data_model.h"
@@ -21,8 +23,10 @@ public:
 
 private slots:
     void triggerReceivedData(QString data);
+    void triggerParseData();
 
 private:
+    QFutureWatcher<NavDataModel> watcherCapture;
     RadarEngine::RadarConfig* m_instance_cfg;
     NavigationConfig *navConfig;
     Stream *m_stream_mqtt;
