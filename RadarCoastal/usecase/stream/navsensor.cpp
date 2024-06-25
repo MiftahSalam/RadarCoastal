@@ -26,8 +26,17 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent), m_stream_mqtt{nullptr}
 
     initConfigMqtt();
 
-    decoder = new NavDataDecoderNMEA();
-    //    decoder = new NavDataDecoderCustom();
+    switch (navConfig->getDecoderStrategy())
+    {
+    case NavigationConfig::NMEA:
+        decoder = new NavDataDecoderNMEA();
+        break;
+    case NavigationConfig::CUSTOM1:
+        decoder = new NavDataDecoderCustom();
+        break;
+    default:
+        break;
+    }
 
     m_no_osd_count = 11;
 
