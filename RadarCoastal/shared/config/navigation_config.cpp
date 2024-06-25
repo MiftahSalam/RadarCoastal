@@ -14,6 +14,11 @@ NavigationConfig::NavigationConfig()
 
 }
 
+NavigationConfig::NavDecoderStrategy NavigationConfig::getDecoderStrategy() const
+{
+    return decoderStrategy;
+}
+
 quint8 NavigationConfig::getMqttSpasiStatus() const
 {
     return mqttSpasiStatus;
@@ -101,9 +106,45 @@ NavigationConfig* NavigationConfig::getInstance(const QString path) {
     return config;
 }
 
+NavigationConfig::NavDecoderStrategy NavigationConfig::cfgToDecoderStrategy(const quint8 strategy)
+{
+    NavDecoderStrategy val = NMEA;
+    switch (strategy) {
+    case 1:
+        val = CUSTOM1;
+        break;
+    default:
+        break;
+    }
+
+    return val;
+}
+
+NavigationConfig::NavDecoderStrategy NavigationConfig::cfgToDecoderStrategy(const QString strategy)
+{
+    NavDecoderStrategy val = NMEA;
+    if (strategy == "CUSTOM1") {
+        val = CUSTOM1;
+    }
+    return val;
+}
+
+void NavigationConfig::setupStrategy(const QVariant val)
+{
+    bool ok;
+    int intVal = val.toInt(&ok);
+    if (ok) {
+        decoderStrategy = cfgToDecoderStrategy(intVal);
+    } else {
+        decoderStrategy = cfgToDecoderStrategy(val.toString());
+    }
+}
+
 void NavigationConfig::setup(const QString path)
 {
     QSettings configFile(path,QSettings::IniFormat);
+
+    setupStrategy(configFile.value(NAV_DECODER_STRATEGY));
 
     mqttSpasiStatus = 0; //offline
     gpsStatus = 0; //offline

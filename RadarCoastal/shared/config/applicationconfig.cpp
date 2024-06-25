@@ -29,7 +29,8 @@ void ApplicationConfig::checkConfig()
                <<GZ1_NOTIF_THRESHOLD
               <<GZ_TIMEOUT
              <<GZ1_TIMEOUT
-            <<NAV_MODE_GPS
+            <<NAV_DECODER_STRATEGY
+           <<NAV_MODE_GPS
            <<NAV_MODE_HEADING
           <<NAV_INTERNAL_NET
          <<NAV_SPASI_NET
