@@ -124,6 +124,12 @@ NavDataModel NavDataDecoderNMEA::decode()
     result.timestamp = QDateTime::currentSecsSinceEpoch();
     m_append_data_osd.append(msg);
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" m_append_data_osd: "<<m_append_data_osd;
+#else
+    qDebug()<<Q_FUNC_INFO<<" m_append_data_osd: "<<m_append_data_osd;
+#endif
+
     while (m_append_data_osd.size() > 0) {
         auto now = QDateTime::currentMSecsSinceEpoch();
         if (now - start > 2000) {
@@ -253,7 +259,7 @@ NavDataModel NavDataDecoderNMEA::decode()
     #ifdef USE_LOG4QT
                         logger()->debug()<<Q_FUNC_INFO<<"RMC not implemented";
     #else
-                        qDebug()<<Q_FUNC_INFO<<"osd invalid";
+                        qDebug()<<Q_FUNC_INFO<<"GLL not implemented";
     #endif
                     }
                     else if(m_append_data_osd_buf.contains("GSA"))
@@ -261,7 +267,7 @@ NavDataModel NavDataDecoderNMEA::decode()
     #ifdef USE_LOG4QT
                         logger()->debug()<<Q_FUNC_INFO<<"GSA not implemented";
     #else
-                        qDebug()<<Q_FUNC_INFO<<"osd invalid";
+                        qDebug()<<Q_FUNC_INFO<<"GLL not implemented";
     #endif
                     }
                     else if(m_append_data_osd_buf.contains("GSV"))
@@ -269,7 +275,7 @@ NavDataModel NavDataDecoderNMEA::decode()
     #ifdef USE_LOG4QT
                         logger()->debug()<<Q_FUNC_INFO<<"GSV not implemented";
     #else
-                        qDebug()<<Q_FUNC_INFO<<"osd invalid";
+                        qDebug()<<Q_FUNC_INFO<<"GLL not implemented";
     #endif
                     }
                     else if(m_append_data_osd_buf.contains("GLL"))
@@ -277,7 +283,15 @@ NavDataModel NavDataDecoderNMEA::decode()
     #ifdef USE_LOG4QT
                         logger()->debug()<<Q_FUNC_INFO<<"GLL not implemented";
     #else
-                        qDebug()<<Q_FUNC_INFO<<"osd invalid";
+                        qDebug()<<Q_FUNC_INFO<<"GLL not implemented";
+    #endif
+                    }
+                    else if(m_append_data_osd_buf.contains("VTG"))
+                    {
+    #ifdef USE_LOG4QT
+                        logger()->debug()<<Q_FUNC_INFO<<"VTG not implemented";
+    #else
+                        qDebug()<<Q_FUNC_INFO<<"VTG not implemented";
     #endif
                     }
                     else
