@@ -119,11 +119,9 @@ NavDataModel NavDataDecoderNMEA::decode()
     const QString NMEA_HEADER = "$"; //not work in mqtt. why ???
     const QString NMEA_TAIL1 = "\r";
     const QString NMEA_TAIL2 = "\n";
-
-    result.timestamp = QDateTime::currentSecsSinceEpoch();
-
     auto start = QDateTime::currentMSecsSinceEpoch();
 
+    result.timestamp = QDateTime::currentSecsSinceEpoch();
     m_append_data_osd.append(msg);
 
     while (m_append_data_osd.size() > 0) {
@@ -135,6 +133,11 @@ NavDataModel NavDataDecoderNMEA::decode()
         }
 
         int index_hdr = m_append_data_osd.indexOf(NMEA_HEADER);
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" index_hdr: "<<index_hdr;
+#else
+                qDebug()<<Q_FUNC_INFO<<"index_hdr: "<<index_hdr;
+#endif
         if(index_hdr >= 0)
         {
             int index_end = m_append_data_osd.indexOf(NMEA_TAIL1);
@@ -305,7 +308,6 @@ NavDataModel NavDataDecoderNMEA::decode()
             qDebug()<<Q_FUNC_INFO<<index_end;
     #endif
         }
-
     }
 
     return result;
