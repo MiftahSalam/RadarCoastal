@@ -42,6 +42,7 @@ NavSensor::NavSensor(QObject *parent) : QObject(parent), m_stream_mqtt{nullptr}
     }
 
     m_no_osd_count = 11;
+    pendingDataProcess = false;
 
     navConfig->attach(this);
 }
@@ -121,16 +122,22 @@ void NavSensor::UpdateStatus()
 }
 void NavSensor::triggerReceivedData(QString data)
 {
+    data.remove(m_topic+MQTT_MESSAGE_SEPARATOR);
     decoder->update(data.toUtf8());
 
-    QFuture<NavDataModel> future = QtConcurrent::run(decoder, &NavDataDecoder::decode);
-    watcherCapture.setFuture(future);
+    if (!pendingDataProcess) {
+        pendingDataProcess = true;
+        QFuture<NavDataModel> future = QtConcurrent::run(decoder, &NavDataDecoder::decode);
+        watcherCapture.setFuture(future);
+    }
 
 //    NavDataModel model = decoder->decode();
 }
 
 void NavSensor::triggerParseData()
 {
+    pendingDataProcess = false;
+
     QFutureWatcher<NavDataModel> *watcher;
     watcher = reinterpret_cast<QFutureWatcher<NavDataModel> *>(sender());
     NavDataModel model = watcher->result();

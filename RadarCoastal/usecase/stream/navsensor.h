@@ -33,6 +33,7 @@ private:
     NavDataDecoder *decoder;
     QString m_topic;
     int m_no_osd_count;
+    bool pendingDataProcess;
 
     void sendMqtt(NavDataEncoder *encoder);
     void initConfigMqtt();
