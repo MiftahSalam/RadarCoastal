@@ -43,6 +43,8 @@ private:
     QFutureWatcher<NavDataModel> watcherCapture;
     Stream *m_stream_mqtt_private;
     QString m_topic_private;
+    bool pendingDataProcess;
+
     void initConfigMqttPrivate();
 #endif
     Stream *m_stream_mqtt_public;

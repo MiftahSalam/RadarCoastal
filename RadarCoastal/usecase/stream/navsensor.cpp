@@ -54,6 +54,8 @@ NavSensor::NavSensor(QObject *parent)
         break;
     }
     connect(&watcherCapture, &QFutureWatcher<NavDataModel>::finished, this, &NavSensor::triggerParseData);
+
+    pendingDataProcess = false;
 #endif
 
     m_no_osd_count = 11;
@@ -228,8 +230,11 @@ void NavSensor::processNavData(QString data)
     decoder->update(data.toUtf8());
 
 #ifndef DISPLAY_ONLY_MODE
-    QFuture<NavDataModel> future = QtConcurrent::run(decoder, &NavDataDecoder::decode);
-    watcherCapture.setFuture(future);
+    if (!pendingDataProcess) {
+        pendingDataProcess = true;
+        QFuture<NavDataModel> future = QtConcurrent::run(decoder, &NavDataDecoder::decode);
+        watcherCapture.setFuture(future);
+    }
 #else
     NavDataModel model = decoder->decode();
     if (model.timestamp < 0)
@@ -240,24 +245,13 @@ void NavSensor::processNavData(QString data)
     m_no_osd_count = 0;
 
     m_stream_mqtt_public->UpdateTimeStamp();
-    if (model.status_gps == 3)
-    {
-        {
-            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE, model.lat);
-            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE, model.lon);
-        }
-        navConfig->setGpsStatus(model.status_gps);
-    }
-    else if (model.status_gps == 2) navConfig->setGpsStatus(2); //data not valid
 
-    if (model.status_hdg == 3)
-    {
-        {
-            m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING, model.hdg);
-        }
-        navConfig->setHeadingStatus(model.status_hdg);  //data valid
-    }
-    else if (model.status_hdg == 2) navConfig->setHeadingStatus(2); //data not valid
+    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LATITUDE, model.lat);
+    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_LONGITUDE, model.lon);
+    m_instance_cfg->setConfig(RadarEngine::NON_VOLATILE_NAV_DATA_LAST_HEADING, model.hdg);
+
+    navConfig->setGpsStatus(model.status_gps);
+    navConfig->setHeadingStatus(model.status_hdg);
 
     navConfig->setGpsModeAuto(!model.gps_man);
     navConfig->setHeadingModeAuto(!model.hdg_man);
@@ -267,6 +261,8 @@ void NavSensor::processNavData(QString data)
 #ifndef DISPLAY_ONLY_MODE
 void NavSensor::triggerParseData()
 {
+    pendingDataProcess = false;
+
     QFutureWatcher<NavDataModel> *watcher;
     watcher = reinterpret_cast<QFutureWatcher<NavDataModel> *>(sender());
     NavDataModel model = watcher->result();
