@@ -32,6 +32,7 @@ bool ArpaReceiverDecoderJson::isDataValid()
 
 #ifdef USE_LOG4QT
     logger()->warn()<<Q_FUNC_INFO<<" m_parse_error "<<error->errorString();
+    logger()->warn()<<Q_FUNC_INFO<<" m_parse_error data"<<m_data;
 #else
     qDebug()<<Q_FUNC_INFO<<"m_parse_error"<<error->errorString();
 #endif
@@ -132,7 +133,7 @@ void ArpaReceiver::triggerReceivedData(const QString data)
         msg.remove(m_topic+"@");
 
 #ifdef USE_LOG4QT
-        logger()->trace()<<Q_FUNC_INFO<<" arpa raw data: "<<msg;
+        logger()->debug()<<Q_FUNC_INFO<<" arpa raw data: "<<msg;
 #else
         qDebug()<<Q_FUNC_INFO<<"arpa raw data"<<msg;
 #endif

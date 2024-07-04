@@ -145,6 +145,15 @@ void FrameOSD::updateModeControl()
 
     ui->checkBoxGPS->setChecked(gps_auto);
     ui->checkBoxHDG->setChecked(hdg_auto);
+
+    if (!gps_auto) {
+        ui->lineEditLat->setStyleSheet("color: rgb(255,255,255);");
+        ui->lineEditLon->setStyleSheet("color: rgb(255,255,255);");
+    }
+
+    if (!hdg_auto) {
+        ui->lineEditHDG->setStyleSheet("color: rgb(255,255,255);");
+    }
 }
 
 void FrameOSD::updateHDGColor(const int status)
